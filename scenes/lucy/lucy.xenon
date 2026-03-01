@@ -6,7 +6,9 @@ material back 0.725 0.71 0.68 0 0.5
 material left 0.63 0.065 0.05 0 0.5
 material right 0.14 0.45 0.091 0 0.5
 material white 0.725 0.71 0.68 0 0.5
+material glass 1.0 1.0 1.0 0.0 0.01
 material light 15 15 15 0 0
-mesh scenes/meshes/cornell_box.obj
+mesh scenes/cornell_box/meshes/cornell_box.obj
+mesh scenes/lucy/meshes/lucy.obj
 light 34 15 15 15 1
 light 35 15 15 15 1

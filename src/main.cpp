@@ -43,6 +43,7 @@ int main(int argc, char** argv) {
 
     // Overrides from command line
     std::string output_dir = "renders";
+    int render_mode = 0;
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "--samples" && i + 1 < argc) {
             config.samples = std::stoi(argv[++i]);
@@ -54,6 +55,8 @@ int main(int argc, char** argv) {
             config.max_bounces = std::stoi(argv[++i]);
         } else if (std::string(argv[i]) == "--output-dir" && i + 1 < argc) {
             output_dir = argv[++i];
+        } else if (std::string(argv[i]) == "--render-mode" && i + 1 < argc) {
+            render_mode = std::stoi(argv[++i]);
         }
     }
 
@@ -63,6 +66,7 @@ int main(int argc, char** argv) {
     TripleSwapchain swap(config.width, config.height);
     WavefrontRenderer renderer(config.width, config.height);
     renderer.set_bounces(config.min_bounces, config.max_bounces);
+    renderer.set_render_mode((RenderMode)render_mode);
 
     std::atomic<bool> exit_flag(false);
     std::thread render_thread([&]() {

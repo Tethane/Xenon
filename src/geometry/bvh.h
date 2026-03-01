@@ -37,6 +37,7 @@ public:
 
     // Visibility test (early out)
     bool intersects(const Ray& ray) const;
+    bool intersects(const Ray& ray, int& hit_prim_id) const;
 
     // Packet traversal (4 rays)
     void intersect4(const RayPacket4& rp, HitRecord recs[4], int active_mask) const;

@@ -61,7 +61,7 @@ Vec3 PathIntegrator::li(const Ray& initial_ray, const Scene& scene, PCGState& rn
             float cos_s = std::max(0.f, dot(rec.normal, wi));
 
             if (cos_l > 0.f && cos_s > 0.f) {
-                Ray shadow_ray{rec.pos + rec.normal * kEps, wi, kEps, std::sqrt(dist_sq) - kEps};
+                Ray shadow_ray{rec.pos + rec.normal * kRayEps, wi, kRayEps, std::sqrt(dist_sq) - kRayEps};
                 if (!scene.intersects(shadow_ray)) {
                     // Evaluate BSDF
                     Vec3 f = mat.albedo * kInvPi * cos_s;
@@ -88,7 +88,7 @@ Vec3 PathIntegrator::li(const Ray& initial_ray, const Scene& scene, PCGState& rn
         delta_sample = false; 
 
         beta *= mat.albedo; 
-        ray = Ray{rec.pos + rec.normal * kEps, wi};
+        ray = Ray{rec.pos + rec.normal * kRayEps, wi};
     }
 
     return L;

@@ -39,9 +39,11 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
         } else if (cmd == "mesh") {
             std::string obj_path;
             ss >> obj_path;
-            TriangleMesh m;
-            if (load_obj(obj_path, m, mat_map)) {
-                scene.meshes.push_back(std::move(m));
+            if (scene.meshes.empty()) {
+                scene.meshes.emplace_back();
+            }
+            if (!load_obj(obj_path, scene.meshes[0], mat_map)) {
+                std::fprintf(stderr, "[Error] Failed to load mesh: %s\n", obj_path.c_str());
             }
         } else if (cmd == "light") {
             int tri_idx;
@@ -54,9 +56,7 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
 
     camera.look_at(eye, target, up, fov, (float)config.width / config.height);
     
-    // For MVP: merge all meshes into one big mesh for the BVH
     if (!scene.meshes.empty()) {
-        // Merge strategy or single mesh for world_bvh
         scene.world_bvh.build(scene.meshes[0]);
     }
 

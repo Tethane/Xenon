@@ -172,6 +172,11 @@ bool BVH::intersect(const Ray& ray, HitRecord& rec) const {
 }
 
 bool BVH::intersects(const Ray& ray) const {
+    int dummy;
+    return intersects(ray, dummy);
+}
+
+bool BVH::intersects(const Ray& ray, int& hit_prim_id) const {
     if (nodes_.empty()) return false;
     uint32_t stack[64];
     uint32_t ptr = 0;
@@ -185,9 +190,13 @@ bool BVH::intersects(const Ray& ray) const {
         const BVHNode& node = nodes_[idx];
         if (!node.bbox.intersect_fast(inv_dir, ray.origin, sign, ray.tmin, ray.tmax)) continue;
         if (node.is_leaf()) {
-            HitRecord dummy; dummy.t = ray.tmax;
+            HitRecord dummy_rec; dummy_rec.t = ray.tmax;
             for (uint32_t i = 0; i < node.tri_count; ++i) {
-                if (mesh_->intersect_triangle(ray, tri_indices_[node.tri_offset + i], dummy)) return true;
+                int prim_id = tri_indices_[node.tri_offset + i];
+                if (mesh_->intersect_triangle(ray, prim_id, dummy_rec)) {
+                    hit_prim_id = prim_id;
+                    return true;
+                }
             }
         } else {
             stack[ptr++] = node.left_child;

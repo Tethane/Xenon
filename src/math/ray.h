@@ -8,10 +8,25 @@
 
 namespace xn {
 
-constexpr float kInfinity = std::numeric_limits<float>::infinity();
-constexpr float kEps      = 1e-4f;  // surface offset to avoid self-intersection
-constexpr float kPi       = 3.14159265358979323846f;
-constexpr float kInvPi    = 1.f / kPi;
+constexpr float kInfinity   = std::numeric_limits<float>::infinity();
+constexpr float kRayEps     = 1e-4f;  // surface offset for bounce rays
+constexpr float kShadowEps  = 5e-4f;  // surface offset for shadow rays
+constexpr float kPi         = 3.14159265358979323846f;
+constexpr float kInvPi      = 1.f / kPi;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Ray Origin Offset Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+inline Vec3 offset_ray_origin(const Vec3& p, const Vec3& ng, const Vec3& dir, float eps) {
+    Vec3 n = ng;
+    if (dot(n, dir) < 0.f) n = -n;
+    return p + n * eps;
+}
+
+inline Vec3 offset_ray_origin(const Vec3& p, const Vec3& ng, const Vec3& dir) {
+    return offset_ray_origin(p, ng, dir, kRayEps);
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Ray
@@ -19,7 +34,7 @@ constexpr float kInvPi    = 1.f / kPi;
 struct Ray {
     Vec3  origin;
     Vec3  dir;
-    float tmin = kEps;
+    float tmin = kRayEps;
     float tmax = kInfinity;
 
     Vec3 at(float t) const { return origin + t * dir; }

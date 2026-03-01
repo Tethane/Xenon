@@ -40,6 +40,9 @@ struct Scene {
     bool intersects(const Ray& ray) const {
         return world_bvh.intersects(ray);
     }
+    bool intersects(const Ray& ray, int& hit_prim_id) const {
+        return world_bvh.intersects(ray, hit_prim_id);
+    }
     
     // Pick a light to sample
     const Light& sample_light(float u_pick, float& pdf) const {

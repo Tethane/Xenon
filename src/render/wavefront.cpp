@@ -215,13 +215,12 @@ void WavefrontRenderer::render_tile(const Tile& tile, const Scene& scene, const 
                         
                         Vec3 contrib = path.throughput * f * cos_s * (l.emission / light_pdf_sa) * mis_w;
                         
-                        // Fix ray offset using geo_normal
-                        Vec3 ng = rec.geo_normal;
-                        if (dot(ng, shadow_wi) < 0) ng = -ng;
-                        Vec3 origin = rec.pos + ng * kEps;
+                        // Robust ray offset using geo_normal helper
+                        Vec3 origin = offset_ray_origin(rec.pos, rec.geo_normal, shadow_wi, kShadowEps);
                         
-                        Ray shadow_ray{origin, shadow_wi, kEps, dist - kEps};
-                        q_shadow.push({work.path_idx, shadow_ray, shadow_ray.tmax, contrib});
+                        // Strict tMax to avoid hitting the light itself due to precision
+                        Ray shadow_ray{origin, shadow_wi, kShadowEps, dist - kShadowEps};
+                        q_shadow.push({work.path_idx, shadow_ray, shadow_ray.tmax, contrib, rec.prim_id, (int)l.tri_idx});
                     }
                 }
 
@@ -248,10 +247,8 @@ void WavefrontRenderer::render_tile(const Tile& tile, const Scene& scene, const 
                 
                 Vec3 wi_world = onb.to_world(sample.wi);
                 
-                // Fix ray offset using geo_normal
-                Vec3 ng = rec.geo_normal;
-                if (dot(ng, wi_world) < 0) ng = -ng;
-                Vec3 origin = rec.pos + ng * kEps;
+                // Robust ray offset using geo_normal helper
+                Vec3 origin = offset_ray_origin(rec.pos, rec.geo_normal, wi_world, kRayEps);
                 
                 path.ray = Ray{origin, wi_world};
                 path.prev_bsdf_pdf_sa = sample.pdf;
@@ -269,12 +266,17 @@ void WavefrontRenderer::render_tile(const Tile& tile, const Scene& scene, const 
         // 4. ShadowKernel
         for (int i = 0; i < q_shadow.size; ++i) {
             const auto& work = q_shadow.items[i];
+            
+            // Targeted Debug Mode
             if (render_mode_ == RENDER_MODE_SELF_INTERSECTION) {
-                HitRecord shadow_rec;
-                // Check if we hit something VERY close (likely self-intersection)
-                if (scene.intersect(work.ray, shadow_rec)) {
-                    if (shadow_rec.t < kEps * 2.0f) {
-                        paths[work.path_idx].radiance = Vec3(1, 0, 0); // Red for self-intersection
+                int hit_prim = -1;
+                if (scene.intersects(work.ray, hit_prim)) {
+                    if (hit_prim == work.origin_prim_id) {
+                        paths[work.path_idx].radiance = Vec3(1, 0, 0); // RED: self-intersection
+                    } else if (hit_prim == work.light_prim_id) {
+                        paths[work.path_idx].radiance = Vec3(0, 1, 0); // GREEN: hitting the light
+                    } else {
+                        paths[work.path_idx].radiance = Vec3(0, 0, 1); // BLUE: legitimate occluder
                     }
                 }
             } else {

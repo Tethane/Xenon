@@ -41,10 +41,12 @@ struct HitWorkItem {
 };
 
 struct ShadowWorkItem {
-    int path_idx;
-    Ray ray;
+    int   path_idx;
+    Ray   ray;
     float t_max;
-    Vec3 contrib;
+    Vec3  contrib;
+    int   origin_prim_id;
+    int   light_prim_id;
 };
 
 // Typed, chunk-friendly queue

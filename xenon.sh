@@ -8,8 +8,9 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_TYPE="Release"
 FORCE_BUILD=0
-SAMPLES=64
-SCENE="${ROOT_DIR}/scenes/cornell_box.xenon"
+SAMPLES=256
+TEST_SCENE="cornell_box"
+SCENE=""
 OUTPUT=""
 NO_DISPLAY=""
 BENCHMARK=""
@@ -23,14 +24,20 @@ while [[ $# -gt 0 ]]; do
     --bounces)       BOUNCES="$2"; shift 2 ;;
     --outdir)        OUTDIR="$2"; shift 2 ;;
     --scene)         SCENE="$2"; shift 2 ;;
+    --test-scene)    TEST_SCENE="$2"; shift 2 ;;
     --output)        OUTPUT="$2"; shift 2 ;;
+    --render-mode)   RENDER_MODE="$2"; shift 2 ;;
     *) echo "Unknown arg: $1" >&2; exit 1 ;;
   esac
 done
 
 BOUNCES=${BOUNCES:-8}
 OUTDIR=${OUTDIR:-renders}
-OUTPUT=${OUTPUT:-output.png}
+
+if [[ -z "${SCENE}" ]]; then
+  SCENE="${ROOT_DIR}/scenes/${TEST_SCENE}/${TEST_SCENE}.xenon"
+fi
+OUTPUT=${OUTPUT:-"${TEST_SCENE}_output.png"}
 
 mkdir -p "${ROOT_DIR}/${OUTDIR}"
 
@@ -68,4 +75,5 @@ exec "${BUILD_DIR}/xenon" \
   --scene "${SCENE}" \
   --output "${OUTPUT}" \
   --output-dir "${OUTDIR}" \
-  --max-bounces "${BOUNCES}"
+  --max-bounces "${BOUNCES}" \
+  --render-mode "${RENDER_MODE:-0}"

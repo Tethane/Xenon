@@ -62,9 +62,13 @@ struct Sphere {
         rec.t       = t;
         rec.pos     = ray.at(t);
         Vec3 outward = (rec.pos - center) / radius;
+        
+        // Geometric normal (faceforwarded)
+        if (dot(outward, -ray.dir) < 0.f) outward = -outward;
+        rec.geo_normal = outward;
         rec.front_face = dot(outward, ray.dir) < 0.f;
-        rec.normal  = rec.front_face ? outward : -outward;
-        rec.geo_normal = rec.normal;
+        rec.normal     = outward; // For sphere, geo == shading (unless we add texture/bump)
+        
         rec.mat_id  = mat_id;
         rec.prim_id = -1;
         return true;
@@ -91,9 +95,11 @@ struct Plane {
         if (t < ray.tmin || t > ray.tmax) return false;
         rec.t          = t;
         rec.pos        = ray.at(t);
-        rec.front_face = denom < 0.f;
-        rec.normal     = rec.front_face ? normal : -normal;
-        rec.geo_normal = rec.normal;
+        Vec3 n = normal;
+        if (dot(n, -ray.dir) < 0.f) n = -n;
+        rec.geo_normal = n;
+        rec.front_face = dot(n, ray.dir) < 0.f;
+        rec.normal     = n;
         rec.mat_id     = mat_id;
         rec.prim_id    = -1;
         return true;
