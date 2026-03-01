@@ -39,10 +39,21 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
         } else if (cmd == "mesh") {
             std::string obj_path;
             ss >> obj_path;
-            if (scene.meshes.empty()) {
-                scene.meshes.emplace_back();
-            }
-            if (!load_obj(obj_path, scene.meshes[0], mat_map)) {
+            TriangleMesh m;
+            if (load_obj(obj_path, m, mat_map)) {
+                Vec3 p(0, 0, 0), r(0, 0, 0);
+                float s = 1.0f;
+                // Parse optional transform: px py pz scale rx ry rz
+                if (ss >> p.x >> p.y >> p.z >> s >> r.x >> r.y >> r.z) {
+                    m.transform(p, s, r);
+                }
+                
+                if (scene.meshes.empty()) {
+                    scene.meshes.push_back(std::move(m));
+                } else {
+                    scene.meshes[0].merge(m);
+                }
+            } else {
                 std::fprintf(stderr, "[Error] Failed to load mesh: %s\n", obj_path.c_str());
             }
         } else if (cmd == "light") {

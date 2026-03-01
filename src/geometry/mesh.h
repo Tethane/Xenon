@@ -129,6 +129,12 @@ struct TriangleMesh {
         }
         return true;
     }
+
+    // Transform mesh: Scale -> Rotate YXZ -> Translate
+    void transform(Vec3 pos, float scale, Vec3 rot_deg);
+
+    // Merge another mesh into this one
+    void merge(const TriangleMesh& other);
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

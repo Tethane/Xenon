@@ -1,8 +1,8 @@
 import os
 
-def gen_cow_scene():
+def gen_empty_scene():
     scene_dir = os.path.dirname(os.path.abspath(__file__))
-    output_path = os.path.join(scene_dir, "cow.xenon")
+    output_path = os.path.join(scene_dir, "cornell_empty.xenon")
     
     with open(output_path, "w") as f:
         f.write("config 800 600 256\n")
@@ -15,22 +15,15 @@ def gen_cow_scene():
         f.write("material left 0.63 0.065 0.05 0 0.5\n")
         f.write("material right 0.14 0.45 0.091 0 0.5\n")
         f.write("material white 0.725 0.71 0.68 0 0.5\n")
-        f.write("material glossy_metal 0.9 0.9 0.9 0.9 0.05\n")
         f.write("material light 15 15 15 0 0\n")
         
-        # Meshes: path px py pz scale rx ry rz
-        # Empty Box
+        # Mesh
         f.write("mesh scenes/cornell_box/meshes/empty_box.obj 0 0 0 1 0 0 0\n")
         
-        # Cow: Centered, scaled to fit. y-range is ~[-3.5, 2].
-        # Scale 1.5 makes it ~7 units tall/wide. 
-        # Translate y up to sit on floor.
-        f.write("mesh scenes/cow/meshes/cow.obj 0 4.0 0 1.2 0 45 0\n")
-        
-        # Lights (Indices in empty_box.obj)
+        # Lights
         f.write("light 10 15 15 15 1\n")
         f.write("light 11 15 15 15 1\n")
 
 if __name__ == "__main__":
-    gen_cow_scene()
-    print("Generated cow.xenon")
+    gen_empty_scene()
+    print("Generated cornell_empty.xenon")
