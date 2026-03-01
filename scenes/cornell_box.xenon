@@ -1,0 +1,11 @@
+config 800 600 256
+camera 0 5 15 0 5 0 40
+material floor 0.8 0.8 0.8 0 0.5
+material ceiling 0.8 0.8 0.8 0 0.5
+material back 0.8 0.8 0.8 0 0.5
+material left 0.8 0.2 0.2 0 0.5
+material right 0.2 0.8 0.2 0 0.5
+material white 0.8 0.8 0.8 0 0.5
+mesh scenes/meshes/cornell_box.obj white
+light 34 10 10 10 8
+light 35 10 10 10 8
