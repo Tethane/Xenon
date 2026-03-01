@@ -13,6 +13,8 @@
 using namespace xn;
 
 void save_image(const std::string& path, int w, int h, float* data) {
+    stbi_flip_vertically_on_write(true);
+
     std::vector<uint8_t> pixels(w * h * 3);
     for (int i = 0; i < w * h * 3; ++i) {
         float c = std::pow(std::clamp(data[i], 0.f, 1.f), 1.f/2.2f); // Gamma

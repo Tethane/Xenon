@@ -51,6 +51,7 @@ CTestTestfile.cmake
 _CPack_Packages/
 CPackConfig.cmake
 CPackSourceConfig.cmake
+.cache/
 
 # Python
 __pycache__/

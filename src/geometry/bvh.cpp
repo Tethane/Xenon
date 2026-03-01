@@ -185,7 +185,7 @@ bool BVH::intersects(const Ray& ray) const {
         const BVHNode& node = nodes_[idx];
         if (!node.bbox.intersect_fast(inv_dir, ray.origin, sign, ray.tmin, ray.tmax)) continue;
         if (node.is_leaf()) {
-            HitRecord dummy;
+            HitRecord dummy; dummy.t = ray.tmax;
             for (uint32_t i = 0; i < node.tri_count; ++i) {
                 if (mesh_->intersect_triangle(ray, tri_indices_[node.tri_offset + i], dummy)) return true;
             }

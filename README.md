@@ -6,13 +6,15 @@ Xenon is a modern, CPU-based path tracer written in C++20. It employs a **wavefr
 
 ## Features
 
-- **Wavefront Path Tracing:** Decouples ray generation, intersection, and shading to maximize instruction cache coherence and data throughput.
-- **SIMD Optimized:** Custom 4-way and 8-way SIMD math primitives (AVX2/FMA) for ray-box and ray-triangle intersection.
-- **Acceleration Structure:** High-performance Bounding Volume Hierarchy (BVH) with Surface Area Heuristic (SAH) for fast intersection.
-- **Physically Based Materials:** Full BSDF support including Lambertian diffuse, Microfacet (GGX) specular, and Dielectrics.
-- **Modern C++:** Built using C++20 standards, utilizing `std::atomic`, `std::thread`, and modern memory management.
-- **Interactive Display:** Real-time preview via GLFW/OpenGL swapchain with progressive accumulation.
-- **Tile-based Rendering:** Efficient multi-threaded rendering using a dynamic tile-based task system.
+- **Wavefront Path Tracing:** Decouples ray generation, intersection, and shading stages. This architecture improves instruction cache coherence and allows for massive parallelism.
+- **Next Event Estimation (NEE):** Significantly reduces noise by explicitly sampling light sources at each bounce.
+- **Multiple Importance Sampling (MIS):** Robustly combines BSDF and light sampling strategies to handle varying light sizes and material roughness.
+- **Physically Based Materials:** Principled BSDF with support for Lambertian diffuse, GGX microfacet specular, and stochastic dielectric/plastic lobes.
+- **SIMD Optimized:** 4-way SIMD math primitives for BVH traversal and ray-triangle intersection.
+- **SAH-optimized BVH:** High-quality acceleration structure built using surface area heuristic.
+- **Correct Integration:** Unbiased estimator with consistent PDF handling and energy-conserving BSDFs.
+- **Progessive Preview:** Interactive real-time preview via GLFW/OpenGL with correct image orientation.
+- **Multi-threaded:** Scalable performance using a dynamic tile-dispatched thread pool.
 
 ## System Architecture
 
