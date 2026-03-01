@@ -37,10 +37,10 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
             mat_map[name] = (int)scene.materials.size();
             scene.materials.push_back(m);
         } else if (cmd == "mesh") {
-            std::string obj_path, mat_name;
-            ss >> obj_path >> mat_name;
+            std::string obj_path;
+            ss >> obj_path;
             TriangleMesh m;
-            if (load_obj(obj_path, m, mat_map[mat_name])) {
+            if (load_obj(obj_path, m, mat_map)) {
                 scene.meshes.push_back(std::move(m));
             }
         } else if (cmd == "light") {

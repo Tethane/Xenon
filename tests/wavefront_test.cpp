@@ -13,15 +13,15 @@ static int s_pass = 0, s_fail = 0;
 } while(0)
 
 void test_queue_logic() {
-    WavefrontQueue q;
+    WavefrontQueue<int> q;
     q.reset(10);
     CHECK(q.size == 0);
 
     q.push(5);
     q.push(2);
     CHECK(q.size == 2);
-    CHECK(q.indices[0] == 5);
-    CHECK(q.indices[1] == 2);
+    CHECK(q.items[0] == 5);
+    CHECK(q.items[1] == 2);
 
     q.reset(10);
     CHECK(q.size == 0);

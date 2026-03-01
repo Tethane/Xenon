@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <map>
 
 namespace xn {
 
@@ -23,6 +24,8 @@ struct TriangleMesh {
     std::vector<float> nx, ny, nz;
     // Face (triangle) index buffer — 3 indices per triangle
     std::vector<int32_t> indices; // size = num_triangles * 3
+    // Per-triangle material IDs
+    std::vector<int32_t> mat_ids; // size = num_triangles
 
     int mat_id = 0;
 
@@ -81,6 +84,7 @@ struct TriangleMesh {
         vx.reserve(nv); vy.reserve(nv); vz.reserve(nv);
         nx.reserve(nv); ny.reserve(nv); nz.reserve(nv);
         indices.reserve(nt*3);
+        mat_ids.reserve(nt);
     }
 
     void add_vertex(Vec3 p) {
@@ -88,10 +92,11 @@ struct TriangleMesh {
         nx.push_back(0);   ny.push_back(0);   nz.push_back(0);
     }
 
-    void add_triangle(int i0, int i1, int i2) {
+    void add_triangle(int i0, int i1, int i2, int mid = -1) {
         indices.push_back(i0);
         indices.push_back(i1);
         indices.push_back(i2);
+        mat_ids.push_back(mid >= 0 ? mid : mat_id);
     }
 
     // Ray-triangle intersection against a specific triangle
@@ -105,7 +110,7 @@ struct TriangleMesh {
         rec.pos    = ray.at(t);
         rec.u      = u;
         rec.v      = v;
-        rec.mat_id = mat_id;
+        rec.mat_id = mat_ids[tri_idx];
         rec.prim_id = tri_idx;
 
         // Geometric normal
@@ -128,6 +133,7 @@ struct TriangleMesh {
 // OBJ Loader — loads positions, normals, and triangle faces
 // Returns false on failure. Sets mesh.mat_id = mat_id argument.
 // ─────────────────────────────────────────────────────────────────────────────
-[[nodiscard]] bool load_obj(const std::string& path, TriangleMesh& mesh, int mat_id = 0);
+[[nodiscard]] bool load_obj(const std::string& path, TriangleMesh& mesh, 
+                           const std::map<std::string, int>& mat_map, int default_mat_id = 0);
 
 } // namespace xn

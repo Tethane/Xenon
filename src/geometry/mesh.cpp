@@ -39,7 +39,8 @@ void TriangleMesh::compute_smooth_normals() {
 // Indices are 1-based in OBJ; we convert to 0-based here.
 // If the OBJ has vertex normals, we use them; otherwise compute smooth normals.
 // ─────────────────────────────────────────────────────────────────────────────
-bool load_obj(const std::string& path, TriangleMesh& mesh, int mat_id) {
+bool load_obj(const std::string& path, TriangleMesh& mesh, 
+              const std::map<std::string, int>& mat_map, int default_mat_id) {
     std::ifstream f(path);
     if (!f.is_open()) {
         std::fprintf(stderr, "[OBJ] Cannot open file: %s\n", path.c_str());
@@ -51,16 +52,6 @@ bool load_obj(const std::string& path, TriangleMesh& mesh, int mat_id) {
     std::vector<Vec3> normals_obj;
 
     // Per-unique-combo (pos_idx, norm_idx) → mesh vertex index
-    // We flatten OBJ's separate index arrays into a unified vertex buffer.
-    struct VertKey { int pi, ni; };
-    struct VertKeyHash {
-        size_t operator()(VertKey k) const {
-            return std::hash<int64_t>()(((int64_t)k.pi << 32) | (uint32_t)k.ni);
-        }
-        bool operator()(VertKey a, VertKey b) const { return a.pi==b.pi && a.ni==b.ni; }
-    };
-
-    // Simple flat map (small meshes) — for large meshes this is fine too
     std::unordered_map<int64_t, int32_t> vert_cache;
     vert_cache.reserve(4096);
 
@@ -81,7 +72,8 @@ bool load_obj(const std::string& path, TriangleMesh& mesh, int mat_id) {
         return idx;
     };
 
-    mesh.mat_id = mat_id;
+    mesh.mat_id = default_mat_id;
+    int current_mat_id = default_mat_id;
     bool has_normals = false;
     std::string line;
     positions.reserve(4096);
@@ -90,10 +82,10 @@ bool load_obj(const std::string& path, TriangleMesh& mesh, int mat_id) {
     while (std::getline(f, line)) {
         if (line.empty() || line[0] == '#') continue;
         char type[8] = {};
-        const char* p = line.c_str();
-        int n = std::sscanf(p, "%7s", type);
+        const char* p_cstr = line.c_str();
+        int n = std::sscanf(p_cstr, "%7s", type);
         if (n < 1) continue;
-        p += std::strlen(type);
+        const char* p = p_cstr + std::strlen(type);
 
         if (std::strcmp(type, "v") == 0) {
             float x, y, z;
@@ -105,9 +97,16 @@ bool load_obj(const std::string& path, TriangleMesh& mesh, int mat_id) {
                 normals_obj.push_back(normalize({x, y, z}));
                 has_normals = true;
             }
+        } else if (std::strcmp(type, "usemtl") == 0) {
+            char mat_name[128];
+            if (std::sscanf(p, " %127s", mat_name) == 1) {
+                auto it = mat_map.find(mat_name);
+                if (it != mat_map.end()) {
+                    current_mat_id = it->second;
+                }
+            }
         } else if (std::strcmp(type, "f") == 0) {
             // Parse face: each vertex is pos[/uv[/norm]] (1-based)
-            // We ignore UV, support v, v/t, v//n, v/t/n
             std::vector<int32_t> face_verts;
             const char* q = p;
             while (*q) {
@@ -115,7 +114,6 @@ bool load_obj(const std::string& path, TriangleMesh& mesh, int mat_id) {
                 if (!*q || *q == '\n' || *q == '\r') break;
                 int pi = -1, ti = -1, ni = -1;
                 int consumed = 0;
-                // Try v/t/n
                 if (std::sscanf(q, "%d/%d/%d%n", &pi, &ti, &ni, &consumed) >= 3) {}
                 else if (std::sscanf(q, "%d//%d%n", &pi, &ni, &consumed) >= 2) {}
                 else if (std::sscanf(q, "%d/%d%n", &pi, &ti, &consumed) >= 2) {}
@@ -130,7 +128,7 @@ bool load_obj(const std::string& path, TriangleMesh& mesh, int mat_id) {
             }
             // Fan triangulation
             for (int i = 1; i+1 < (int)face_verts.size(); ++i)
-                mesh.add_triangle(face_verts[0], face_verts[i], face_verts[i+1]);
+                mesh.add_triangle(face_verts[0], face_verts[i], face_verts[i+1], current_mat_id);
         }
     }
 
