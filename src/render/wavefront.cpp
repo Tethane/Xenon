@@ -40,6 +40,8 @@ void WavefrontRenderer::render_frame(const Scene& scene, const Camera& camera, T
     pool_->wait();
 
     // Copy to swapchain and normalize
+    // @todo needs fixing: each tile should represent a contiguous section of the accumulation buffer
+    // for cache alignment. 
     float* out = swapchain.get_write_buffer();
     float inv_spp = 1.0f / (float)spp_;
     for (int y = 0; y < height_; ++y) {
@@ -90,9 +92,9 @@ void WavefrontRenderer::render_tile(const Tile& tile, const Scene& scene, const 
         
         paths[i].rng = seed_pcg(seed);
         float u = (float)x + paths[i].rng.next_float();
-        float v_coord = (float)y + paths[i].rng.next_float();
+        float v = (float)y + paths[i].rng.next_float();
         
-        paths[i].ray = camera.get_ray(u / (float)width_, ((float)height_ - v_coord) / (float)height_);
+        paths[i].ray = camera.get_ray(u / (float)width_, ((float)height_ - v) / (float)height_);
         paths[i].throughput = Vec3(1.f);
         paths[i].radiance   = Vec3(0.f);
         paths[i].pixel_idx  = y * width_ + x;
@@ -130,17 +132,16 @@ void WavefrontRenderer::render_tile(const Tile& tile, const Scene& scene, const 
             const auto& work = q_hits.items[i];
             const PrincipledBSDF& mat = scene.materials[work.hit.mat_id];
             
-            // Simple classification logic
-            if (mat.roughness < 0.01f || (mat.transmission > 0.1f && mat.transmission_roughness < 0.01f)) {
-                q_hit_delta.push(work);
-            } else if (mat.transmission > 0.1f) {
-                #if XN_ENABLE_ROUGH_TRANSMISSION
-                q_hit_glossy_trans.push(work);
-                #else
-                q_hit_diffuse.push(work); // Fallback to diffuse if gated
-                #endif
-            } else if (mat.metallic > 0.1f || mat.roughness < 0.2f) {
-                q_hit_glossy_refl.push(work);
+            // Enhanced classification: Delta vs Glossy vs Diffuse
+            float alpha = mat.roughness * mat.roughness;
+            bool is_delta = (alpha < 0.005f);
+            
+            if (mat.transmission > 0.1f) {
+                if (is_delta) q_hit_delta.push(work);
+                else          q_hit_glossy_trans.push(work);
+            } else if (mat.metallic > 0.1f || alpha < 0.1f) {
+                if (is_delta) q_hit_delta.push(work);
+                else          q_hit_glossy_refl.push(work);
             } else {
                 q_hit_diffuse.push(work);
             }
@@ -240,7 +241,7 @@ void WavefrontRenderer::render_tile(const Tile& tile, const Scene& scene, const 
                 if (!bsdf_sample(wo_local, mat, path.rng, sample)) { path.active = false; continue; }
 
                 if (sample.is_delta) {
-                    path.throughput *= sample.f;
+                    path.throughput *= sample.f; // Magnitude (Fresnel * Albedo) only
                 } else {
                     path.throughput *= sample.f * std::abs(sample.wi.z) / sample.pdf;
                 }
