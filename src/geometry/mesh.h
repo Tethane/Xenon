@@ -113,17 +113,14 @@ struct TriangleMesh {
         rec.mat_id = mat_ids[tri_idx];
         rec.prim_id = tri_idx;
 
-        // Geometric normal (faceforwarded against incident ray)
+        // Geometric normal (stable, world space)
         Vec3 gn = normalize(cross(p1-p0, p2-p0));
-        if (dot(gn, -ray.dir) < 0.f) gn = -gn;
-        rec.geo_normal  = gn;
-        rec.front_face  = dot(gn, ray.dir) < 0.f; // still useful for some logic
+        rec.geo_normal = gn;
+        rec.front_face = dot(gn, ray.dir) < 0.f; // hitting the front side
 
-        // Shading normal: smooth if available, faceforwarded consistently with geo
+        // Shading normal (stable)
         if (!nx.empty()) {
-            Vec3 ns = interpolate_normal(tri_idx, u, v);
-            if (dot(ns, gn) < 0.f) ns = -ns;
-            rec.normal = ns;
+            rec.normal = interpolate_normal(tri_idx, u, v);
         } else {
             rec.normal = gn;
         }

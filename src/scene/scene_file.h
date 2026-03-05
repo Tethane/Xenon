@@ -8,12 +8,12 @@
 namespace xn {
 
 struct SceneConfig {
-    int width = 800;
-    int height = 600;
-    int samples = 64;
-    int min_bounces = 3;
-    int max_bounces = 8;
-    std::string output = "output.png";
+  int width = 800;
+  int height = 600;
+  int samples = 64;
+  int min_bounces = 3;
+  int max_bounces = 8;
+  std::string output = "output.png";
 };
 
 // Loads a .xenon file and populates the scene and camera

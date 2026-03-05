@@ -21,8 +21,8 @@ def gen_empty_scene():
         f.write("mesh scenes/cornell_box/meshes/empty_box.obj 0 0 0 1 0 0 0\n")
         
         # Lights
-        f.write("light 10 15 15 15 1\n")
-        f.write("light 11 15 15 15 1\n")
+        f.write("light 0 10 15 15 15 1\n")
+        f.write("light 0 11 15 15 15 1\n")
 
 if __name__ == "__main__":
     gen_empty_scene()

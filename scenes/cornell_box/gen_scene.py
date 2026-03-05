@@ -21,8 +21,8 @@ def gen_cornell_scene():
         f.write("mesh scenes/cornell_box/meshes/cornell_box.obj\n")
         
         # Lights
-        f.write("light 34 15 15 15 1\n")
-        f.write("light 35 15 15 15 1\n")
+        f.write("light 0 34 15 15 15 1\n")
+        f.write("light 0 35 15 15 15 1\n")
 
 if __name__ == "__main__":
     gen_cornell_scene()

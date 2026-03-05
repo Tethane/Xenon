@@ -34,12 +34,14 @@ struct BSDFSample {
 // Math Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+inline float abs_cos_theta(Vec3 w) { return std::abs(w.z); }
 inline float cos_theta(Vec3 w) { return w.z; }
 inline float cos2_theta(Vec3 w) { return w.z * w.z; }
 inline float sin2_theta(Vec3 w) { return std::max(0.f, 1.f - cos2_theta(w)); }
 inline float sin_theta(Vec3 w) { return std::sqrt(sin2_theta(w)); }
 inline float tan_theta(Vec3 w) { return sin_theta(w) / cos_theta(w); }
 inline float tan2_theta(Vec3 w) { return sin2_theta(w) / cos2_theta(w); }
+inline float mis_weight_power2(float pdf_a, float pdf_b) { return (pdf_a * pdf_a) / (pdf_a * pdf_a + pdf_b * pdf_b); }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GGX / Microfacet
@@ -132,7 +134,7 @@ inline void get_lobe_weights(const PrincipledBSDF &mat, float &w_diff,
 }
 
 inline Vec3 bsdf_eval(Vec3 wo, Vec3 wi, const PrincipledBSDF &mat) {
-  if (wo.z <= 0.f || wi.z == 0.f)
+  if (wo.z == 0.f || wi.z == 0.f)
     return Vec3(0.f);
 
   float w_diff, w_refl, w_trans;
@@ -188,7 +190,7 @@ inline Vec3 bsdf_eval(Vec3 wo, Vec3 wi, const PrincipledBSDF &mat) {
 }
 
 inline float bsdf_pdf(Vec3 wo, Vec3 wi, const PrincipledBSDF &mat) {
-  if (wo.z <= 0.f || wi.z == 0.f)
+  if (wo.z == 0.f || wi.z == 0.f)
     return 0.f;
 
   float w_diff, w_refl, w_trans;
@@ -237,7 +239,7 @@ inline float bsdf_pdf(Vec3 wo, Vec3 wi, const PrincipledBSDF &mat) {
 
 inline bool bsdf_sample(Vec3 wo, const PrincipledBSDF &mat, PCGState &rng,
                         BSDFSample &res) {
-  if (wo.z <= 0.f)
+  if (wo.z == 0.f)
     return false;
 
   float w_diff, w_refl, w_trans;
@@ -247,17 +249,21 @@ inline bool bsdf_sample(Vec3 wo, const PrincipledBSDF &mat, PCGState &rng,
   if (u < w_diff) {
     // Sample Diffuse
     res.wi = sample_cosine_hemisphere(rng.next_float(), rng.next_float());
+    if (wo.z < 0.f)
+      res.wi.z = -res.wi.z; // reflect to same side
     res.lobe = LOBE_DIFFUSE;
     res.is_delta = false;
   } else if (u < w_diff + w_refl) {
     // Sample Reflection
     float alpha = mat.roughness * mat.roughness;
     if (alpha < 0.01f) {
-      res.wi = reflect(-wo, Vec3(0, 0, 1));
+      res.wi = reflect(-wo, Vec3(0, 0, (wo.z > 0.f ? 1.f : -1.f)));
       res.is_delta = true;
       res.lobe = LOBE_DELTA;
     } else {
       Vec3 wh = sample_ggx(rng.next_float(), rng.next_float(), alpha);
+      if (wo.z < 0.f)
+        wh.z = -wh.z;
       res.wi = reflect(-wo, wh);
       res.is_delta = false;
       res.lobe = LOBE_GLOSSY_REFL;
@@ -271,20 +277,24 @@ inline bool bsdf_sample(Vec3 wo, const PrincipledBSDF &mat, PCGState &rng,
     if (alpha < 0.01f) {
       float f = fresnel_dielectric(wo.z, mat.ior);
       if (rng.next_float() < f) {
-        res.wi = reflect(-wo, Vec3(0, 0, 1));
+        res.wi = reflect(-wo, Vec3(0, 0, (wo.z > 0.f ? 1.f : -1.f)));
       } else {
-        refract(-wo, Vec3(0, 0, 1), 1.f / mat.ior, res.wi);
+        float eta = (wo.z > 0.f ? 1.f / mat.ior : mat.ior);
+        refract(-wo, Vec3(0, 0, (wo.z > 0.f ? 1.f : -1.f)), eta, res.wi);
       }
       res.is_delta = true;
       res.lobe = LOBE_DELTA;
     } else {
       Vec3 wh = sample_ggx(rng.next_float(), rng.next_float(), alpha);
+      if (wo.z < 0.f)
+        wh.z = -wh.z;
       float f = fresnel_dielectric(dot(wo, wh), mat.ior);
       if (rng.next_float() < f) {
         res.wi = reflect(-wo, wh);
         res.lobe = LOBE_GLOSSY_REFL;
       } else {
-        refract(-wo, wh, 1.f / mat.ior, res.wi);
+        float eta = (dot(wo, wh) > 0.f ? 1.f / mat.ior : mat.ior);
+        refract(-wo, wh, eta, res.wi);
         res.lobe = LOBE_GLOSSY_TRANS;
       }
       res.is_delta = false;
@@ -293,23 +303,20 @@ inline bool bsdf_sample(Vec3 wo, const PrincipledBSDF &mat, PCGState &rng,
 
   if (res.is_delta) {
     res.pdf = 1.0f;
-    // For delta, 'f' is the weight (no cos/pdf factor needed in integrator for
-    // delta) L = T * f * Li. No cos because it's baked or cancels. We'll set f
-    // to albedo * Fresnel for delta reflection.
-    if (res.lobe == LOBE_DELTA) {
-      float f_dielectric = fresnel_dielectric(wo.z, mat.ior);
-      if (res.wi.z > 0)
-        res.f = Vec3(f_dielectric); // Reflection
+    float f_dielectric = fresnel_dielectric(wo.z, mat.ior);
+    if (res.wi.z > 0) { // Reflection
+      if (mat.metallic > 0.5f)
+        res.f = mat.albedo;
       else
-        res.f = Vec3(1.0f - f_dielectric) * mat.albedo; // Transmission
-    } else {
-      res.f = mat.albedo;
+        res.f = Vec3(f_dielectric);
+    } else { // Transmission
+      res.f = Vec3(1.0f - f_dielectric) * mat.albedo;
     }
   } else {
     res.pdf = bsdf_pdf(wo, res.wi, mat);
     if (res.pdf <= 0.f)
       return false;
-    res.f = bsdf_eval(wo, res.wi, mat);
+    res.f = bsdf_eval(wo, res.wi, mat) / res.pdf;
   }
 
   return true;

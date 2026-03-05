@@ -10,10 +10,11 @@
 namespace xn {
 
 struct Light {
-    uint32_t tri_idx;
-    Vec3     emission;
-    float    area;
-    // For area light sampling: mesh, etc.
+  uint32_t mesh_id;
+  uint32_t tri_idx;
+  Vec3     emission;
+  float    area;
+  // For area light sampling: mesh, etc.
 };
 
 struct Scene {

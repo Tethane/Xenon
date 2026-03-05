@@ -10,65 +10,65 @@
 namespace xn {
 
 enum LobeType {
-    LOBE_DIFFUSE = 0,
-    LOBE_GLOSSY_REFL,
-    LOBE_GLOSSY_TRANS,
-    LOBE_DELTA,
-    LOBE_COUNT
+  LOBE_DIFFUSE = 0,
+  LOBE_GLOSSY_REFL,
+  LOBE_GLOSSY_TRANS,
+  LOBE_DELTA,
+  LOBE_COUNT
 };
 
 // PathState — state of a single path in the wavefront
 struct PathState {
-    Ray   ray;
-    Vec3  throughput = Vec3(1.f);
-    Vec3  radiance   = Vec3(0.f);
-    PCGState rng;        // Per-path RNG
-    int   pixel_idx  = -1;
-    int   depth      = 0;
-    float prev_bsdf_pdf_sa = 0.f;
-    bool  active     = false;
-    bool  specular   = false; // For MIS
-    bool  prev_was_delta = false;
+  Ray   ray;
+  Vec3  throughput = Vec3(1.f);
+  Vec3  radiance   = Vec3(0.f);
+  PCGState rng;        // Per-path RNG
+  int   pixel_idx  = -1;
+  int   depth      = 0;
+  float prev_bsdf_pdf_sa = 0.f;
+  bool  active     = false;
+  bool  specular   = false; // For MIS
+  bool  prev_was_delta = false;
 };
 
 struct RayWorkItem {
-    int path_idx;
+  int path_idx;
 };
 
 struct HitWorkItem {
-    int path_idx;
-    HitRecord hit;
+  int path_idx;
+  HitRecord hit;
 };
 
 struct ShadowWorkItem {
-    int   path_idx;
-    Ray   ray;
-    float t_max;
-    Vec3  contrib;
-    int   origin_prim_id;
-    int   light_prim_id;
+  int   path_idx;
+  Ray   ray;
+  float t_max;
+  Vec3  contrib;
+  int   origin_prim_id;
+  int   light_prim_id;
 };
 
 // Typed, chunk-friendly queue
 template<typename T>
 struct WavefrontQueue {
-    std::vector<T> items;
-    std::atomic<int> size{0};
+  std::vector<T> items;
+  std::atomic<int> size{0};
 
-    void reset(int max_size) {
-        if ((int)items.size() < max_size) items.resize(max_size);
-        this->size.store(0);
-    }
+  void reset(int max_size) {
+    if ((int)items.size() < max_size) items.resize(max_size);
+    this->size.store(0);
+  }
 
-    void push(const T& item) {
-        int idx = this->size.fetch_add(1, std::memory_order_relaxed);
-        items[idx] = item;
-    }
+  void push(const T& item) {
+    int idx = this->size.fetch_add(1, std::memory_order_relaxed);
+    items[idx] = item;
+  }
 
-    // Support for block pushing (optional for now, but good for performance)
-    int push_block(int n) {
-        return this->size.fetch_add(n, std::memory_order_relaxed);
-    }
+  // Support for block pushing (optional for now, but good for performance)
+  int push_block(int n) {
+    return this->size.fetch_add(n, std::memory_order_relaxed);
+  }
 };
 
 } // namespace xn

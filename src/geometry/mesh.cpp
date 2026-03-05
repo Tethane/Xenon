@@ -138,6 +138,15 @@ bool load_obj(const std::string& path, TriangleMesh& mesh,
 
     std::printf("[OBJ] Loaded %s: %d verts, %d tris\n",
         path.c_str(), mesh.num_vertices(), mesh.num_triangles());
+    
+    // Debug: Compute bounds
+    Vec3 vmin(1e30f), vmax(-1e30f);
+    for (int i = 0; i < mesh.num_vertices(); ++i) {
+        vmin.x = std::min(vmin.x, mesh.vx[i]); vmin.y = std::min(vmin.y, mesh.vy[i]); vmin.z = std::min(vmin.z, mesh.vz[i]);
+        vmax.x = std::max(vmax.x, mesh.vx[i]); vmax.y = std::max(vmax.y, mesh.vy[i]); vmax.z = std::max(vmax.z, mesh.vz[i]);
+    }
+    std::printf("      Bounds: min(%.2f, %.2f, %.2f) max(%.2f, %.2f, %.2f)\n", vmin.x, vmin.y, vmin.z, vmax.x, vmax.y, vmax.z);
+    
     return true;
 }
 #ifndef M_PI

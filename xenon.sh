@@ -9,14 +9,14 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_TYPE="Release"
 FORCE_BUILD=0
 SAMPLES=256
-TEST_SCENE="cornell_box"
 SCENE=""
+SCENE_PATH=""
 OUTPUT=""
 NO_DISPLAY=""
 BENCHMARK=""
 
 # ── Argument parsing ──────────────────────────────────────────────────────────
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
   case "$1" in
     --debug)         BUILD_TYPE="Debug"; shift ;;
     --build)         FORCE_BUILD=1; shift ;;
@@ -24,10 +24,9 @@ while [[ $# -gt 0 ]]; do
     --bounces)       BOUNCES="$2"; shift 2 ;;
     --outdir)        OUTDIR="$2"; shift 2 ;;
     --scene)         SCENE="$2"; shift 2 ;;
-    --test-scene)    TEST_SCENE="$2"; shift 2 ;;
     --output)        OUTPUT="$2"; shift 2 ;;
     --render-mode)   RENDER_MODE="$2"; shift 2 ;;
-    *) echo "Unknown arg: $1" >&2; exit 1 ;;
+    *) echo "[Error] Unknown arg: $1" >&2; exit 1 ;;
   esac
 done
 
@@ -35,9 +34,18 @@ BOUNCES=${BOUNCES:-8}
 OUTDIR=${OUTDIR:-renders}
 
 if [[ -z "${SCENE}" ]]; then
-  SCENE="${ROOT_DIR}/scenes/${TEST_SCENE}/${TEST_SCENE}.xenon"
+  SCENE="cornell_box"
+  SCENE_PATH="${ROOT_DIR}/scenes/cornell_box/cornell_box.xenon"
 fi
-OUTPUT=${OUTPUT:-"${TEST_SCENE}_output.png"}
+
+if [[ ! -f "${ROOT_DIR}/scenes/${SCENE}/${SCENE}.xenon" ]]; then
+  echo "[Error] Could not find ${SCENE}.xenon"
+  exit 1
+fi
+
+SCENE_PATH="${ROOT_DIR}/scenes/${SCENE}/${SCENE}.xenon"
+
+OUTPUT=${OUTPUT:-"${SCENE}_output.png"}
 
 mkdir -p "${ROOT_DIR}/${OUTDIR}"
 
@@ -72,7 +80,7 @@ fi
 # ── Run ───────────────────────────────────────────────────────────────────────
 exec "${BUILD_DIR}/xenon" \
   --samples "${SAMPLES}" \
-  --scene "${SCENE}" \
+  --scene "${SCENE_PATH}" \
   --output "${OUTPUT}" \
   --output-dir "${OUTDIR}" \
   --max-bounces "${BOUNCES}" \
