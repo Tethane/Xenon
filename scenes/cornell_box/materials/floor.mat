@@ -1,0 +1,8 @@
+# Cornell Box — Floor
+name "floor"
+type "principled"
+baseColor 0.725 0.71 0.68
+roughness 0.5
+metallic 0.0
+ior 1.5
+transmission 0.0

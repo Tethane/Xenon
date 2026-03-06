@@ -1,0 +1,8 @@
+# Cornell Box — Area light
+name "light"
+type "principled"
+baseColor 1.0 1.0 1.0
+roughness 0.0
+metallic 0.0
+emission 15.0 15.0 15.0
+emissionTemperature 6500

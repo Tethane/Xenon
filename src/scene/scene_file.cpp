@@ -1,11 +1,32 @@
 #include "scene/scene_file.h"
 #include "geometry/mesh.h"
+#include "material/material.h"
 #include <fstream>
 #include <sstream>
 #include <cstdio>
 #include <map>
+#include <filesystem>
 
 namespace xn {
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Resolve a relative path against the scene file's directory
+// ─────────────────────────────────────────────────────────────────────────────
+static std::string resolve_relative(const std::string& scene_path, const std::string& rel) {
+    namespace fs = std::filesystem;
+    fs::path scene_dir = fs::path(scene_path).parent_path();
+    fs::path resolved  = scene_dir / rel;
+    return resolved.string();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Strip surrounding quotes from a token: "foo" → foo
+// ─────────────────────────────────────────────────────────────────────────────
+static std::string strip_quotes(const std::string& s) {
+    if (s.size() >= 2 && s.front() == '"' && s.back() == '"')
+        return s.substr(1, s.size() - 2);
+    return s;
+}
 
 bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConfig& config) {
   std::ifstream f(path);
@@ -26,24 +47,42 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
     std::stringstream ss(line);
     std::string cmd;
     ss >> cmd;
+
+    if (cmd.empty() || cmd[0] == '#')
+        continue;
+
     if (cmd == "config") {
         ss >> config.width >> config.height >> config.samples;
     } else if (cmd == "camera") {
         ss >> eye.x >> eye.y >> eye.z >> target.x >> target.y >> target.z >> fov;
+    } else if (cmd == "matfile") {
+        // ── New .mat file reference ──────────────────────────────────────
+        std::string mat_path;
+        ss >> mat_path;
+        mat_path = strip_quotes(mat_path);
+
+        // Resolve relative to scene directory
+        std::string resolved = resolve_relative(path, mat_path);
+        Material m = load_material(resolved);
+
+        mat_map[m.name] = (int)scene.materials.size();
+        scene.materials.push_back(std::move(m));
     } else if (cmd == "material") {
+        // ── Legacy inline material (backward compat) ─────────────────────
         std::string name;
-        PrincipledBSDF m;
-        ss >> name >> m.albedo.x >> m.albedo.y >> m.albedo.z >> m.metallic >> m.roughness;
-        // Optional extended fields
+        Vec3 albedo;
+        float metallic, roughness;
+        ss >> name >> albedo.x >> albedo.y >> albedo.z >> metallic >> roughness;
+
         float spec = 0.5f, ior = 1.5f, trans = 0.0f, trans_rough = -1.0f;
         if (ss >> spec >> ior >> trans >> trans_rough) {
-            m.specular = spec;
-            m.ior = ior;
-            m.transmission = trans;
-            m.transmission_roughness = trans_rough;
+            // All extended fields present
         }
+
+        Material m = material_from_legacy(name, albedo, metallic, roughness,
+                                          spec, ior, trans, trans_rough);
         mat_map[name] = (int)scene.materials.size();
-        scene.materials.push_back(m);
+        scene.materials.push_back(std::move(m));
     } else if (cmd == "mesh") {
         std::string obj_path;
         ss >> obj_path;

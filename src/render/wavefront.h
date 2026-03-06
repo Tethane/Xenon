@@ -9,6 +9,8 @@
 
 #include <cstring>
 
+// #define XN_DEBUG_QUEUES 1
+
 namespace xn {
 
 // Wavefront Renderer
@@ -45,49 +47,34 @@ static inline void flush_local_to_queue(WavefrontQueue<T>& q, const std::vector<
 // Wavefront Pipeline Kernels
 
 // Generates Camera Rays over the Entire Frame
-// Input: None
-// Output: Camera generated rays stored in q_rays
 void raygen(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<RayWorkItem>& q_rays, const Camera& camera, int spp, int height, int width);
 
-// Filters Out Misses
-// Input: q_rays
-// Output: q_hits
+// Filters Out Misses — Input: q_rays, Output: q_hits
 void closest_hit(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<RayWorkItem>& q_rays, WavefrontQueue<HitWorkItem>& q_hits, const Scene& scene);
 
-// Generate Shadow Rays at Hits and Adjust MIS weighting
-// Input: q_hits
-// Output: q_shadow
+// Generate Shadow Rays at Hits and Adjust MIS weighting — Input: q_hits, Output: q_shadow
 void next_event_estimation(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q_hits, WavefrontQueue<ShadowWorkItem>& q_shadow, const Scene& scene, int min_bounces);
 
-// Classify Rays Based on BSDF Sampling and NEE Compatibility
-// Input: q_hits
-// Output: q_hits_diffuse, q_hits_glossy_refl, q_hits_glossy_trans, q_hits_delta
-void classification(ThreadPool& pool, WavefrontQueue<HitWorkItem>& q_hits, WavefrontQueue<HitWorkItem>& q_hit_diffuse, WavefrontQueue<HitWorkItem>& q_hit_glossy_refl, WavefrontQueue<HitWorkItem>& q_hit_glossy_trans, WavefrontQueue<HitWorkItem>& q_hit_delta, const Scene& scene);
+// Classify hits into 6 queues based on material — Input: q_hits, Output: 6 per-lobe queues
+void classification(ThreadPool& pool, std::vector<PathState>& paths,
+    WavefrontQueue<HitWorkItem>& q_hits,
+    WavefrontQueue<HitWorkItem>& q_diffuse,
+    WavefrontQueue<HitWorkItem>& q_microfacet_refl,
+    WavefrontQueue<HitWorkItem>& q_microfacet_trans,
+    WavefrontQueue<HitWorkItem>& q_delta_refl,
+    WavefrontQueue<HitWorkItem>& q_delta_trans,
+    WavefrontQueue<HitWorkItem>& q_subsurface,
+    const Scene& scene);
 
-// Shade Diffuse Hits and Sample BSDF:
-// Input: q_hits_diffuse
-// Output: q_rays_next
-void shade_diffuse(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q_hits_diffuse, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
+// Per-queue shading kernels — each calls only its queue's sample()
+void shade_diffuse(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
+void shade_microfacet_refl(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
+void shade_microfacet_trans(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
+void shade_delta_refl(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
+void shade_delta_trans(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
+void shade_subsurface(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
 
-// Shade Glossy Reflection Hits and Sample BSDF:
-// Input: q_hits_glossy_refl
-// Output: q_rays_next
-void shade_glossy_refl(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q_hits_glossy_refl, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
-
-
-// Shade Glossy Transmittion Hits and Sample BSDF:
-// Input: q_hits_glossy_trans
-// Output: q_rays_next
-void shade_glossy_trans(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q_hits_glossy_trans, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
-
-// Shade Delta Hits and Produce Reflected Ray
-// Input: q_hits_delta
-// Output: q_rays_next
-void shade_delta(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<HitWorkItem>& q_hits_delta, WavefrontQueue<RayWorkItem>& q_rays_next, const Scene& scene);
-
-// Compute Shadow Ray Intersections
-// Input: q_shadow
-// Output: None
+// Compute Shadow Ray Intersections — Input: q_shadow, Output: radiance accumulation
 void shadow(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<ShadowWorkItem>& q_shadow, const Scene& scene);
 
 } // namespace xn

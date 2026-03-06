@@ -1,0 +1,8 @@
+# Cornell Box — Right wall (green)
+name "right"
+type "principled"
+baseColor 0.14 0.45 0.091
+roughness 0.5
+metallic 0.0
+ior 1.5
+transmission 0.0

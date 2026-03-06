@@ -1,0 +1,8 @@
+# Lucy scene — Glass material
+name "glass"
+type "principled"
+baseColor 1.0 1.0 1.0
+roughness 0.0
+metallic 0.0
+ior 1.5
+transmission 1.0

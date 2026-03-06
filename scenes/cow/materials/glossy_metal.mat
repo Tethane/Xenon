@@ -1,0 +1,8 @@
+# Cow scene — Glossy metal
+name "glossy_metal"
+type "principled"
+baseColor 0.9 0.9 0.9
+roughness 0.1
+metallic 1.0
+ior 1.5
+transmission 0.0

@@ -32,7 +32,7 @@ find_package(Threads REQUIRED)
 set(MATH_SRC)       # header-only
 set(GEOMETRY_SRC    src/geometry/bvh.cpp src/geometry/mesh.cpp)
 set(CAMERA_SRC)     # header-only
-set(MATERIAL_SRC    src/material/bsdf.cpp)
+set(MATERIAL_SRC    src/material/bsdf.cpp src/material/material.cpp)
 set(RENDER_SRC      src/render/wavefront.cpp src/render/integrator.cpp)
 set(SCENE_SRC       src/scene/scene_file.cpp)
 set(DISPLAY_SRC     src/display/window.cpp)

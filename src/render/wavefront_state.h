@@ -11,9 +11,11 @@ namespace xn {
 
 enum LobeType {
   LOBE_DIFFUSE = 0,
-  LOBE_GLOSSY_REFL,
-  LOBE_GLOSSY_TRANS,
-  LOBE_DELTA,
+  LOBE_MICROFACET_REFL,
+  LOBE_MICROFACET_TRANS,
+  LOBE_DELTA_REFL,
+  LOBE_DELTA_TRANS,
+  LOBE_DIFFUSE_SUBSURFACE,
   LOBE_COUNT
 };
 
@@ -26,7 +28,7 @@ struct PathState {
   int   pixel_idx  = -1;
   int   depth      = 0;
   float prev_bsdf_pdf_sa = 0.f;
-  bool  active     = false;
+  bool  active     = true;
   bool  specular   = false; // For MIS
   bool  prev_was_delta = false;
 };

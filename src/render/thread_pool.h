@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <deque>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <type_traits>
@@ -134,7 +135,9 @@ public:
   explicit ThreadPool(uint32_t num_threads = std::thread::hardware_concurrency())
       : stop_(false), next_queue_(0), approx_tasks_(0) {
     if (num_threads == 0) num_threads = 1;
-    queues_.resize(num_threads);
+    queues_.reserve(num_threads);
+    for (uint32_t i = 0; i < num_threads; ++i)
+      queues_.push_back(std::make_unique<Queue>());
     workers_.reserve(num_threads);
 
     for (uint32_t i = 0; i < num_threads; ++i) {
@@ -222,7 +225,7 @@ private:
   };
 
   std::vector<std::thread> workers_;
-  std::vector<Queue> queues_;
+  std::vector<std::unique_ptr<Queue>> queues_;
 
   std::atomic<bool> stop_;
   std::atomic<uint32_t> next_queue_;
@@ -234,13 +237,13 @@ private:
   static thread_local int tls_worker_id_;
 
   void push_local(uint32_t q, Task&& t) {
-    Queue& Q = queues_[q];
+    Queue& Q = *queues_[q];
     std::lock_guard<std::mutex> lk(Q.m);
     Q.dq.emplace_back(std::move(t));
   }
 
   bool pop_local(uint32_t q, Task& out) {
-    Queue& Q = queues_[q];
+    Queue& Q = *queues_[q];
     std::lock_guard<std::mutex> lk(Q.m);
     if (Q.dq.empty()) return false;
     out = std::move(Q.dq.back());
@@ -254,7 +257,7 @@ private:
     // Simple linear probe; for ultra-hot cases you can randomize start.
     for (uint32_t k = 1; k < n; ++k) {
       uint32_t victim = (thief + k) % n;
-      Queue& Q = queues_[victim];
+      Queue& Q = *queues_[victim];
       std::lock_guard<std::mutex> lk(Q.m);
       if (!Q.dq.empty()) {
         out = std::move(Q.dq.front());
@@ -321,7 +324,7 @@ private:
   friend class TaskGroup;
 };
 
-thread_local int ThreadPool::tls_worker_id_ = -1;
+inline thread_local int ThreadPool::tls_worker_id_ = -1;
 
 // -------------------------
 // TaskGroup implementation

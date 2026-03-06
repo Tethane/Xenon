@@ -3,7 +3,7 @@
 
 #include "geometry/mesh.h"
 #include "geometry/bvh.h"
-#include "material/bsdf.h"
+#include "material/material.h"
 #include <vector>
 #include <memory>
 
@@ -19,7 +19,7 @@ struct Light {
 
 struct Scene {
     std::vector<TriangleMesh> meshes;
-    std::vector<PrincipledBSDF> materials;
+    std::vector<Material> materials;
     std::vector<BVH> bvhs;
     std::vector<Light> lights;
 
