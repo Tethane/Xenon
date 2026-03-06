@@ -22,6 +22,7 @@ public:
     ~WavefrontRenderer();
 
     void render_frame(const Scene& scene, const Camera& camera, TripleSwapchain& swapchain);
+    void render_frame_tiled(const Scene& scene, const Camera& camera, TripleSwapchain& swapchain);
     
     void reset_accumulation() { spp_ = 0; }
     int  get_spp() const { return spp_; }

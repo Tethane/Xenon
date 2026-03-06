@@ -29,11 +29,9 @@ find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
 
 # ── Source groups ─────────────────────────────────────────────────────────────
-set(MATH_SRC)       # header-only
 set(GEOMETRY_SRC    src/geometry/bvh.cpp src/geometry/mesh.cpp)
-set(CAMERA_SRC)     # header-only
 set(MATERIAL_SRC    src/material/bsdf.cpp src/material/material.cpp)
-set(RENDER_SRC      src/render/wavefront.cpp src/render/integrator.cpp)
+set(RENDER_SRC      src/render/wavefront.cpp src/render/integrator.cpp src/render/cpu_tiled.cpp)
 set(SCENE_SRC       src/scene/scene_file.cpp)
 set(DISPLAY_SRC     src/display/window.cpp)
 
@@ -50,7 +48,18 @@ add_library(stb_image_write INTERFACE)
 target_include_directories(stb_image_write INTERFACE third_party)
 
 # ── Main executable ───────────────────────────────────────────────────────────
-add_executable(xenon src/main.cpp ${ALL_SRC})
+add_executable(xenon
+  src/main.cpp
+  src/geometry/bvh.cpp
+  src/geometry/mesh.cpp
+  src/material/bsdf.cpp
+  src/material/material.cpp
+  src/render/wavefront.cpp
+  src/render/integrator.cpp
+  src/render/cpu_tiled.cpp
+  src/scene/scene_file.cpp
+  src/display/window.cpp
+)
 target_include_directories(xenon PRIVATE src ${GLFW_INCLUDE_DIRS})
 target_link_libraries(xenon PRIVATE
   ${GLFW_LIBRARIES}

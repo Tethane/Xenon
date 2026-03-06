@@ -652,6 +652,46 @@ inline float bsdf_pdf_for_nee(Vec3 wo, Vec3 wi, const Material& mat) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
+// Unified BSDF sampling
+//
+// Selects exactly one lobe based on material properties and samples it.
+// This matches the logic in Wavefront classification + shade kernels.
+// ═════════════════════════════════════════════════════════════════════════════
+
+inline bool bsdf_sample(Vec3 wo, const Material& mat, PCGState& rng, BSDFSample& res) {
+    if (mat.isDelta) {
+        if (mat.isTransmissive) {
+            float F = fresnel_dielectric(wo.z, mat.ior);
+            if (rng.next_float() < F) {
+                return delta_refl_bsdf::sample(wo, mat, rng, res);
+            } else {
+                return delta_trans_bsdf::sample(wo, mat, rng, res);
+            }
+        } else {
+            return delta_refl_bsdf::sample(wo, mat, rng, res);
+        }
+    } else if (mat.isConductor) {
+        return microfacet_refl_bsdf::sample(wo, mat, rng, res);
+    } else if (mat.hasSubsurface) {
+        return subsurface_bsdf::sample(wo, mat, rng, res);
+    } else if (mat.isTransmissive) {
+        float F = fresnel_dielectric(std::abs(wo.z), mat.ior);
+        if (rng.next_float() < F) {
+            return microfacet_refl_bsdf::sample(wo, mat, rng, res);
+        } else {
+            return microfacet_trans_bsdf::sample(wo, mat, rng, res);
+        }
+    } else {
+        float spec_weight = mat.F0.x;
+        if (rng.next_float() < spec_weight) {
+            return microfacet_refl_bsdf::sample(wo, mat, rng, res);
+        } else {
+            return diffuse_bsdf::sample(wo, mat, rng, res);
+        }
+    }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
 // Legacy compatibility: bsdf_sample using the old PrincipledBSDF struct
 // (Only used by integrator.cpp which still references PrincipledBSDF)
 // ═════════════════════════════════════════════════════════════════════════════

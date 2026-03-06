@@ -2,10 +2,12 @@
 #include "render/swapchain.h"
 #include "render/wavefront.h"
 #include "scene/scene_file.h"
+#include "math/image.h"
 #include <cstdio>
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <iostream>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -22,6 +24,24 @@ void save_image(const std::string& path, int w, int h, float* data) {
     pixels[i] = (uint8_t)(255.99f * c);
   }
   stbi_write_png(path.c_str(), w, h, 3, pixels.data(), w * 3);
+
+  // Noise Computation
+
+  NoiseStats s = ImageNoiseEstimator::computeResidualNoiseStats(data, w, h);
+
+  std::cout << std::setprecision(10)
+                << "meanSquaredScore = " << s.meanSquaredScore << "\n"
+                << "rmsScore         = " << s.rmsScore << "\n"
+                << "meanAbsolute     = " << s.meanAbsolute << "\n"
+                << "medianAbsolute   = " << s.medianAbsolute << "\n"
+                << "p95Absolute      = " << s.p95Absolute << "\n"
+                << "maxAbsolute      = " << s.maxAbsolute << "\n"
+                << "avgLuminance     = " << s.avgLuminance << "\n"
+                << "edgeThreshold    = " << s.edgeThreshold << "\n"
+                << "epsilon          = " << s.epsilon << "\n"
+                << "validPixelCount  = " << s.validPixelCount << "\n"
+                << "validPixelRatio  = " << s.validPixelRatio << "\n";
+
   std::printf("Saved image to %s\n", path.c_str());
 }
 
@@ -77,7 +97,13 @@ int main(int argc, char* argv[]) {
   std::thread render_thread([&]() {
     while (!exit_flag.load()) {
       if (renderer.get_spp() < config.samples) {
-        renderer.render_frame(scene, camera, swapchain);
+        // CPU Tiled
+        renderer.render_frame_tiled(scene, camera, swapchain);
+
+        // CPU Wavefront
+        //renderer.render_frame(scene, camera, swapchain);
+
+        // GPU Wavefront
         if (renderer.get_spp() % 10 == 0) {
           std::printf("Progress: %d/%d samples\n", renderer.get_spp(), config.samples);
         }
