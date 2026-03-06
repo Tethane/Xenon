@@ -1,5 +1,5 @@
 #include "geometry/mesh.h"
-#include "geometry/bvh.h"
+#include "geometry/blas.h"
 #include "geometry/primitives.h"
 #include "math/ray.h"
 #include <cstdio>
@@ -21,6 +21,7 @@ void test_ray_triangle() {
     Vec3 v0(0,0,0), v1(1,0,0), v2(0,1,0); 
     Ray r{{0.2f, 0.2f, 1.0f}, {0,0,-1}};
     float t, u, v;
+    HitRecord rec;
     CHECK(ray_triangle(r, v0, v1, v2, t, u, v));
     CHECK_NEAR(t, 1.0f, 1e-5f);
     CHECK_NEAR(u, 0.2f, 1e-5f);
@@ -30,10 +31,9 @@ void test_ray_triangle() {
     CHECK(!ray_triangle(r, v0, v1, v2, t, u, v));
 }
 
-void test_bvh_build() {
+void test_blas_build() {
     TriangleMesh mesh;
     // Create a simple box with 12 triangles
-    // Vertices
     mesh.add_vertex({-1,-1,-1}); // 0
     mesh.add_vertex({ 1,-1,-1}); // 1
     mesh.add_vertex({ 1, 1,-1}); // 2
@@ -43,9 +43,9 @@ void test_bvh_build() {
     mesh.add_vertex({ 1, 1, 1}); // 6
     mesh.add_vertex({-1, 1, 1}); // 7
 
-    // Front
+    // Front (z=-1)
     mesh.add_triangle(0, 1, 2); mesh.add_triangle(0, 2, 3);
-    // Back
+    // Back (z=1)
     mesh.add_triangle(4, 5, 6); mesh.add_triangle(4, 6, 7);
     // Left
     mesh.add_triangle(0, 3, 7); mesh.add_triangle(0, 7, 4);
@@ -56,30 +56,30 @@ void test_bvh_build() {
     // Bottom
     mesh.add_triangle(0, 1, 5); mesh.add_triangle(0, 5, 4);
 
-    BVH bvh;
-    bvh.build(mesh);
+    BLAS blas;
+    blas.build(mesh);
 
     Ray r{{0,0,5}, {0,0,-1}};
     HitRecord rec;
-    CHECK(bvh.intersect(r, rec));
-    CHECK_NEAR(rec.t, 4.0f, 1e-5f); // Hits front face at z=1
+    CHECK(blas.intersect(r, rec));
+    CHECK_NEAR(rec.t, 4.0f, 1e-5f); // Hits back face at z=1
     CHECK_NEAR(rec.pos.z, 1.0f, 1e-5f);
 
     r.origin = {0,0,-5}; r.dir = {0,0,1};
     rec = {};
-    CHECK(bvh.intersect(r, rec));
-    CHECK_NEAR(rec.t, 4.0f, 1e-5f); // Hits back face at z=-1
+    CHECK(blas.intersect(r, rec));
+    CHECK_NEAR(rec.t, 4.0f, 1e-5f); // Hits front face at z=-1
     CHECK_NEAR(rec.pos.z, -1.0f, 1e-5f);
 
     r.origin = {10,10,10}; // misses
     rec = {};
-    CHECK(!bvh.intersect(r, rec));
+    CHECK(!blas.intersect(r, rec));
 }
 
 int main() {
     std::printf("=== geometry_test ===\n");
     test_ray_triangle();
-    test_bvh_build();
+    test_blas_build();
     std::printf("\n=== Results: %d passed, %d failed ===\n", s_pass, s_fail);
     return s_fail ? 1 : 0;
 }

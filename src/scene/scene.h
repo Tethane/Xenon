@@ -2,7 +2,8 @@
 // scene/scene.h — Container for materials, meshes, and lights
 
 #include "geometry/mesh.h"
-#include "geometry/bvh.h"
+#include "geometry/blas.h"
+#include "geometry/tlas.h"
 #include "material/material.h"
 #include <vector>
 #include <memory>
@@ -20,29 +21,30 @@ struct Light {
 struct Scene {
     std::vector<TriangleMesh> meshes;
     std::vector<Material> materials;
-    std::vector<BVH> bvhs;
+    std::vector<BLAS> blases;
+    std::vector<Instance> instances;
     std::vector<Light> lights;
 
-    // Master BVH — for now we'll just have one BVH per mesh or one for everything
-    BVH world_bvh;
+    // Master TLAS over instances
+    TLAS world_tlas;
 
-    void build_world_bvh() {
-        // For the MVP, we assume a single triangle mesh for simplicity or 
-        // merging all meshes into one.
-        // Let's assume we have one main TriangleMesh for the whole scene.
+    void build_acceleration_structures() {
+        blases.clear();
+        blases.resize(meshes.size());
+        for (size_t i = 0; i < meshes.size(); ++i) {
+            blases[i].build(meshes[i]);
+        }
+        world_tlas.build(instances);
     }
 
     // Closest object hit
     bool intersect(const Ray& ray, HitRecord& rec) const {
-        return world_bvh.intersect(ray, rec);
+        return world_tlas.intersect(ray, blases, rec);
     }
 
     // Visibility (shadow) ray
     bool intersects(const Ray& ray) const {
-        return world_bvh.intersects(ray);
-    }
-    bool intersects(const Ray& ray, int& hit_prim_id) const {
-        return world_bvh.intersects(ray, hit_prim_id);
+        return world_tlas.intersect_shadow(ray, blases);
     }
     
     // Pick a light to sample

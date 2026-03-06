@@ -29,7 +29,7 @@ find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
 
 # ── Source groups ─────────────────────────────────────────────────────────────
-set(GEOMETRY_SRC    src/geometry/bvh.cpp src/geometry/mesh.cpp)
+set(GEOMETRY_SRC    src/geometry/blas.cpp src/geometry/tlas.cpp src/geometry/mesh.cpp)
 set(MATERIAL_SRC    src/material/bsdf.cpp src/material/material.cpp)
 set(RENDER_SRC      src/render/wavefront.cpp src/render/integrator.cpp src/render/cpu_tiled.cpp)
 set(SCENE_SRC       src/scene/scene_file.cpp)
@@ -50,7 +50,8 @@ target_include_directories(stb_image_write INTERFACE third_party)
 # ── Main executable ───────────────────────────────────────────────────────────
 add_executable(xenon
   src/main.cpp
-  src/geometry/bvh.cpp
+  src/geometry/blas.cpp
+  src/geometry/tlas.cpp
   src/geometry/mesh.cpp
   src/material/bsdf.cpp
   src/material/material.cpp

@@ -50,6 +50,7 @@ struct HitRecord {
     Vec3   geo_normal = {};     // geometric (flat) normal
     int    mat_id   = -1;
     int    prim_id  = -1;       // triangle / primitive index
+    int    instance_id = -1;    // mesh instance index
     float  u = 0, v = 0;       // barycentric / UV
     bool   front_face = true;
 

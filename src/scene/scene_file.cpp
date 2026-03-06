@@ -14,9 +14,14 @@ namespace xn {
 // ─────────────────────────────────────────────────────────────────────────────
 static std::string resolve_relative(const std::string& scene_path, const std::string& rel) {
     namespace fs = std::filesystem;
+    // 1. Try as-is (relative to CWD)
+    if (fs::exists(rel)) return rel;
+    // 2. Try relative to scene file
     fs::path scene_dir = fs::path(scene_path).parent_path();
     fs::path resolved  = scene_dir / rel;
-    return resolved.string();
+    if (fs::exists(resolved)) return resolved.string();
+    // Fallback to original behavior if both fail (though it will likely fail later)
+    return rel;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -34,6 +39,10 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
     std::fprintf(stderr, "Failed to open scene: %s\n", path.c_str());
     return false;
   }
+
+  // Mesh cache for sharing geometry within this scene load
+  std::map<std::string, uint32_t> mesh_cache;
+  int current_mat_id = -1;
 
   // Simplified parser: one keyword per line
   std::string line;
@@ -65,7 +74,8 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
         std::string resolved = resolve_relative(path, mat_path);
         Material m = load_material(resolved);
 
-        mat_map[m.name] = (int)scene.materials.size();
+        current_mat_id = (int)scene.materials.size();
+        mat_map[m.name] = current_mat_id;
         scene.materials.push_back(std::move(m));
     } else if (cmd == "material") {
         // ── Legacy inline material (backward compat) ─────────────────────
@@ -81,33 +91,56 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
 
         Material m = material_from_legacy(name, albedo, metallic, roughness,
                                           spec, ior, trans, trans_rough);
-        mat_map[name] = (int)scene.materials.size();
+        current_mat_id = (int)scene.materials.size();
+        mat_map[name] = current_mat_id;
         scene.materials.push_back(std::move(m));
     } else if (cmd == "mesh") {
         std::string obj_path;
         ss >> obj_path;
-        TriangleMesh m;
-        if (load_obj(obj_path, m, mat_map)) {
-            Vec3 p(0, 0, 0), r(0, 0, 0);
-            float s = 1.0f;
-            // Parse optional transform: px py pz scale rx ry rz
-            if (ss >> p.x >> p.y >> p.z >> s >> r.x >> r.y >> r.z) {
-                m.transform(p, s, r);
-            }
-            
-            if (scene.meshes.empty()) {
+        
+        // Resolve absolute path to use as key for mesh sharing
+        std::string resolved_path = resolve_relative(path, obj_path);
+        
+        uint32_t mesh_id;
+        
+        if (mesh_cache.find(resolved_path) == mesh_cache.end()) {
+            TriangleMesh m;
+            if (load_obj(resolved_path, m, mat_map, current_mat_id)) {
+                mesh_id = (uint32_t)scene.meshes.size();
                 scene.meshes.push_back(std::move(m));
+                mesh_cache[resolved_path] = mesh_id;
             } else {
-                scene.meshes[0].merge(m);
+                std::fprintf(stderr, "[Error] Failed to load mesh: %s\n", obj_path.c_str());
+                continue;
             }
         } else {
-            std::fprintf(stderr, "[Error] Failed to load mesh: %s\n", obj_path.c_str());
+            mesh_id = mesh_cache[resolved_path];
         }
+
+        Vec3 p(0, 0, 0), r(0, 0, 0);
+        float s = 1.0f;
+        Mat4 xform = Mat4::identity();
+        
+        if (ss >> p.x >> p.y >> p.z >> s >> r.x >> r.y >> r.z) {
+            // Transform: Translation * Rotation * Scale
+            // Note: TriangleMesh::transform used Scale -> Rotate -> Translate
+            // Let's match that order for consistency or use a proper mat4 composition.
+            xform = Mat4::translate(p) * 
+                    Mat4::rotate({0,0,1}, r.z * M_PI / 180.f) *
+                    Mat4::rotate({0,1,0}, r.y * M_PI / 180.f) *
+                    Mat4::rotate({1,0,0}, r.x * M_PI / 180.f) *
+                    Mat4::scale({s, s, s});
+        }
+        
+        uint32_t inst_id = (uint32_t)scene.instances.size();
+        // Use -1 for material override to signify "use mesh/obj materials"
+        scene.instances.emplace_back(mesh_id, (uint32_t)-1, inst_id, xform, scene.meshes[mesh_id].compute_aabb());
+
     } else if (cmd == "light") {
         uint32_t mesh_id;
         uint32_t tri_idx;
         Vec3 emission;
-        float area; // Perceived surface area of emission
+        float area;
         ss >> mesh_id >> tri_idx >> emission.x >> emission.y >> emission.z >> area;
         scene.lights.push_back({mesh_id, tri_idx, emission, area});
     }
@@ -115,10 +148,8 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
 
   camera.look_at(eye, target, up, fov, (float)config.width / config.height);
   
-  // Build BVH
-  if (!scene.meshes.empty()) {
-      scene.world_bvh.build(scene.meshes[0]);
-  }
+  // Build TLAS/BLAS
+  scene.build_acceleration_structures();
 
   return true;
 }

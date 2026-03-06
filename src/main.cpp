@@ -50,12 +50,15 @@ int main(int argc, char* argv[]) {
   SceneConfig config;
   
   // Default scene path (can be overridden by args)
-  std::string scene_path = "scenes/cornell_box.xenon";
+  std::string scene_path = "";
   for (int i = 1; i < argc; ++i) {
     if (std::string(argv[i]) == "--scene" && i + 1 < argc) {
       scene_path = argv[++i];
+    } else if (argv[i][0] != '-' && scene_path.empty()) {
+      scene_path = argv[i];
     }
   }
+  if (scene_path.empty()) scene_path = "scenes/cornell_box.xenon";
 
   Scene scene;
   Camera camera;

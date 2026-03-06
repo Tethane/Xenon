@@ -68,6 +68,17 @@ struct AABB {
         tmax = std::min({tmax, txmax, tymax, tzmax});
         return tmin <= tmax;
     }
+
+    void get_corners(Vec3 corners[8]) const {
+        corners[0] = {mn.x, mn.y, mn.z};
+        corners[1] = {mx.x, mn.y, mn.z};
+        corners[2] = {mn.x, mx.y, mn.z};
+        corners[3] = {mx.x, mx.y, mn.z};
+        corners[4] = {mn.x, mn.y, mx.z};
+        corners[5] = {mx.x, mn.y, mx.z};
+        corners[6] = {mn.x, mx.y, mx.z};
+        corners[7] = {mx.x, mx.y, mx.z};
+    }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

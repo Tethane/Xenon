@@ -27,7 +27,7 @@ struct TriangleMesh {
     // Per-triangle material IDs
     std::vector<int32_t> mat_ids; // size = num_triangles
 
-    int mat_id = 0;
+    int mat_id = -1;
 
     int num_vertices()  const { return (int)vx.size(); }
     int num_triangles() const { return (int)indices.size() / 3; }
@@ -126,12 +126,6 @@ struct TriangleMesh {
         }
         return true;
     }
-
-    // Transform mesh: Scale -> Rotate YXZ -> Translate
-    void transform(Vec3 pos, float scale, Vec3 rot_deg);
-
-    // Merge another mesh into this one
-    void merge(const TriangleMesh& other);
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -139,6 +133,6 @@ struct TriangleMesh {
 // Returns false on failure. Sets mesh.mat_id = mat_id argument.
 // ─────────────────────────────────────────────────────────────────────────────
 [[nodiscard]] bool load_obj(const std::string& path, TriangleMesh& mesh, 
-                           const std::map<std::string, int>& mat_map, int default_mat_id = 0);
+                           const std::map<std::string, int>& mat_map, int default_mat_id = -1);
 
 } // namespace xn
