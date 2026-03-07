@@ -4,6 +4,7 @@ def gen_cornell_scene():
     scene_dir = os.path.dirname(os.path.abspath(__file__))
     output_path = os.path.join(scene_dir, "cornell_box.xenon")
     
+    return
     with open(output_path, "w") as f:
         f.write("config 800 600 256\n")
         f.write("camera 0 5 15 0 5 0 40\n")

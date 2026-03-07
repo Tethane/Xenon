@@ -30,7 +30,9 @@ void WavefrontRenderer::render_frame_tiled(const Scene& scene, const Camera& cam
 
                 for (int depth = 0; depth < max_bounces_; ++depth) {
                     HitRecord rec;
-                    if (!scene.intersect(ray, rec)) break;
+                    if (!scene.intersect(ray, rec)) {
+                      break;
+                    }
 
                     const Material& mat = scene.materials[rec.mat_id];
 

@@ -1,6 +1,7 @@
 import os
 
 def gen_cow_scene():
+    return
     scene_dir = os.path.dirname(os.path.abspath(__file__))
     output_path = os.path.join(scene_dir, "cow.xenon")
     
