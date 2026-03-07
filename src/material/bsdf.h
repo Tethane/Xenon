@@ -315,9 +315,10 @@ inline Vec3 eval(Vec3 wo, Vec3 wi, const Material& mat) {
     Vec3 result = F * D * G / denom;
 
     // Multi-scatter compensation
-    Vec3 Fms = multiscatter_compensation(mat.F0, wo.z, wi.z, mat.alpha);
-    result *= Fms;
-
+    if (!mat.isTransmissive) {
+        Vec3 Fms = multiscatter_compensation(mat.F0, wo.z, wi.z, mat.alpha);
+        result *= Fms;
+    }
     return result;
 }
 
@@ -362,85 +363,89 @@ inline bool sample(Vec3 wo, const Material& mat, PCGState& rng, BSDFSample& res)
 namespace microfacet_trans_bsdf {
 
 inline Vec3 eval(Vec3 wo, Vec3 wi, const Material& mat) {
-    // Transmission: wo and wi on opposite sides
-    if (wo.z * wi.z > 0.f) return Vec3(0.f);
+    // Transmission requires opposite hemispheres
+    if (wo.z == 0.f || wi.z == 0.f) return Vec3(0.f);
+    if (same_hemisphere(wo, wi)) return Vec3(0.f);
 
-    float eta = (wo.z > 0.f) ? (1.f / mat.ior) : mat.ior;
+    const bool entering = wo.z > 0.f;
+    const float eta = entering ? (1.f / mat.ior) : mat.ior;
 
-    // Half-vector for transmission (Walter 2007)
-    Vec3 wh = normalize(wo + wi * (1.f / eta));
+    // Walter-style transmission half-vector
+    Vec3 wh = normalize(wo + eta * wi);
     if (wh.z < 0.f) wh = -wh;
 
-    float cos_o = dot(wo, wh);
-    float cos_i = dot(wi, wh);
+    float dot_wo_wh = dot(wo, wh);
+    float dot_wi_wh = dot(wi, wh);
 
-    // Must have opposite signs of dot products
-    if (cos_o * cos_i > 0.f) return Vec3(0.f);
+    // Reflection and transmission should lie on opposite sides of wh
+    if (dot_wo_wh * dot_wi_wh >= 0.f) return Vec3(0.f);
 
-    float ax = mat.alpha_x;
-    float ay = mat.alpha_y;
+    float D = ggx_d_aniso(wh, mat.alpha_x, mat.alpha_y);
+    float G = ggx_g2_aniso(wo, wi, mat.alpha_x, mat.alpha_y);
+    float F = fresnel_dielectric(dot_wo_wh, mat.ior);
 
-    float D = ggx_d_aniso(wh, ax, ay);
-    float G = ggx_g2_aniso(wo, wi, ax, ay);
-    float F = fresnel_dielectric(cos_o, mat.ior);
+    float cos_o = abs_cos_theta(wo);
+    float cos_i = abs_cos_theta(wi);
+    if (cos_o < 1e-8f || cos_i < 1e-8f) return Vec3(0.f);
 
-    float denom_ht = cos_o + eta * cos_i;
-    if (std::abs(denom_ht) < 1e-8f) return Vec3(0.f);
+    float denom = dot_wo_wh + eta * dot_wi_wh;
+    float denom2 = denom * denom;
+    if (std::abs(denom) < 1e-8f) return Vec3(0.f);
 
-    float factor = std::abs(cos_o * cos_i) * D * G * (1.f - F) /
-                   (std::abs(wo.z * wi.z) * denom_ht * denom_ht);
+    float factor = std::abs(dot_wo_wh * dot_wi_wh) * (eta * eta) /
+                   (cos_o * cos_i * denom2);
 
-    // Account for non-symmetry of BTDF
-    factor *= (eta * eta);
-
-    return mat.baseColor * std::abs(factor);
+    return mat.baseColor * ((1.f - F) * D * G * factor);
 }
 
 inline float pdf(Vec3 wo, Vec3 wi, const Material& mat) {
-    if (wo.z * wi.z > 0.f) return 0.f;
+    if (wo.z == 0.f || wi.z == 0.f) return 0.f;
+    if (same_hemisphere(wo, wi)) return 0.f;
 
-    float eta = (wo.z > 0.f) ? (1.f / mat.ior) : mat.ior;
+    const bool entering = wo.z > 0.f;
+    const float eta = entering ? (1.f / mat.ior) : mat.ior;
 
-    Vec3 wh = normalize(wo + wi * (1.f / eta));
+    Vec3 wh = normalize(wo + eta * wi);
     if (wh.z < 0.f) wh = -wh;
 
-    float cos_o = dot(wo, wh);
-    float cos_i = dot(wi, wh);
-    if (cos_o * cos_i > 0.f) return 0.f;
+    float dot_wo_wh = dot(wo, wh);
+    float dot_wi_wh = dot(wi, wh);
+    if (dot_wo_wh * dot_wi_wh >= 0.f) return 0.f;
 
-    float Dv = vndf_pdf(wo, wh, mat.alpha_x, mat.alpha_y);
+    float p_wh = vndf_pdf(wo, wh, mat.alpha_x, mat.alpha_y);
 
-    // Jacobian for transmission: |cos_i| / (cos_o + eta * cos_i)^2
-    float denom = cos_o + eta * cos_i;
+    float denom = dot_wo_wh + eta * dot_wi_wh;
     if (std::abs(denom) < 1e-8f) return 0.f;
-    float jacobian = std::abs(cos_i) / (denom * denom);
 
-    return Dv * jacobian;
+    float dwh_dwi = std::abs((eta * eta * dot_wi_wh) / (denom * denom));
+    return p_wh * dwh_dwi;
 }
 
 inline bool sample(Vec3 wo, const Material& mat, PCGState& rng, BSDFSample& res) {
     if (std::abs(wo.z) < 1e-8f) return false;
 
     Vec3 wh = sample_vndf_ggx(wo, mat.alpha_x, mat.alpha_y,
-                               rng.next_float(), rng.next_float());
+                              rng.next_float(), rng.next_float());
     if (wh.z < 0.f) wh = -wh;
 
-    float eta = (wo.z > 0.f) ? (1.f / mat.ior) : mat.ior;
+    const bool entering = wo.z > 0.f;
+    const float eta = entering ? (1.f / mat.ior) : mat.ior;
 
-    // Refract through wh
-    float cos_o = dot(wo, wh);
-    float sin2_t = eta * eta * (1.f - cos_o * cos_o);
+    float dot_wo_wh = dot(wo, wh);
 
-    // TIR check — return invalid
-    if (sin2_t >= 1.f) return false;
+    // TIR check
+    float sin2_theta_o = std::max(0.f, 1.f - dot_wo_wh * dot_wo_wh);
+    float sin2_theta_i = eta * eta * sin2_theta_o;
+    if (sin2_theta_i >= 1.f) return false;
 
-    float cos_t = std::sqrt(std::max(0.f, 1.f - sin2_t));
-    // wi points away from wh on the other side
-    res.wi = eta * (-wo) + (eta * cos_o - cos_t) * wh;
-    res.wi = normalize(res.wi);
+    // Refract wo through microfacet wh to obtain wi
+    // wo / wi both point away from surface
+    float cos_theta_i = std::sqrt(std::max(0.f, 1.f - sin2_theta_i));
+    float sign = (dot_wo_wh > 0.f) ? 1.f : -1.f;
 
-    // Verify opposite hemispheres
-    if (res.wi.z * wo.z > 0.f) return false;
+    res.wi = normalize((-eta * wo) + (eta * dot_wo_wh - sign * cos_theta_i) * wh);
+
+    if (same_hemisphere(wo, res.wi)) return false;
 
     res.pdf = pdf(wo, res.wi, mat);
     if (res.pdf < 1e-8f) return false;
@@ -481,7 +486,7 @@ inline bool sample(Vec3 wo, const Material& mat, PCGState& /*rng*/, BSDFSample& 
     if (mat.isConductor) {
         F_val = fresnel_schlick(std::abs(wo.z), mat.F0);
     } else {
-        float F = fresnel_dielectric(wo.z, mat.ior);
+        float F = fresnel_dielectric(std::abs(wo.z), mat.ior);
         F_val = Vec3(F);
     }
 
@@ -526,7 +531,7 @@ inline bool sample(Vec3 wo, const Material& mat, PCGState& /*rng*/, BSDFSample& 
     }
     res.wi = normalize(res.wi);
 
-    float F   = fresnel_dielectric(wo.z, mat.ior);
+    float F   = fresnel_dielectric(std::abs(wo.z), mat.ior);
     float cos_i = std::abs(res.wi.z);
     if (cos_i < 1e-8f) return false;
 
@@ -604,11 +609,10 @@ inline Vec3 bsdf_eval_for_nee(Vec3 wo, Vec3 wi, const Material& mat) {
         result = microfacet_refl_bsdf::eval(wo, wi, mat);
     } else if (mat.isTransmissive) {
         // Transmissive dielectric: both reflection and transmission
-        float F = fresnel_dielectric(wo.z, mat.ior);
         if (wi.z > 0.f) {
-            result = microfacet_refl_bsdf::eval(wo, wi, mat) * F;
+            result = microfacet_refl_bsdf::eval(wo, wi, mat);
         } else {
-            result = microfacet_trans_bsdf::eval(wo, wi, mat) * (1.f - F);
+            result = microfacet_trans_bsdf::eval(wo, wi, mat);
         }
     } else if (mat.hasSubsurface) {
         // Subsurface: use subsurface eval
@@ -632,12 +636,12 @@ inline float bsdf_pdf_for_nee(Vec3 wo, Vec3 wi, const Material& mat) {
     if (mat.isConductor) {
         return microfacet_refl_bsdf::pdf(wo, wi, mat);
     } else if (mat.isTransmissive) {
-        float F = fresnel_dielectric(wo.z, mat.ior);
-        if (wi.z > 0.f) {
-            return microfacet_refl_bsdf::pdf(wo, wi, mat) * F;
-        } else {
-            return microfacet_trans_bsdf::pdf(wo, wi, mat) * (1.f - F);
-        }
+         float F = fresnel_dielectric(std::abs(wo.z), mat.ior);
+          if (wi.z > 0.f) {
+              return F * microfacet_refl_bsdf::pdf(wo, wi, mat);
+          } else {
+              return (1.f - F) * microfacet_trans_bsdf::pdf(wo, wi, mat);
+          }
     } else if (mat.hasSubsurface) {
         return subsurface_bsdf::pdf(wo, wi);
     } else {
@@ -676,18 +680,29 @@ inline bool bsdf_sample(Vec3 wo, const Material& mat, PCGState& rng, BSDFSample&
         return subsurface_bsdf::sample(wo, mat, rng, res);
     } else if (mat.isTransmissive) {
         float F = fresnel_dielectric(std::abs(wo.z), mat.ior);
+
         if (rng.next_float() < F) {
-            return microfacet_refl_bsdf::sample(wo, mat, rng, res);
+            if (!microfacet_refl_bsdf::sample(wo, mat, rng, res)) return false;
+            res.pdf *= F;
+            return true;
         } else {
-            return microfacet_trans_bsdf::sample(wo, mat, rng, res);
+            if (!microfacet_trans_bsdf::sample(wo, mat, rng, res)) return false;
+            res.pdf *= (1.f - F);
+            return true;
         }
     } else {
-        float spec_weight = mat.F0.x;
-        if (rng.next_float() < spec_weight) {
-            return microfacet_refl_bsdf::sample(wo, mat, rng, res);
-        } else {
-            return diffuse_bsdf::sample(wo, mat, rng, res);
-        }
+      float spec_weight = std::clamp(mat.F0.x, 0.f, 1.f);
+      float diff_weight = 1.f - spec_weight;
+
+      if (rng.next_float() < spec_weight) {
+          if (!microfacet_refl_bsdf::sample(wo, mat, rng, res)) return false;
+          res.pdf *= spec_weight;
+          return true;
+      } else {
+          if (!diffuse_bsdf::sample(wo, mat, rng, res)) return false;
+          res.pdf *= diff_weight;
+          return true;
+      }
     }
 }
 
