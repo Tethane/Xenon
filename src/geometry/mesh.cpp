@@ -153,4 +153,82 @@ bool load_obj(const std::string& path, TriangleMesh& mesh,
 #define M_PI 3.14159265358979323846
 #endif
 
+void TriangleMesh::transform(Vec3 pos, float scale, Vec3 rot_deg) {
+    Vec3 rad = rot_deg * (M_PI / 180.f);
+    float cx = std::cos(rad.x), sx = std::sin(rad.x);
+    float cy = std::cos(rad.y), sy = std::sin(rad.y);
+    float cz = std::cos(rad.z), sz = std::sin(rad.z);
+
+    // Vertex positions
+    for (size_t i = 0; i < vx.size(); ++i) {
+        Vec3 v(vx[i], vy[i], vz[i]);
+        v *= scale;
+        
+        // Rotation Y (Yaw)
+        float nx = v.x * cy + v.z * sy;
+        float nz = -v.x * sy + v.z * cy;
+        v.x = nx; v.z = nz;
+        // Rotation X (Pitch)
+        float ny = v.y * cx - v.z * sx;
+        nz = v.y * sx + v.z * cx;
+        v.y = ny; v.z = nz;
+        // Rotation Z (Roll)
+        nx = v.x * cz - v.y * sz;
+        ny = v.x * sz + v.y * cz;
+        v.x = nx; v.y = ny;
+
+        v += pos;
+        vx[i] = v.x; vy[i] = v.y; vz[i] = v.z;
+    }
+
+    // Vertex normals (only rotate and re-normalize)
+    if (!nx.empty()) {
+        for (size_t i = 0; i < nx.size(); ++i) {
+            Vec3 n(nx[i], ny[i], nz[i]);
+            // Y
+            float tx = n.x * cy + n.z * sy;
+            float tz = -n.x * sy + n.z * cy;
+            n.x = tx; n.z = tz;
+            // X
+            float ty = n.y * cx - n.z * sx;
+            tz = n.y * sx + n.z * cx;
+            n.y = ty; n.z = tz;
+            // Z
+            tx = n.x * cz - n.y * sz;
+            ty = n.x * sz + n.y * cz;
+            n.x = tx; n.y = ty;
+
+            n = normalize(n);
+            nx[i] = n.x; ny[i] = n.y; nz[i] = n.z;
+        }
+    }
+}
+
+void TriangleMesh::merge(const TriangleMesh& other) {
+    int v_offset = (int)vx.size();
+    vx.insert(vx.end(), other.vx.begin(), other.vx.end());
+    vy.insert(vy.end(), other.vy.begin(), other.vy.end());
+    vz.insert(vz.end(), other.vz.begin(), other.vz.end());
+    
+    // Normal merge: if one has normals and other doesn't, this becomes tricky.
+    // However, xenon's load_obj ensures normals exist (computed if missing).
+    if (!other.nx.empty()) {
+        if (nx.empty()) {
+            nx.resize(v_offset, 0.f); ny.resize(v_offset, 0.f); nz.resize(v_offset, 0.f);
+        }
+        nx.insert(nx.end(), other.nx.begin(), other.nx.end());
+        ny.insert(ny.end(), other.ny.begin(), other.ny.end());
+        nz.insert(nz.end(), other.nz.begin(), other.nz.end());
+    } else if (!nx.empty()) {
+        nx.resize(vx.size(), 0.f); ny.resize(vy.size(), 0.f); nz.resize(vz.size(), 0.f);
+    }
+
+    for (size_t i = 0; i < other.indices.size(); ++i) {
+        indices.push_back(other.indices[i] + v_offset);
+    }
+    mat_ids.insert(mat_ids.end(), other.mat_ids.begin(), other.mat_ids.end());
+    
+    std::printf("[Mesh] Merged: total %d verts, %d tris\n", (int)vx.size(), (int)indices.size()/3);
+}
+
 } // namespace xn

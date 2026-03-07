@@ -68,6 +68,7 @@ bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConf
             std::string mat_path;
             ss >> mat_path;
             mat_path = strip_quotes(mat_path);
+            mat_path = "materials/" + mat_path;
 
             std::string resolved = resolve_relative(path, mat_path);
             Material m = load_material(resolved);
