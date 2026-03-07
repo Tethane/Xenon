@@ -1,0 +1,54 @@
+config 800 600 128
+# Camera: elevated looking down at a 5x5 grid of spheres
+camera 0 18 30   0 0 0   50
+
+# Cool sky
+sky  0.10 0.22 0.60   0.55 0.68 0.80   0.12 0.10 0.08   0.9 3.0
+
+# A warm sun from high angle (validates many shadows cast by spheres onto ground)
+sunlight  0.40 0.85 0.35   1.00 0.97 0.90   6.0
+
+# Materials
+material mat_ground   0.65 0.63 0.60   0.0 0.85 0.5 1.5 0 -1
+material mat_diff     0.80 0.25 0.20   0.0 0.5  0.5 1.5 0 -1
+material mat_rough    0.20 0.55 0.80   0.0 0.8  0.5 1.5 0 -1
+material mat_metal    0.90 0.85 0.80   1.0 0.15 1.0 1.5 0 -1
+
+# Ground plane
+plane  0 1 0   -1.0   mat_ground
+
+# 5x5 grid of spheres (radius 0.8, spacing 4.0)
+# Row z=-8  (back row)
+sphere  -8 0  -8   0.8   mat_diff
+sphere  -4 0  -8   0.8   mat_rough
+sphere   0 0  -8   0.8   mat_metal
+sphere   4 0  -8   0.8   mat_diff
+sphere   8 0  -8   0.8   mat_rough
+
+# Row z=-4
+sphere  -8 0  -4   0.8   mat_rough
+sphere  -4 0  -4   0.8   mat_metal
+sphere   0 0  -4   0.8   mat_diff
+sphere   4 0  -4   0.8   mat_rough
+sphere   8 0  -4   0.8   mat_metal
+
+# Row z=0  (middle)
+sphere  -8 0   0   0.8   mat_metal
+sphere  -4 0   0   0.8   mat_diff
+sphere   0 0   0   0.8   mat_rough
+sphere   4 0   0   0.8   mat_metal
+sphere   8 0   0   0.8   mat_diff
+
+# Row z=4
+sphere  -8 0   4   0.8   mat_diff
+sphere  -4 0   4   0.8   mat_rough
+sphere   0 0   4   0.8   mat_metal
+sphere   4 0   4   0.8   mat_diff
+sphere   8 0   4   0.8   mat_rough
+
+# Row z=8  (front row)
+sphere  -8 0   8   0.8   mat_rough
+sphere  -4 0   8   0.8   mat_metal
+sphere   0 0   8   0.8   mat_diff
+sphere   4 0   8   0.8   mat_rough
+sphere   8 0   8   0.8   mat_metal

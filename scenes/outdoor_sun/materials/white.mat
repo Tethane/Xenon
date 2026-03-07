@@ -1,0 +1,8 @@
+# outdoor_sun — white diffuse box
+name "white"
+type "principled"
+baseColor 0.90 0.90 0.88
+roughness 0.9
+metallic 0.0
+ior 1.5
+transmission 0.0

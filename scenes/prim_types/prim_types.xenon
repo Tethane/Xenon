@@ -1,0 +1,37 @@
+config 800 600 256
+# Camera: wide shot to see all 5 primitive types arranged in a row
+camera 0 5 20   0 2 0   50
+
+# Neutral sky light
+sky  0.15 0.25 0.55   0.65 0.72 0.80   0.15 0.12 0.10   0.8 3.0
+
+# No sun: pure sky lit scene.
+# Primitives are arranged left to right: sphere, box, disk, quad, plane
+
+# Materials (inline)
+material mat_plane   0.72 0.70 0.68   0.0 0.8 0.5 1.5 0 -1
+material mat_sphere  0.85 0.12 0.08   0.0 0.3 0.5 1.5 0 -1
+material mat_box     0.10 0.45 0.80   0.0 0.5 0.5 1.5 0 -1
+material mat_disk    0.90 0.75 0.10   0.0 0.4 0.5 1.5 0 -1
+material mat_quad    0.15 0.80 0.25   0.0 0.5 0.5 1.5 0 -1
+material mat_metal   0.90 0.90 0.90   1.0 0.05 1.0 1.5 0 -1
+
+# Ground plane
+plane  0 1 0   0.0   mat_plane
+
+# 1 — Sphere (leftmost)
+sphere  -7.0 1.4 0   1.4   mat_sphere
+
+# 2 — Box
+box  -3.5 1.2 0   1.2 1.2 1.2   mat_box
+
+# 3 — Disk (horizontal, in mid-air for visibility: shows front face from camera)
+#   center=(0, 2, 0)  normal pointing toward camera  radius=1.3
+disk  0.0 1.8 0.5   0.0 0.5 1.0   1.3   mat_disk
+
+# 4 — Quad (parallelogram, tilted 45°)
+#   origin bottom-left, u = rightward, v = upward-backward
+quad  2.8 0.0 -0.8   2.4 0.0 0.0   0.0 2.8 -0.8   mat_quad
+
+# 5 — Thin metallic box to represent something sitting on the ground (rightmost)
+box  7.0 0.5 0   1.6 0.5 1.0   mat_metal

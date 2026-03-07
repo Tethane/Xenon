@@ -1,0 +1,40 @@
+config 800 600 256
+# Full combined outdoor scene: mesh from OBJ + analytic primitives + sun + sky
+# Camera: moderate-angle landscape shot
+camera 10 8 22   0 3 0   42
+
+# Midday sky
+sky  0.12 0.30 0.72   0.60 0.73 0.88   0.15 0.12 0.09   1.0 3.5
+
+# Sun: high elevation from south-west
+sunlight  -0.50 0.80 0.30   1.00 0.97 0.88   7.0
+
+# Materials
+material mat_ground   0.62 0.58 0.54   0.0 0.85 0.5 1.5 0 -1
+material mat_sphere   0.85 0.30 0.10   0.0 0.35 0.5 1.5 0 -1
+material mat_metal    0.90 0.88 0.82   1.0 0.10 1.0 1.5 0 -1
+material mat_stone    0.42 0.40 0.38   0.0 0.80 0.5 1.5 0 -1
+material mat_glass    0.95 0.95 0.95   0.0 0.05 0.5 1.45 1.0 0.05
+material mat_quad     0.30 0.70 0.30   0.0 0.60 0.5 1.5 0 -1
+
+# Ground plane
+plane  0 1 0   0.0   mat_ground
+
+# Red sphere
+sphere   0.0 2.0  0.0   2.0   mat_sphere
+
+# Metal sphere (smaller, offset)
+sphere  -4.5 1.0 2.0   1.0   mat_metal
+
+# Stone box
+box   5.0 2.0 -1.0   2.0 2.0 1.5   mat_stone
+
+# Glass sphere (refractive)
+sphere  -1.5 1.0 -5.0   1.0   mat_glass
+
+# Green quad as a "flag" or banner in the scene
+# origin at base, u = width (rightward), v = height (upward)
+quad  2.5 0.0 -6.0   2.4 0.0 0.0   0.0 3.0 0.0   mat_quad
+
+# Horizontal disk — like a flying saucer or platform
+disk   0.0 5.5 0.0   0.0 1.0 0.0   2.5   mat_metal

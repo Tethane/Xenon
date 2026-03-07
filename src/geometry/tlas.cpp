@@ -204,17 +204,17 @@ bool TLAS::intersect(const Ray& world_ray, HitRecord& rec) const {
             // ── Per-instance intersection ────────────────────────────────────
             for (uint32_t i = 0; i < node.count; ++i) {
                 const Instance& inst = instances_[inst_indices_[node.child + i]];
-                if (!inst.blas) continue;
+                if (!inst.geom.valid()) continue;
 
                 // Transform ray to instance local space (t preserved by design)
                 const Ray local_ray = inst.xform.to_local(world_ray);
 
-                // Forward local rec.t so BLAS culls with the current best distance.
-                // rec.t is invariant between spaces — no scaling needed.
+                // Forward local rec.t so geometry culls with the current best distance.
                 HitRecord local_rec = rec;
-                if (inst.blas->intersect(local_ray, local_rec)) {
+                if (inst.geom.intersect(local_ray, local_rec)) {
                     // Fix up world-space fields before accepting
                     fixup_hit(local_rec, world_ray, inst.xform);
+                    local_rec.instance_id = inst.instance_id;
                     rec = local_rec;
                     hit = true;
                 }
@@ -275,9 +275,9 @@ bool TLAS::intersects(const Ray& world_ray) const {
         if (node.is_leaf()) {
             for (uint32_t i = 0; i < node.count; ++i) {
                 const Instance& inst = instances_[inst_indices_[node.child + i]];
-                if (!inst.blas) continue;
+                if (!inst.geom.valid()) continue;
                 const Ray local_ray = inst.xform.to_local(world_ray);
-                if (inst.blas->intersects(local_ray))
+                if (inst.geom.intersects(local_ray))
                     return true;    // any-hit — done
             }
         } else {

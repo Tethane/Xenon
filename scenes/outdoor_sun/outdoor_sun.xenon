@@ -1,0 +1,24 @@
+config 800 600 256
+# Camera: looking at the scene from slightly elevated angle
+camera 8 6 18  0 2 0  38
+
+# Sky: midday blue sky
+sky  0.12 0.30 0.70   0.65 0.75 0.90   0.15 0.12 0.09   1.0 3.5
+
+# Sun: roughly 45 degrees elevation from the south-east (normalized direction toward sun)
+# direction points FROM scene TOWARD sun
+sunlight  0.57 0.70 0.42   1.00 0.95 0.80   8.0
+
+# Materials
+matfile gray.mat
+matfile red_glossy.mat
+matfile white.mat
+
+# Ground plane  (y=0, pointing up)
+plane  0 1 0  0.0  gray
+
+# Red sphere on the ground
+sphere  0 1.5 0   1.5   red_glossy
+
+# White box to the right (casts a shadow)
+box  5.0 1.5 -2.0   1.5 1.5 1.5   white
