@@ -1,5 +1,5 @@
 #pragma once
-// scene/scene.h — Container for materials, meshes, and lights
+// scene/scene.h — Container for materials, meshes, lights, and TLAS/BLAS
 
 #include "geometry/mesh.h"
 #include "geometry/blas.h"
@@ -11,52 +11,93 @@
 namespace xn {
 
 struct Light {
-  uint32_t mesh_id;
-  uint32_t tri_idx;
-  Vec3     emission;
-  float    area;
-  // For area light sampling: mesh, etc.
+    uint32_t mesh_id;   // index into scene.meshes
+    uint32_t tri_idx;   // triangle index within that mesh
+    Vec3     emission;
+    float    area;
 };
 
 struct Scene {
-    std::vector<TriangleMesh> meshes;
+    // ── Geometry ─────────────────────────────────────────────────────────────
+    // One TriangleMesh per loaded object.  Each mesh is stored in world space
+    // (transforms are baked into vertex data at load time).
+    // blas_list[i] is the bottom-level BVH for meshes[i].
+    // Stable pointers are required: unique_ptr avoids invalidation on push_back.
+    std::vector<TriangleMesh>       meshes;
+    std::vector<std::unique_ptr<BLAS>> blas_list;
+
+    // Top-level BVH over all instances.
+    TLAS tlas;
+
+    // ── Scene data ────────────────────────────────────────────────────────────
     std::vector<Material> materials;
-    std::vector<BLAS> blases;
-    std::vector<Instance> instances;
-    std::vector<Light> lights;
+    std::vector<Light>    lights;
 
-    // Master TLAS over instances
-    TLAS world_tlas;
+    // ── Build ─────────────────────────────────────────────────────────────────
+    // Call once after all meshes have been loaded and transformed.
+    // Builds one BLAS per mesh, then assembles the TLAS.
+    void build_acceleration() {
+        blas_list.clear();
+        blas_list.reserve(meshes.size());
 
-    void build_acceleration_structures() {
-        blases.clear();
-        blases.resize(meshes.size());
+        std::vector<Instance> instances;
+        instances.reserve(meshes.size());
+
         for (size_t i = 0; i < meshes.size(); ++i) {
-            blases[i].build(meshes[i]);
+            auto blas = std::make_unique<BLAS>();
+            blas->build(meshes[i]);
+
+            // Mesh vertices are already in world space — identity instance transform.
+            Instance inst;
+            inst.blas        = blas.get();
+            inst.xform       = AffineTransform{};   // identity
+            inst.instance_id = static_cast<int>(i);
+            inst.rebuild_world_aabb();
+
+            instances.push_back(std::move(inst));
+            blas_list.push_back(std::move(blas));
         }
-        world_tlas.build(instances);
+
+        tlas.build(std::move(instances));
+
+        std::printf("[Scene] Built %zu BLAS + TLAS over %zu meshes\n",
+                    blas_list.size(), meshes.size());
     }
 
-    // Closest object hit
+    // ── Queries ───────────────────────────────────────────────────────────────
+    // All three signatures are preserved exactly from the old scene.
+
+    // Closest-hit — fills rec on success.
     bool intersect(const Ray& ray, HitRecord& rec) const {
-        return world_tlas.intersect(ray, blases, rec);
+        return tlas.intersect(ray, rec);
     }
 
-    // Visibility (shadow) ray
+    // Pure visibility test — fast any-hit, no HitRecord.
     bool intersects(const Ray& ray) const {
-        return world_tlas.intersect_shadow(ray, blases);
+        return tlas.intersects(ray);
     }
-    
-    // Pick a light to sample
+
+    // Visibility test that also returns the hit primitive id.
+    // Uses a full intersect internally (TLAS any-hit doesn't expose prim_id
+    // directly, but this path is only called by code that needs the id).
+    bool intersects(const Ray& ray, int& hit_prim_id) const {
+        HitRecord rec;
+        rec.t = ray.tmax;
+        if (!tlas.intersect(ray, rec)) return false;
+        hit_prim_id = rec.prim_id;
+        return true;
+    }
+
+    // ── Light sampling ────────────────────────────────────────────────────────
     const Light& sample_light(float u_pick, float& pdf) const {
         if (lights.empty()) {
             pdf = 0.f;
-            static Light null_light;
+            static const Light null_light{};
             return null_light;
         }
-        int idx = (int)(u_pick * (float)lights.size());
-        idx = std::clamp(idx, 0, (int)lights.size() - 1);
-        pdf = 1.f / (float)lights.size();
+        int idx = std::clamp(static_cast<int>(u_pick * static_cast<float>(lights.size())),
+                             0, static_cast<int>(lights.size()) - 1);
+        pdf = 1.f / static_cast<float>(lights.size());
         return lights[idx];
     }
 };

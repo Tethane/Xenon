@@ -34,124 +34,110 @@ static std::string strip_quotes(const std::string& s) {
 }
 
 bool load_scene(const std::string& path, Scene& scene, Camera& camera, SceneConfig& config) {
-  std::ifstream f(path);
-  if (!f.is_open()) {
-    std::fprintf(stderr, "Failed to open scene: %s\n", path.c_str());
-    return false;
-  }
+    std::ifstream f(path);
+    if (!f.is_open()) {
+        std::fprintf(stderr, "Failed to open scene: %s\n", path.c_str());
+        return false;
+    }
 
-  // Mesh cache for sharing geometry within this scene load
-  std::map<std::string, uint32_t> mesh_cache;
-  int current_mat_id = -1;
+    std::string line;
+    std::map<std::string, int> mat_map;
 
-  // Simplified parser: one keyword per line
-  std::string line;
-  std::map<std::string, int> mat_map;
-  
-  // Default Camera Params
-  Vec3 eye(0, 5, 20), target(0, 5, 0), up(0, 1, 0);
-  float fov = 40.f;
+    // Default camera params
+    Vec3  eye(0, 5, 20), target(0, 5, 0), up(0, 1, 0);
+    float fov = 40.f;
 
-  while (std::getline(f, line)) {
-    std::stringstream ss(line);
-    std::string cmd;
-    ss >> cmd;
+    while (std::getline(f, line)) {
+        std::stringstream ss(line);
+        std::string cmd;
+        ss >> cmd;
+        if (cmd.empty() || cmd[0] == '#') continue;
 
-    if (cmd.empty() || cmd[0] == '#')
-        continue;
+        // ── config ───────────────────────────────────────────────────────────
+        if (cmd == "config") {
+            ss >> config.width >> config.height >> config.samples;
 
-    if (cmd == "config") {
-        ss >> config.width >> config.height >> config.samples;
-    } else if (cmd == "camera") {
-        ss >> eye.x >> eye.y >> eye.z >> target.x >> target.y >> target.z >> fov;
-    } else if (cmd == "matfile") {
-        // ── New .mat file reference ──────────────────────────────────────
-        std::string mat_path;
-        ss >> mat_path;
-        mat_path = strip_quotes(mat_path);
+        // ── camera ───────────────────────────────────────────────────────────
+        } else if (cmd == "camera") {
+            ss >> eye.x    >> eye.y    >> eye.z
+               >> target.x >> target.y >> target.z
+               >> fov;
 
-        // Resolve relative to scene directory
-        std::string resolved = resolve_relative(path, mat_path);
-        Material m = load_material(resolved);
+        // ── matfile (external .mat file) ──────────────────────────────────────
+        } else if (cmd == "matfile") {
+            std::string mat_path;
+            ss >> mat_path;
+            mat_path = strip_quotes(mat_path);
 
-        current_mat_id = (int)scene.materials.size();
-        mat_map[m.name] = current_mat_id;
-        scene.materials.push_back(std::move(m));
-    } else if (cmd == "material") {
-        // ── Legacy inline material (backward compat) ─────────────────────
-        std::string name;
-        Vec3 albedo;
-        float metallic, roughness;
-        ss >> name >> albedo.x >> albedo.y >> albedo.z >> metallic >> roughness;
+            std::string resolved = resolve_relative(path, mat_path);
+            Material m = load_material(resolved);
 
-        float spec = 0.5f, ior = 1.5f, trans = 0.0f, trans_rough = -1.0f;
-        if (ss >> spec >> ior >> trans >> trans_rough) {
-            // All extended fields present
-        }
+            mat_map[m.name] = static_cast<int>(scene.materials.size());
+            scene.materials.push_back(std::move(m));
 
-        Material m = material_from_legacy(name, albedo, metallic, roughness,
-                                          spec, ior, trans, trans_rough);
-        current_mat_id = (int)scene.materials.size();
-        mat_map[name] = current_mat_id;
-        scene.materials.push_back(std::move(m));
-    } else if (cmd == "mesh") {
-        std::string obj_path;
-        ss >> obj_path;
-        
-        // Resolve absolute path to use as key for mesh sharing
-        std::string resolved_path = resolve_relative(path, obj_path);
-        
-        uint32_t mesh_id;
-        
-        if (mesh_cache.find(resolved_path) == mesh_cache.end()) {
+        // ── material (legacy inline) ──────────────────────────────────────────
+        } else if (cmd == "material") {
+            std::string name;
+            Vec3  albedo;
+            float metallic, roughness;
+            ss >> name >> albedo.x >> albedo.y >> albedo.z >> metallic >> roughness;
+
+            float spec = 0.5f, ior = 1.5f, trans = 0.0f, trans_rough = -1.0f;
+            if (ss >> spec >> ior >> trans >> trans_rough) {
+
+            };
+
+            Material m = material_from_legacy(name, albedo, metallic, roughness,
+                                              spec, ior, trans, trans_rough);
+            mat_map[name] = static_cast<int>(scene.materials.size());
+            scene.materials.push_back(std::move(m));
+
+        // ── mesh ──────────────────────────────────────────────────────────────
+        // Each mesh command produces one entry in scene.meshes.
+        // We no longer merge meshes together — each gets its own BLAS so:
+        //   • large scenes stay cache-friendly (one BVH per object, not one giant BVH)
+        //   • Light::mesh_id correctly identifies the source mesh for light sampling
+        } else if (cmd == "mesh") {
+            std::string obj_path;
+            ss >> obj_path;
+
+            // Resolve OBJ path relative to the scene file directory so that
+            // scenes are portable (previously this path was used verbatim).
+            // obj_path = resolve_relative(path, strip_quotes(obj_path));
+
             TriangleMesh m;
-            if (load_obj(resolved_path, m, mat_map, current_mat_id)) {
-                mesh_id = (uint32_t)scene.meshes.size();
-                scene.meshes.push_back(std::move(m));
-                mesh_cache[resolved_path] = mesh_id;
-            } else {
+            if (!load_obj(obj_path, m, mat_map)) {
                 std::fprintf(stderr, "[Error] Failed to load mesh: %s\n", obj_path.c_str());
                 continue;
             }
-        } else {
-            mesh_id = mesh_cache[resolved_path];
-        }
 
-        Vec3 p(0, 0, 0), r(0, 0, 0);
-        float s = 1.0f;
-        Mat4 xform = Mat4::identity();
-        
-        if (ss >> p.x >> p.y >> p.z >> s >> r.x >> r.y >> r.z) {
-            // Transform: Translation * Rotation * Scale
-            // Note: TriangleMesh::transform used Scale -> Rotate -> Translate
-            // Let's match that order for consistency or use a proper mat4 composition.
-            xform = Mat4::translate(p) * 
-                    Mat4::rotate({0,0,1}, r.z * M_PI / 180.f) *
-                    Mat4::rotate({0,1,0}, r.y * M_PI / 180.f) *
-                    Mat4::rotate({1,0,0}, r.x * M_PI / 180.f) *
-                    Mat4::scale({s, s, s});
-        }
-        
-        uint32_t inst_id = (uint32_t)scene.instances.size();
-        // Use -1 for material override to signify "use mesh/obj materials"
-        scene.instances.emplace_back(mesh_id, (uint32_t)-1, inst_id, xform, scene.meshes[mesh_id].compute_aabb());
+            // Optional transform: px py pz scale rx ry rz
+            Vec3  pos(0.f), rot_deg(0.f);
+            float scale = 1.f;
+            if (ss >> pos.x >> pos.y >> pos.z >> scale >> rot_deg.x >> rot_deg.y >> rot_deg.z) {
+                m.transform(pos, scale, rot_deg);
+            }
 
-    } else if (cmd == "light") {
-        uint32_t mesh_id;
-        uint32_t tri_idx;
-        Vec3 emission;
-        float area;
-        ss >> mesh_id >> tri_idx >> emission.x >> emission.y >> emission.z >> area;
-        scene.lights.push_back({mesh_id, tri_idx, emission, area});
+            scene.meshes.push_back(std::move(m));
+
+        // ── light ─────────────────────────────────────────────────────────────
+        // mesh_id now refers to the index into scene.meshes (1:1 with source objects).
+        } else if (cmd == "light") {
+            Light lt{};
+            ss >> lt.mesh_id >> lt.tri_idx
+               >> lt.emission.x >> lt.emission.y >> lt.emission.z
+               >> lt.area;
+            scene.lights.push_back(lt);
+        }
     }
-  }
 
-  camera.look_at(eye, target, up, fov, (float)config.width / config.height);
-  
-  // Build TLAS/BLAS
-  scene.build_acceleration_structures();
+    camera.look_at(eye, target, up, fov,
+                   static_cast<float>(config.width) / static_cast<float>(config.height));
 
-  return true;
+    // Build one BLAS per mesh, then assemble the TLAS.
+    scene.build_acceleration();
+
+    return true;
 }
 
 } // namespace xn

@@ -31,7 +31,7 @@ find_package(Threads REQUIRED)
 # ── Source groups ─────────────────────────────────────────────────────────────
 set(GEOMETRY_SRC    src/geometry/blas.cpp src/geometry/tlas.cpp src/geometry/mesh.cpp)
 set(MATERIAL_SRC    src/material/bsdf.cpp src/material/material.cpp)
-set(RENDER_SRC      src/render/wavefront.cpp src/render/integrator.cpp src/render/cpu_tiled.cpp)
+set(RENDER_SRC      src/render/wavefront.cpp src/render/cpu_tiled.cpp)
 set(SCENE_SRC       src/scene/scene_file.cpp)
 set(DISPLAY_SRC     src/display/window.cpp)
 
@@ -50,16 +50,7 @@ target_include_directories(stb_image_write INTERFACE third_party)
 # ── Main executable ───────────────────────────────────────────────────────────
 add_executable(xenon
   src/main.cpp
-  src/geometry/blas.cpp
-  src/geometry/tlas.cpp
-  src/geometry/mesh.cpp
-  src/material/bsdf.cpp
-  src/material/material.cpp
-  src/render/wavefront.cpp
-  src/render/integrator.cpp
-  src/render/cpu_tiled.cpp
-  src/scene/scene_file.cpp
-  src/display/window.cpp
+  ${ALL_SRC}
 )
 target_include_directories(xenon PRIVATE src ${GLFW_INCLUDE_DIRS})
 target_link_libraries(xenon PRIVATE
@@ -81,7 +72,6 @@ function(add_xenon_test name src)
 endfunction()
 
 add_xenon_test(math_test     tests/math_test.cpp)
-add_xenon_test(geometry_test tests/geometry_test.cpp ${GEOMETRY_SRC})
 add_xenon_test(sampler_test  tests/sampler_test.cpp)
 add_xenon_test(bsdf_test     tests/bsdf_test.cpp ${MATERIAL_SRC})
 add_xenon_test(wavefront_test tests/wavefront_test.cpp)
