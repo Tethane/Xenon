@@ -9,10 +9,11 @@
 // Ray space: all intersection calls expect rays in BLAS-local space.
 //            The TLAS is responsible for transforming world rays before calling.
 
+#include <cstdint>
+#include <vector>
+
 #include "geometry/aabb.h"
 #include "geometry/mesh.h"
-#include <vector>
-#include <cstdint>
 
 namespace xn {
 

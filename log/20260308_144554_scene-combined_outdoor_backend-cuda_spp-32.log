@@ -1,0 +1,6 @@
+Start time: 2026-03-08 14:45:54
+Scene: combined_outdoor
+Backend: cuda
+Samples: 32
+
+Command: ./xenon.sh --scene combined_outdoor --samples 32 --backend cuda

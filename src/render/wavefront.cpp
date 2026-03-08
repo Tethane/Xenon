@@ -1,11 +1,14 @@
-#include "render/wavefront.h"
-#include "material/bsdf.h"
-#include "camera/sampler.h"
-#include "math/simd.h"
+// render/wavefront.cpp — Wavefront CPU path integrator (staged kernel pipeline)
+
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <immintrin.h>
+
+#include "render/wavefront.h"
+#include "material/bsdf.h"
+#include "camera/sampler.h"
+#include "math/simd.h"
 
 #ifdef XN_DEBUG_QUEUES
 #include <cstdio>
@@ -41,7 +44,7 @@ void raygen(ThreadPool& pool, std::vector<PathState>& paths, WavefrontQueue<RayW
       float u = (float)x + paths[i].rng.next_float();
       float v = (float)y + paths[i].rng.next_float();
 
-      paths[i].ray = camera.get_ray(u / (float)width, ((float)height - v) / (float)height);
+      paths[i].ray = camera.get_ray(u / (float)width, v / (float)height);
       paths[i].throughput = Vec3(1.f);
       paths[i].pixel_idx = i;
 

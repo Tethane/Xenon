@@ -62,3 +62,5 @@ __pycache__/
 renders/*.png
 !renders/cornell_final.png
 !renders/wavefront_cornell.png
+.log/
+run_tests.sh

@@ -1,9 +1,10 @@
 #pragma once
 // material/material.h — Material description and .mat file loader
 
-#include "math/vec3.h"
-#include <string>
 #include <cmath>
+#include <string>
+
+#include "math/vec3.h"
 
 namespace xn {
 

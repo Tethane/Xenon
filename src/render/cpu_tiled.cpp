@@ -1,9 +1,12 @@
+// render/cpu_tiled.cpp — Tiled CPU path integrator (cache-friendly per-tile loop)
+
+#include <algorithm>
+#include <cmath>
+
 #include "render/wavefront.h"
 #include "material/bsdf.h"
 #include "camera/sampler.h"
 #include "math/simd.h"
-#include <algorithm>
-#include <cmath>
 
 namespace xn {
 
@@ -22,7 +25,7 @@ void WavefrontRenderer::render_frame_tiled(const Scene& scene, const Camera& cam
                 float u = (float)x + rng.next_float();
                 float v = (float)y + rng.next_float();
 
-                Ray ray = camera.get_ray(u / (float)width_, ((float)height_ - v) / (float)height_);
+                Ray ray = camera.get_ray(u / (float)width_, v / (float)height_);
                 Vec3 throughput(1.f);
                 Vec3 accumulation(0.f);
                 float prev_bsdf_pdf_sa = 0.f;

@@ -1,8 +1,9 @@
 #pragma once
 // display/window.h — GLFW window and OpenGL display logic
 
-#include "render/swapchain.h"
 #include <string>
+
+#include "render/swapchain.h"
 
 struct GLFWwindow;
 

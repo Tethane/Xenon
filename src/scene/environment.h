@@ -10,8 +10,9 @@
 // Replace it with an HDRI texture lookup by switching evaluate() to
 // sample a latitude-longitude image without touching any other code.
 
-#include "math/vec3.h"
 #include <cmath>
+
+#include "math/vec3.h"
 
 namespace xn {
 

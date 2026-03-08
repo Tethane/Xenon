@@ -1,12 +1,15 @@
+// scene/scene_file.cpp — .xenon scene file parser
+
+#include <cstdio>
+#include <filesystem>
+#include <fstream>
+#include <map>
+#include <sstream>
+
 #include "scene/scene_file.h"
 #include "geometry/mesh.h"
 #include "geometry/primitives.h"
 #include "material/material.h"
-#include <fstream>
-#include <sstream>
-#include <cstdio>
-#include <map>
-#include <filesystem>
 
 namespace xn {
 

@@ -1,9 +1,10 @@
 #pragma once
 // math/mat4.h — row-major 4×4 float matrix
 
-#include "vec3.h"
-#include <cstring>
 #include <cmath>
+#include <cstring>
+
+#include "vec3.h"
 
 namespace xn {
 

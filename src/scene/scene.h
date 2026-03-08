@@ -1,16 +1,17 @@
 #pragma once
 // scene/scene.h — Container for materials, geometry, lights, BVH, and environment
 
+#include <algorithm>
+#include <cmath>
+#include <memory>
+#include <vector>
+
 #include "geometry/mesh.h"
 #include "geometry/blas.h"
 #include "geometry/prim_blas.h"
 #include "geometry/tlas.h"
 #include "scene/environment.h"
 #include "material/material.h"
-#include <vector>
-#include <memory>
-#include <cmath>
-#include <algorithm>
 
 namespace xn {
 

@@ -3,6 +3,9 @@
 // Full wavefront pipeline: raygen → intersect → NEE → shade → shadow → accumulate
 // All work stays on device; only the final framebuffer is copied back per sample.
 
+#include <cstdio>
+#include <cstring>
+
 #include "cuda/cuda_renderer.cuh"
 #include "cuda/cuda_utils.cuh"
 #include "cuda/gpu_traverse.cuh"
@@ -10,9 +13,6 @@
 #include "scene/scene.h"
 #include "camera/camera.h"
 #include "render/swapchain.h"
-
-#include <cstdio>
-#include <cstring>
 
 namespace xn {
 
@@ -56,7 +56,7 @@ __global__ void raygen_kernel(
   GpuPCG rng = gpu_seed_pcg((uint64_t)idx * 1337 + spp * 7919, (uint64_t)idx);
 
   float u = ((float)x + rng.next_float()) / (float)width;
-  float v = ((float)height - (float)y - rng.next_float()) / (float)height;
+  float v = ((float)y + rng.next_float()) / (float)height;
 
   GpuPathState& ps = paths[idx];
   ps.ray        = camera.get_ray(u, v);

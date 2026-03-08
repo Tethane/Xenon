@@ -1,6 +1,5 @@
 #pragma once
 // render/thread_pool.h — Simple thread pool for parallel execution
-#pragma once
 #include <atomic>
 #include <condition_variable>
 #include <cstddef>

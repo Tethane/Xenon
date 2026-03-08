@@ -1,27 +1,29 @@
+// main.cpp — Xenon path tracer entry point
+
+#include <chrono>
+#include <cstdio>
+#include <iostream>
+#include <thread>
+#include <vector>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 #include "display/window.h"
+#include "math/image.h"
 #include "render/swapchain.h"
 #include "render/wavefront.h"
 #include "scene/scene_file.h"
-#include "math/image.h"
-#include <cstdio>
-#include <thread>
-#include <chrono>
-#include <vector>
-#include <iostream>
 
 #ifdef XENON_HAS_CUDA
 #include "cuda/cuda_renderer.cuh"
 #endif
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 using namespace xn;
 
 // Helper for caching the image to png
 void save_image(const std::string& path, int w, int h, float* data) {
-  stbi_flip_vertically_on_write(true); // Fix for OpenGL coordinates
-
+  stbi_flip_vertically_on_write(true); // framebuffer is bottom-up (OpenGL), PNG is top-down
   std::vector<uint8_t> pixels(w * h * 3);
   for (int i = 0; i < w * h * 3; ++i) {
     float c = std::pow(std::clamp(data[i], 0.f, 1.f), 1.f/2.2f); // Gamma

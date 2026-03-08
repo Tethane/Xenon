@@ -1,9 +1,10 @@
 #pragma once
 // scene/scene_file.h — Loader for .xenon scene files
 
+#include <string>
+
 #include "scene/scene.h"
 #include "camera/camera.h"
-#include <string>
 
 namespace xn {
 

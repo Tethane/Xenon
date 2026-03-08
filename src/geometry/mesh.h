@@ -1,14 +1,15 @@
 #pragma once
 // geometry/mesh.h — Triangle mesh with SoA layout for cache-efficient access
 
+#include <cstdint>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "math/vec3.h"
 #include "math/ray.h"
 #include "geometry/aabb.h"
 #include "geometry/primitives.h"
-#include <vector>
-#include <string>
-#include <cstdint>
-#include <map>
 
 namespace xn {
 

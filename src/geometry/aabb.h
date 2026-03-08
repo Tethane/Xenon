@@ -1,11 +1,12 @@
 #pragma once
 // geometry/aabb.h — Axis-Aligned Bounding Box with SIMD slab intersection
 
+#include <algorithm>
+#include <cstring>
+
 #include "math/vec3.h"
 #include "math/ray.h"
 #include "math/simd.h"
-#include <cstring>
-#include <algorithm>
 
 namespace xn {
 

@@ -10,10 +10,11 @@
 //   parametric parameter t is identical in world and local space.  This lets
 //   us use world rec.t directly for culling and return it unchanged.
 
+#include <cmath>
+
 #include "math/vec3.h"
 #include "math/ray.h"
 #include "geometry/aabb.h"
-#include <cmath>
 
 namespace xn {
 

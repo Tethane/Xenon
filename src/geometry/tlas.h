@@ -22,12 +22,13 @@
 //   rec.mat_id, rec.prim_id, rec.u, rec.v — unchanged from geometry
 //   rec.instance_id — set to Instance::instance_id on every hit
 
+#include <cstdint>
+#include <vector>
+
 #include "geometry/aabb.h"
 #include "geometry/blas.h"
 #include "geometry/prim_blas.h"
 #include "geometry/transform.h"
-#include <vector>
-#include <cstdint>
 
 namespace xn {
 

@@ -3,13 +3,13 @@
 // Reads the CPU Scene and produces a flat GpuSceneData on device memory.
 // Called once after scene loading / acceleration structure build.
 
+#include <cstdio>
+#include <vector>
+
 #include "cuda/gpu_scene.cuh"
 #include "cuda/cuda_utils.cuh"
 #include "scene/scene.h"
 #include "camera/camera.h"
-
-#include <vector>
-#include <cstdio>
 
 namespace xn {
 

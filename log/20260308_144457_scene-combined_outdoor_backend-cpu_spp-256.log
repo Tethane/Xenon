@@ -1,0 +1,53 @@
+Start time: 2026-03-08 14:44:57
+Scene: combined_outdoor
+Backend: cpu
+Samples: 256
+
+Command: ./xenon.sh --scene combined_outdoor --samples 256
+[Scene] Sky set: zenith=(0.12,0.30,0.72) horizon=(0.60,0.73,0.88)
+[Scene] Added directional light: dir=(-0.51,0.81,0.30) intensity=7.0
+[Scene] Built 0 mesh BLAS + 1 prim BLAS + TLAS
+[Backend] CPU tiled renderer
+[Config] 800x600, 256 spp, bounces 3-8
+Progress: 10/256 samples
+Progress: 20/256 samples
+Progress: 30/256 samples
+Progress: 40/256 samples
+Progress: 50/256 samples
+Progress: 60/256 samples
+Progress: 70/256 samples
+Progress: 80/256 samples
+Progress: 90/256 samples
+Progress: 100/256 samples
+Progress: 110/256 samples
+Progress: 120/256 samples
+Progress: 130/256 samples
+Progress: 140/256 samples
+Progress: 150/256 samples
+Progress: 160/256 samples
+Progress: 170/256 samples
+Progress: 180/256 samples
+Progress: 190/256 samples
+Progress: 200/256 samples
+Progress: 210/256 samples
+Progress: 220/256 samples
+Progress: 230/256 samples
+Progress: 240/256 samples
+Progress: 250/256 samples
+meanSquaredScore = -nan
+rmsScore         = -nan
+meanAbsolute     = nan
+medianAbsolute   = nan
+p95Absolute      = nan
+maxAbsolute      = 0
+avgLuminance     = -nan
+edgeThreshold    = 9.999999975e-07
+epsilon          = 9.999999939e-09
+validPixelCount  = 12
+validPixelRatio  = 2.514647895e-05
+Saved image to renders/combined_outdoor_output.png
+Total Render Time: 6938 ms
+
+Exit code: 0
+Duration (seconds): 8
+End time: 2026-03-08 14:45:05

@@ -20,12 +20,13 @@
 //     own TLAS instance. In practice, one or two planes are common.
 //   • prim_id is populated by PrimBLAS traversal = index in PrimGroup.
 
+#include <cstdint>
+#include <variant>
+#include <vector>
+
 #include "geometry/aabb.h"
 #include "geometry/primitives.h"
 #include "math/ray.h"
-#include <variant>
-#include <vector>
-#include <cstdint>
 
 namespace xn {
 

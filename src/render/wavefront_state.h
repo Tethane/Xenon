@@ -1,11 +1,12 @@
 #pragma once
 // render/wavefront_state.h — State for wavefront path tracing
 
+#include <atomic>
+#include <cstdint>
+#include <vector>
+
 #include "math/ray.h"
 #include "camera/sampler.h"
-#include <vector>
-#include <cstdint>
-#include <atomic>
 
 namespace xn {
 

@@ -1,0 +1,4 @@
+timestamp,scene,backend,samples,exit_code,duration_seconds,log_file
+2026-03-08 14:44:57,combined_outdoor,cpu,32,0,2,./log/20260308_144455_scene-combined_outdoor_backend-cpu_spp-32.log
+2026-03-08 14:45:05,combined_outdoor,cpu,256,0,8,./log/20260308_144457_scene-combined_outdoor_backend-cpu_spp-256.log
+2026-03-08 14:45:54,combined_outdoor,cpu,2048,0,49,./log/20260308_144505_scene-combined_outdoor_backend-cpu_spp-2048.log

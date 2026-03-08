@@ -11,9 +11,10 @@
 //   • Normals: all outward-face convention (faceforward applied internally).
 //   • UV: each primitive produces texture coordinates in [0,1]^2 where meaningful.
 
+#include <cmath>
+
 #include "math/ray.h"
 #include "geometry/aabb.h"
-#include <cmath>
 
 namespace xn {
 

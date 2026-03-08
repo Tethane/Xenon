@@ -1,13 +1,13 @@
 #pragma once
 // render/wavefront.h — Wavefront rendering and progressive accumulation
 
+#include <cstring>
+
 #include "scene/scene.h"
 #include "camera/camera.h"
 #include "render/swapchain.h"
 #include "render/thread_pool.h"
 #include "render/wavefront_state.h"
-
-#include <cstring>
 
 // #define XN_DEBUG_QUEUES 1
 

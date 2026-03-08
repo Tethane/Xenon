@@ -5,13 +5,14 @@
 // All work in local (tangent) space where N = (0,0,1).
 // Classification selects exactly one queue per hit — no branching in kernels.
 
+#include <algorithm>
+#include <cmath>
+
 #include "material/material.h"
 #include "camera/sampler.h"
 #include "math/ray.h"
 #include "math/vec3.h"
 #include "render/wavefront_state.h"
-#include <algorithm>
-#include <cmath>
 
 namespace xn {
 
@@ -636,12 +637,12 @@ inline float bsdf_pdf_for_nee(Vec3 wo, Vec3 wi, const Material& mat) {
     if (mat.isConductor) {
         return microfacet_refl_bsdf::pdf(wo, wi, mat);
     } else if (mat.isTransmissive) {
-         float F = fresnel_dielectric(std::abs(wo.z), mat.ior);
-          if (wi.z > 0.f) {
-              return F * microfacet_refl_bsdf::pdf(wo, wi, mat);
-          } else {
-              return (1.f - F) * microfacet_trans_bsdf::pdf(wo, wi, mat);
-          }
+        float F = fresnel_dielectric(std::abs(wo.z), mat.ior);
+        if (wi.z > 0.f) {
+            return F * microfacet_refl_bsdf::pdf(wo, wi, mat);
+        } else {
+            return (1.f - F) * microfacet_trans_bsdf::pdf(wo, wi, mat);
+        }
     } else if (mat.hasSubsurface) {
         return subsurface_bsdf::pdf(wo, wi);
     } else {

@@ -1,11 +1,12 @@
 // material/material.cpp — .mat file parser and Material cache
 
-#include "material/material.h"
+#include <cstdio>
 #include <fstream>
+#include <mutex>
 #include <sstream>
 #include <unordered_map>
-#include <cstdio>
-#include <mutex>
+
+#include "material/material.h"
 
 namespace xn {
 

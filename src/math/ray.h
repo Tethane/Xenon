@@ -1,10 +1,11 @@
 #pragma once
 // math/ray.h — ray and hit record types; RayPacket4 for SIMD traversal
 
-#include "vec3.h"
-#include "simd.h"
 #include <cstdint>
 #include <limits>
+
+#include "vec3.h"
+#include "simd.h"
 
 namespace xn {
 
