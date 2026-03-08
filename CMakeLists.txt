@@ -1,5 +1,23 @@
 cmake_minimum_required(VERSION 3.20)
-project(xenon LANGUAGES CXX)
+
+# ── CUDA support (optional) ───────────────────────────────────────────────────
+include(CheckLanguage)
+check_language(CUDA)
+option(XENON_ENABLE_CUDA "Enable CUDA GPU backend" ON)
+
+if(XENON_ENABLE_CUDA AND CMAKE_CUDA_COMPILER)
+  project(xenon LANGUAGES CXX CUDA)
+  set(XENON_HAS_CUDA TRUE)
+  message(STATUS "CUDA enabled — compiler: ${CMAKE_CUDA_COMPILER}")
+else()
+  project(xenon LANGUAGES CXX)
+  set(XENON_HAS_CUDA FALSE)
+  if(XENON_ENABLE_CUDA)
+    message(STATUS "CUDA requested but no compiler found — building CPU-only")
+  else()
+    message(STATUS "CUDA disabled by user — building CPU-only")
+  endif()
+endif()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -43,15 +61,32 @@ set(ALL_SRC
   ${DISPLAY_SRC}
 )
 
+# ── CUDA sources (only when available) ────────────────────────────────────────
+if(XENON_HAS_CUDA)
+  set(CUDA_SRC
+    src/cuda/gpu_scene.cu
+    src/cuda/cuda_renderer.cu
+  )
+endif()
+
 # ── Third-party ───────────────────────────────────────────────────────────────
 add_library(stb_image_write INTERFACE)
 target_include_directories(stb_image_write INTERFACE third_party)
 
 # ── Main executable ───────────────────────────────────────────────────────────
-add_executable(xenon
-  src/main.cpp
-  ${ALL_SRC}
-)
+if(XENON_HAS_CUDA)
+  add_executable(xenon
+    src/main.cpp
+    ${ALL_SRC}
+    ${CUDA_SRC}
+  )
+else()
+  add_executable(xenon
+    src/main.cpp
+    ${ALL_SRC}
+  )
+endif()
+
 target_include_directories(xenon PRIVATE src ${GLFW_INCLUDE_DIRS})
 target_link_libraries(xenon PRIVATE
   ${GLFW_LIBRARIES}
@@ -60,6 +95,24 @@ target_link_libraries(xenon PRIVATE
   stb_image_write
 )
 target_compile_options(xenon PRIVATE ${GLFW_CFLAGS_OTHER})
+
+if(XENON_HAS_CUDA)
+  target_compile_definitions(xenon PRIVATE XENON_HAS_CUDA=1)
+  # Add CUDA toolkit include dir so CXX files can include <cuda_runtime.h>
+  target_include_directories(xenon PRIVATE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+  set_target_properties(xenon PROPERTIES
+    CUDA_STANDARD 20
+    CUDA_STANDARD_REQUIRED ON
+    CUDA_SEPARABLE_COMPILATION ON
+  )
+  # Auto-detect GPU architecture, fallback to Ada Lovelace (89)
+  if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+    set_target_properties(xenon PROPERTIES CUDA_ARCHITECTURES "native")
+  endif()
+  target_compile_options(xenon PRIVATE
+    $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr -lineinfo>
+  )
+endif()
 
 # ── Unit tests ────────────────────────────────────────────────────────────────
 enable_testing()

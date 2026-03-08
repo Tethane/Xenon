@@ -56,6 +56,10 @@ public:
     // Substantially faster than intersect() for shadow testing.
     [[nodiscard]] bool intersects(const Ray& ray) const;
 
+    // ── GPU upload accessors ─────────────────────────────────────────────────
+    const std::vector<BLASNode>& nodes() const noexcept { return nodes_; }
+    const std::vector<uint32_t>& prims() const noexcept { return prims_; }
+
 private:
     const TriangleMesh* mesh_  = nullptr;
     std::vector<BLASNode>  nodes_;

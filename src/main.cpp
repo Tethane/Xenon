@@ -9,6 +9,10 @@
 #include <vector>
 #include <iostream>
 
+#ifdef XENON_HAS_CUDA
+#include "cuda/cuda_renderer.cuh"
+#endif
+
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
@@ -82,6 +86,8 @@ int main(int argc, char* argv[]) {
       output_dir = argv[++i];
     } else if (std::string(argv[i]) == "--render-mode" && i + 1 < argc) {
       render_mode = std::stoi(argv[++i]);
+    } else if (std::string(argv[i]) == "--backend" && i + 1 < argc) {
+      config.backend = argv[++i];
     }
   }
 
@@ -90,28 +96,68 @@ int main(int argc, char* argv[]) {
   // Begin Timing (for aggregate performance)
   auto start = std::chrono::high_resolution_clock::now();
 
+  // Determine backend
+  bool use_cuda = false;
+#ifdef XENON_HAS_CUDA
+  if (config.backend == "cuda") {
+    use_cuda = true;
+    std::printf("[Backend] CUDA GPU wavefront renderer\n");
+  } else {
+    std::printf("[Backend] CPU tiled renderer\n");
+  }
+#else
+  if (config.backend == "cuda") {
+    std::printf("[Warning] CUDA backend requested but not available — falling back to CPU\n");
+  }
+  std::printf("[Backend] CPU tiled renderer\n");
+#endif
+
+  std::printf("[Config] %dx%d, %d spp, bounces %d-%d\n",
+              config.width, config.height, config.samples, config.min_bounces, config.max_bounces);
+
   // Setup window, OpenGL shaders for display, swapchain, threadpool for wavefront
   Window win(config.width, config.height, "Xenon (" + scene_path + ")");
   TripleSwapchain swapchain(config.width, config.height);
-  WavefrontRenderer renderer(config.width, config.height);
+
+  // Create appropriate renderer
+  std::unique_ptr<WavefrontRenderer> cpu_renderer;
+  int current_spp = 0;
+
+#ifdef XENON_HAS_CUDA
+  std::unique_ptr<CudaRenderer> cuda_renderer;
+  if (use_cuda) {
+    cuda_renderer = std::make_unique<CudaRenderer>(
+      config.width, config.height, config.max_bounces, config.min_bounces);
+    cuda_renderer->upload_scene(scene);
+  } else {
+    cpu_renderer = std::make_unique<WavefrontRenderer>(config.width, config.height);
+  }
+#else
+  cpu_renderer = std::make_unique<WavefrontRenderer>(config.width, config.height);
+#endif
 
   // Render Asynchronously
   std::atomic<bool> exit_flag(false);
   std::thread render_thread([&]() {
     while (!exit_flag.load()) {
-      if (renderer.get_spp() < config.samples) {
-        // CPU Tiled
-        renderer.render_frame_tiled(scene, camera, swapchain);
-
-        // CPU Wavefront
-        //renderer.render_frame(scene, camera, swapchain);
-
-        // GPU Wavefront
-        if (renderer.get_spp() % 10 == 0) {
-          std::printf("Progress: %d/%d samples\n", renderer.get_spp(), config.samples);
+      if (current_spp < config.samples) {
+#ifdef XENON_HAS_CUDA
+        if (use_cuda) {
+          cuda_renderer->render_frame(scene, camera, swapchain);
+          current_spp = cuda_renderer->spp();
+        } else {
+          cpu_renderer->render_frame_tiled(scene, camera, swapchain);
+          current_spp = cpu_renderer->get_spp();
+        }
+#else
+        cpu_renderer->render_frame_tiled(scene, camera, swapchain);
+        current_spp = cpu_renderer->get_spp();
+#endif
+        if (current_spp % 10 == 0) {
+          std::printf("Progress: %d/%d samples\n", current_spp, config.samples);
         }
       } else {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Timing for "consistent FPS" for a raytracer doesn't need to be perfect
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
     }
   });
@@ -122,7 +168,7 @@ int main(int argc, char* argv[]) {
     win.display(swapchain);
     win.swap_buffers();
     
-    if (renderer.get_spp() >= config.samples) {
+    if (current_spp >= config.samples) {
       // Finished rendering!
       save_image(final_output, config.width, config.height, swapchain.get_read_buffer());
       

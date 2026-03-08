@@ -14,6 +14,7 @@ struct SceneConfig {
   int min_bounces = 3;
   int max_bounces = 8;
   std::string output = "output.png";
+  std::string backend = "cpu"; // "cpu" or "cuda"
 };
 
 // Loads a .xenon file and populates the scene and camera

@@ -113,6 +113,11 @@ public:
     // Any-hit query in world space — fast shadow test.
     [[nodiscard]] bool intersects(const Ray& world_ray) const;
 
+    // ── GPU upload accessors ─────────────────────────────────────────────────
+    const std::vector<TLASNode>&  nodes()        const noexcept { return nodes_; }
+    const std::vector<uint32_t>&  inst_indices() const noexcept { return inst_indices_; }
+    const std::vector<Instance>&  instances()    const noexcept { return instances_; }
+
 private:
     std::vector<Instance>  instances_;
     std::vector<TLASNode>  nodes_;

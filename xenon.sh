@@ -26,12 +26,14 @@ while [ $# -gt 0 ]; do
     --scene)         SCENE="$2"; shift 2 ;;
     --output)        OUTPUT="$2"; shift 2 ;;
     --render-mode)   RENDER_MODE="$2"; shift 2 ;;
+    --backend)       BACKEND="$2"; shift 2 ;;
     *) echo "[Error] Unknown arg: $1" >&2; exit 1 ;;
   esac
 done
 
 BOUNCES=${BOUNCES:-8}
 OUTDIR=${OUTDIR:-renders}
+BACKEND=${BACKEND:-cpu}
 
 if [[ -z "${SCENE}" ]]; then
   SCENE="cornell_box"
@@ -57,7 +59,7 @@ needs_build() {
   [[ ! -f "${BUILD_DIR}/xenon" ]] && return 0
   # Rebuild if any source file is newer than the binary
   if find "${ROOT_DIR}/src" "${ROOT_DIR}/CMakeLists.txt" \
-       -name "*.cpp" -o -name "*.h" -o -name "CMakeLists.txt" 2>/dev/null \
+       -name "*.cpp" -o -name "*.h" -o -name "*.cu" -o -name "*.cuh" -o -name "CMakeLists.txt" 2>/dev/null \
      | xargs -I{} find {} -newer "${BUILD_DIR}/xenon" 2>/dev/null \
      | grep -q .; then
     return 0
@@ -84,4 +86,5 @@ exec "${BUILD_DIR}/xenon" \
   --output "${OUTPUT}" \
   --output-dir "${OUTDIR}" \
   --max-bounces "${BOUNCES}" \
-  --render-mode "${RENDER_MODE:-0}"
+  --render-mode "${RENDER_MODE:-0}" \
+  --backend "${BACKEND}"

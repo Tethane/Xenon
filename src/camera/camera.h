@@ -36,6 +36,12 @@ public:
         return Ray{eye_, normalize(lower_left_corner_ + s * horizontal_ + t * vertical_ - eye_)};
     }
 
+    // GPU upload accessors
+    Vec3 get_eye()               const { return eye_; }
+    Vec3 get_lower_left_corner() const { return lower_left_corner_; }
+    Vec3 get_horizontal()        const { return horizontal_; }
+    Vec3 get_vertical()          const { return vertical_; }
+
 private:
     Vec3 eye_;
     Vec3 lower_left_corner_;
