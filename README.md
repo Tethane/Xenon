@@ -80,7 +80,7 @@ All other dependencies (stb_image_write for PNG output) are vendored in the repo
 ### Build Steps
 
 ```bash
-git clone https://github.com/your-username/xenon.git
+git clone https://github.com/Tethane/xenon.git
 cd xenon
 
 # Release build (recommended)
