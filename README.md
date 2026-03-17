@@ -7,16 +7,16 @@ Both the CPU and GPU renderers share the same wavefront pipeline architecture an
 ## Example Renders
 
 <p align="center">
-  <img src="renders/cornell_box_output.png" width="400" alt="Cornell Box — area lighting with color bleeding" />
-  <img src="renders/cow_output.png" width="400" alt="Metallic cow — GGX microfacet reflections" />
+  <img src="lucy_output.png" width="400" alt="Cornell Box — area lighting with color bleeding" />
+  <img src="cow_output 1.png" width="400" alt="Metallic cow — GGX microfacet reflections" />
 </p>
 <p align="center">
-  <img src="renders/lucy_output.png" width="400" alt="Stanford Lucy — glass with full transmission and caustics" />
-  <img src="renders/instancing_grid_output.png" width="400" alt="Instancing grid — multiple material types with environment lighting" />
+  <img src="cow_output.png" width="400" alt="Stanford Lucy — glass with full transmission and caustics" />
+  <img src="cornell_box_cpu.png" width="400" alt="Instancing grid — multiple material types with environment lighting" />
 </p>
 <p align="center">
-  <img src="renders/prim_types_output.png" width="400" alt="Analytic primitives — sphere, box, disk, quad with glass" />
-  <img src="renders/combined_outdoor_output.png" width="400" alt="Outdoor scene — directional sunlight with gradient sky" />
+  <img src="instancing_grid_output.png" width="400" alt="Analytic primitives — sphere, box, disk, quad with glass" />
+  <img src="sky_dome_output.png" width="400" alt="Outdoor scene — directional sunlight with gradient sky" />
 </p>
 
 All images above are rendered directly by Xenon at 256 samples per pixel.
