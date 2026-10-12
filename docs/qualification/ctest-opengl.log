@@ -1,0 +1,8 @@
+Internal ctest changing into directory: /home/ethan/dev/Xenon/build/final-display
+Test project /home/ethan/dev/Xenon/build/final-display
+    Start 12: window_test
+1/1 Test #12: window_test ......................   Passed    1.23 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.23 sec

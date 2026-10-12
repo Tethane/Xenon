@@ -1,0 +1,16 @@
+Internal ctest changing into directory: /home/ethan/dev/Xenon/build/final-sanitize
+Test project /home/ethan/dev/Xenon/build/final-sanitize
+    Start  4: medium_test
+1/5 Test  #4: medium_test ......................   Passed    2.63 sec
+    Start  5: environment_test
+2/5 Test  #5: environment_test .................   Passed    1.22 sec
+    Start  6: instance_test
+3/5 Test  #6: instance_test ....................   Passed    0.05 sec
+    Start 17: texture_test
+4/5 Test #17: texture_test .....................   Passed    0.73 sec
+    Start 18: opacity_test
+5/5 Test #18: opacity_test .....................   Passed   14.83 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =  19.47 sec

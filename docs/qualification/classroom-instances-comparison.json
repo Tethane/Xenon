@@ -1,0 +1,13 @@
+{
+  "candidate": "/home/ethan/dev/Xenon/build/qualification/final-beauty/classroom-instances/optix-8192spp-run1.pfm",
+  "reference": "/home/ethan/dev/Xenon/build/fixtures/classroom-converted/cycles.pfm",
+  "linear_metrics": {
+    "rmse": 0.07037121352242129,
+    "relative_rmse": 0.05285353968403292,
+    "mae": 0.03769329242114166,
+    "max_absolute_error": 6.420896768569946,
+    "mean_luminance": 0.6698109043310193,
+    "reference_mean_luminance": 0.6466137153571476,
+    "relative_luminance_bias": 0.03587487927171334
+  }
+}

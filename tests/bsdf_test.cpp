@@ -1,316 +1,208 @@
 #include "material/bsdf.h"
-#include "material/material.h"
-#include "math/ray.h"
 #include <cstdio>
 #include <cmath>
 
 using namespace xn;
+static int failures = 0;
 
-static int g_fail = 0;
-
-static void check(const char* name, bool ok) {
-    if (!ok) {
-        std::printf("  FAIL: %s\n", name);
-        g_fail++;
-    } else {
-        std::printf("  PASS: %s\n", name);
-    }
+static void check(const char *name, bool ok) {
+	std::printf("%s: %s\n", ok ? "PASS" : "FAIL", name);
+	if (!ok)
+		++failures;
 }
 
-static bool approx(float a, float b, float tol = 0.15f) {
-    return std::abs(a - b) < tol;
+static bool near(float a, float b, float eps = 1e-4f) {
+	return std::abs(a - b) <= eps * std::max(1.f, std::max(std::abs(a), std::abs(b)));
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Test 1: PDF Integration (Monte Carlo)
-//   For each queue, integral of pdf(wo, wi) * cos(theta_i) over hemisphere
-//   should ≈ 1.0 (or appropriate value).
-// ─────────────────────────────────────────────────────────────────────────────
-void test_pdf_integration() {
-    std::printf("--- PDF Integration Test ---\n");
-    PCGState rng = seed_pcg(42);
-    Vec3 wo = normalize(Vec3(0.3f, 0.2f, 1.0f));
-    int N = 500000;
-
-    // Diffuse
-    {
-        Material mat;
-        mat.baseColor = Vec3(0.8f);
-        mat.roughness = 0.5f;
-        material_prepare(mat);
-
-        float sum = 0.f;
-        for (int i = 0; i < N; ++i) {
-            BSDFSample s;
-            if (diffuse_bsdf::sample(wo, mat, rng, s)) {
-                sum += 1.f; // pdf-weighted sampling → each sample contributes 1
-            }
-        }
-        float ratio = sum / (float)N;
-        check("Diffuse PDF integrates ~1", approx(ratio, 1.0f, 0.05f));
-    }
-
-    // Microfacet reflection
-    {
-        Material mat;
-        mat.baseColor = Vec3(0.9f);
-        mat.roughness = 0.3f;
-        mat.metallic = 1.0f;
-        material_prepare(mat);
-
-        float sum = 0.f;
-        for (int i = 0; i < N; ++i) {
-            BSDFSample s;
-            if (microfacet_refl_bsdf::sample(wo, mat, rng, s)) {
-                sum += 1.f;
-            }
-        }
-        float ratio = sum / (float)N;
-        check("Microfacet Refl PDF integrates ~1", approx(ratio, 1.0f, 0.1f));
-    }
-
-    // Microfacet transmission
-    {
-        Material mat;
-        mat.baseColor = Vec3(1.0f);
-        mat.roughness = 0.2f;
-        mat.ior = 1.5f;
-        mat.transmission = 1.0f;
-        material_prepare(mat);
-
-        float sum = 0.f;
-        int valid = 0;
-        for (int i = 0; i < N; ++i) {
-            BSDFSample s;
-            if (microfacet_trans_bsdf::sample(wo, mat, rng, s)) {
-                sum += 1.f;
-                valid++;
-            }
-        }
-        // Not all samples valid (TIR), but valid ones should integrate
-        float ratio = (valid > 0) ? sum / (float)valid : 0.f;
-        check("Microfacet Trans valid samples integrate ~1", approx(ratio, 1.0f, 0.05f));
-        std::printf("    (valid rate: %.1f%%)\n", 100.f * valid / N);
-    }
+static bool finite(Vec3 v) {
+	return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Test 2: Eval/PDF/Sample Consistency
-//   sample() returns (wi, f, pdf). Check that:
-//     eval(wo, wi) / pdf(wo, wi) ≈ f (for non-delta lobes)
-// ─────────────────────────────────────────────────────────────────────────────
-void test_consistency() {
-    std::printf("--- Eval/PDF/Sample Consistency ---\n");
-    PCGState rng = seed_pcg(123);
-    Vec3 wo = normalize(Vec3(0.5f, 0.3f, 0.9f));
-    int N = 100000;
-
-    // Microfacet reflection
-    {
-        Material mat;
-        mat.baseColor = Vec3(0.8f, 0.2f, 0.1f);
-        mat.roughness = 0.35f;
-        mat.metallic = 1.0f;
-        material_prepare(mat);
-
-        float max_err_f = 0.f;
-        float max_err_p = 0.f;
-        int checked = 0;
-        for (int i = 0; i < N; ++i) {
-            BSDFSample s;
-            if (!microfacet_refl_bsdf::sample(wo, mat, rng, s)) continue;
-            if (s.pdf < 1e-6f) continue;
-
-            Vec3 f_eval = microfacet_refl_bsdf::eval(wo, s.wi, mat);
-            float p = microfacet_refl_bsdf::pdf(wo, s.wi, mat);
-            if (p < 1e-6f) continue;
-
-            // eval() should match sample().f
-            Vec3 diff_f = f_eval - s.f;
-            float err_f = std::max({std::abs(diff_f.x), std::abs(diff_f.y), std::abs(diff_f.z)});
-            if (err_f > max_err_f) max_err_f = err_f;
-
-            // pdf() should match sample().pdf
-            float err_p = std::abs(p - s.pdf);
-            if (err_p > max_err_p) max_err_p = err_p;
-            checked++;
-        }
-        check("Microfacet Refl eval consistency (max err < 0.01)", max_err_f < 0.01f);
-        check("Microfacet Refl pdf consistency (max err < 0.01)", max_err_p < 0.01f);
-        std::printf("    max_err_f=%.6f max_err_p=%.6f checked=%d\n", max_err_f, max_err_p, checked);
-    }
+static Vec3 direction(float z, float phi) {
+	float r = std::sqrt(std::max(0.f, 1.f - z * z));
+	return {r * std::cos(phi), r * std::sin(phi), z};
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Test 3: Furnace Test (Energy Conservation)
-//   White material, integrate sample throughput. Should be ≤ 1.0 for
-//   energy conservation. For diffuse, should ≈ albedo.
-// ─────────────────────────────────────────────────────────────────────────────
-void test_furnace() {
-    std::printf("--- Furnace Test ---\n");
-    PCGState rng = seed_pcg(999);
-    Vec3 wo = normalize(Vec3(0.4f, 0.2f, 1.0f));
-    int N = 500000;
-
-    // Diffuse furnace
-    {
-        Material mat;
-        mat.baseColor = Vec3(0.7f, 0.3f, 0.5f);
-        mat.roughness = 1.0f;
-        mat.metallic = 0.0f;
-        material_prepare(mat);
-
-        Vec3 sum(0.f);
-        for (int i = 0; i < N; ++i) {
-            BSDFSample s;
-            if (diffuse_bsdf::sample(wo, mat, rng, s)) {
-                sum += s.f * std::abs(s.wi.z) / s.pdf;
-            }
-        }
-        Vec3 avg = sum / (float)N;
-        std::printf("  Diffuse furnace: [%.3f, %.3f, %.3f] (expect ~[0.700, 0.300, 0.500])\n",
-            avg.x, avg.y, avg.z);
-        check("Diffuse energy ≈ albedo",
-            approx(avg.x, 0.7f) && approx(avg.y, 0.3f) && approx(avg.z, 0.5f));
-    }
-
-    // Metallic furnace (white metal, should be ~1)
-    {
-        Material mat;
-        mat.baseColor = Vec3(1.0f);
-        mat.roughness = 0.3f;
-        mat.metallic = 1.0f;
-        material_prepare(mat);
-
-        Vec3 sum(0.f);
-        for (int i = 0; i < N; ++i) {
-            BSDFSample s;
-            if (microfacet_refl_bsdf::sample(wo, mat, rng, s)) {
-                sum += s.f * std::abs(s.wi.z) / s.pdf;
-            }
-        }
-        Vec3 avg = sum / (float)N;
-        std::printf("  Metal furnace: [%.3f, %.3f, %.3f] (expect ≤1, close to 1 with multiscatter)\n",
-            avg.x, avg.y, avg.z);
-        check("Metal energy ≤ 1.1 (allows slight overshoot from approx)",
-            avg.x <= 1.1f && avg.y <= 1.1f && avg.z <= 1.1f);
-    }
-
-    // Dielectric reflection furnace
-    {
-        Material mat;
-        mat.baseColor = Vec3(1.0f);
-        mat.roughness = 0.5f;
-        mat.metallic = 0.0f;
-        mat.ior = 1.5f;
-        material_prepare(mat);
-
-        Vec3 sum(0.f);
-        for (int i = 0; i < N; ++i) {
-            BSDFSample s;
-            if (microfacet_refl_bsdf::sample(wo, mat, rng, s)) {
-                sum += s.f * std::abs(s.wi.z) / s.pdf;
-            }
-        }
-        Vec3 avg = sum / (float)N;
-        std::printf("  Dielectric refl furnace: [%.3f, %.3f, %.3f] (expect F0 ~ 0.04)\n",
-            avg.x, avg.y, avg.z);
-        check("Dielectric reflection energy ≤ 1.0", avg.x <= 1.0f && avg.y <= 1.0f && avg.z <= 1.0f);
-    }
+static void test_distribution() {
+	for (auto axes : {Vec3(0.3f, 0.3f, 0), Vec3(0.2f, 0.8f, 0), Vec3(1, 1, 0)}) {
+		Vec3 wo = normalize(Vec3(1, 0, 0.05f));
+		double ndf = 0, visible = 0;
+		const int nz = 512, np = 512;
+		for (int z = 0; z < nz; ++z)
+			for (int p = 0; p < np; ++p) {
+				Vec3 wh = direction((z + 0.5f) / nz, 2 * kPi * (p + 0.5f) / np);
+				ndf += ggx_d_aniso(wh, axes.x, axes.y) * wh.z;
+				visible += vndf_pdf(wo, wh, axes.x, axes.y);
+			}
+		ndf *= 2 * kPi / (nz * np);
+		visible *= 2 * kPi / (nz * np);
+		check("GGX projected NDF integrates to one", std::abs(ndf - 1) < 0.003);
+		check("VNDF integrates to one at grazing incidence", std::abs(visible - 1) < 0.003);
+	}
+	check("Smith masking tends to zero at grazing",
+		  ggx_g1({1, 0, 0}, 0.5f) == 0.f && ggx_g1({1, 0, 1e-6f}, 0.5f) < 1e-5f);
+	check("power MIS remains finite for large PDFs", near(mis_weight_power2(1e30f, 2e30f), 0.2f));
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Test 4: Delta lobes sanity
-// ─────────────────────────────────────────────────────────────────────────────
-void test_delta() {
-    std::printf("--- Delta Lobe Tests ---\n");
-    PCGState rng = seed_pcg(77);
-
-    // Mirror reflection
-    {
-        Material mat;
-        mat.baseColor = Vec3(1.0f);
-        mat.roughness = 0.0f;
-        mat.metallic = 1.0f;
-        material_prepare(mat);
-
-        Vec3 wo = normalize(Vec3(0.5f, 0.f, 1.f));
-        BSDFSample s;
-        bool ok = delta_refl_bsdf::sample(wo, mat, rng, s);
-        check("Delta refl produces valid sample", ok);
-        check("Delta refl is_delta", s.is_delta);
-        check("Delta refl wi.z > 0", s.wi.z > 0.f);
-        check("Delta refl pdf == 1", s.pdf == 1.f);
-        // Check reflection law: wi = reflect(-wo, N)
-        Vec3 expected = reflect(-wo, Vec3(0, 0, 1));
-        float err = (s.wi - expected).length();
-        check("Delta refl correct direction", err < 0.001f);
-    }
-
-    // Refraction
-    {
-        Material mat;
-        mat.baseColor = Vec3(1.0f);
-        mat.roughness = 0.0f;
-        mat.ior = 1.5f;
-        mat.transmission = 1.0f;
-        material_prepare(mat);
-
-        Vec3 wo = normalize(Vec3(0.3f, 0.f, 1.f));
-        BSDFSample s;
-        bool ok = delta_trans_bsdf::sample(wo, mat, rng, s);
-        check("Delta trans produces valid sample", ok);
-        check("Delta trans is_delta", s.is_delta);
-        check("Delta trans wi.z < 0 (transmitted)", s.wi.z < 0.f);
-    }
+static void test_material(float metallic, float transmission, float roughness, float anisotropy,
+						  float subsurface, Vec3 wo) {
+	Material mat;
+	mat.baseColor = {0.8f, 0.6f, 0.4f};
+	mat.metallic = metallic;
+	mat.transmission = transmission;
+	mat.roughness = roughness;
+	mat.anisotropy = anisotropy;
+	mat.subsurface = subsurface;
+	material_prepare(mat);
+	PCGState rng = seed_pcg(732);
+	const int n = 160000;
+	int valid = 0;
+	double sampled_pdf_mass[4] = {}, sampled_energy = 0;
+	bool consistent = true, finite_samples = true;
+	for (int i = 0; i < n; ++i) {
+		BSDFSample s;
+		if (!bsdf_sample(wo, mat, rng, s))
+			continue;
+		++valid;
+		finite_samples &=
+			finite(s.wi) && finite(s.f) && std::isfinite(s.pdf) && near(s.wi.length(), 1.f);
+		Vec3 f = bsdf_eval_for_nee(wo, s.wi, mat);
+		float p = bsdf_pdf_for_nee(wo, s.wi, mat);
+		consistent &= near(p, s.pdf) && near(f.x, s.f.x) && near(f.y, s.f.y) && near(f.z, s.f.z);
+		sampled_pdf_mass[(s.wi.z > 0 ? 2 : 0) + (s.wi.x > 0 ? 1 : 0)] += 1.0 / n;
+		sampled_energy += s.f.x * std::abs(s.wi.z) / s.pdf / n;
+	}
+	double integrated_mass[4] = {}, integrated_energy = 0;
+	const int nz = 512, np = 512;
+	for (int z = 0; z < nz; ++z)
+		for (int p = 0; p < np; ++p) {
+			Vec3 wi = direction(2.f * (z + 0.5f) / nz - 1.f, 2 * kPi * (p + 0.5f) / np);
+			double dw = 4 * kPi / (nz * np);
+			integrated_mass[(wi.z > 0 ? 2 : 0) + (wi.x > 0 ? 1 : 0)] +=
+				bsdf_pdf_for_nee(wo, wi, mat) * dw;
+			integrated_energy += bsdf_eval_for_nee(wo, wi, mat).x * std::abs(wi.z) * dw;
+		}
+	bool mass = true;
+	for (int i = 0; i < 4; ++i)
+		mass &= std::abs(sampled_pdf_mass[i] - integrated_mass[i]) < 0.012;
+	std::printf(
+		"  m=%.1f t=%.1f rough=%.1f aniso=%.1f wo.z=%.3f energy=%.5f integrated=%.5f valid=%d\n",
+		metallic, transmission, roughness, anisotropy, wo.z, sampled_energy, integrated_energy,
+		valid);
+	check("sample f/PDF matches complete mixture evaluation", consistent && valid > n / 10);
+	check("sampled directions match independently integrated PDF quadrants", mass);
+	check("sampling matches quadrature energy",
+		  std::abs(sampled_energy - integrated_energy) < 0.015);
+	check("samples finite and normalized", finite_samples);
+	if (transmission == 0.f)
+		check("reflection conserves energy", sampled_energy <= 1.005);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Test 5: Reciprocity (BRDF only — diffuse & microfacet reflection)
-// ─────────────────────────────────────────────────────────────────────────────
-void test_reciprocity() {
-    std::printf("--- Reciprocity Test ---\n");
-    PCGState rng = seed_pcg(555);
-    int N = 10000;
+static void test_delta() {
+	Material glass;
+	glass.baseColor = Vec3(1.f);
+	glass.transmission = 1.f;
+	glass.roughness = 0.f;
+	material_prepare(glass);
+	PCGState rng = seed_pcg(1234);
+	for (Vec3 wo : {Vec3(0, 0, 1), normalize(Vec3(0.5f, 0, 1)), normalize(Vec3(0.2f, 0, -1)),
+					normalize(Vec3(1, 0, -0.1f))}) {
+		int reflected = 0;
+		bool ok = true;
+		float F = fresnel_dielectric(wo.z, glass.ior);
+		for (int i = 0; i < 20000; ++i) {
+			BSDFSample s;
+			if (!bsdf_sample(wo, glass, rng, s)) {
+				ok = false;
+				continue;
+			}
+			bool refl = same_hemisphere(wo, s.wi);
+			if (refl)
+				++reflected;
+			Vec3 weight = s.f * std::abs(s.wi.z) / s.pdf;
+			float eta = wo.z > 0.f ? 1.f / glass.ior : glass.ior;
+			ok &= s.is_delta && finite(weight) && near(weight.x, refl ? 1.f : eta * eta);
+			if (!refl)
+				ok &= near(std::sqrt(s.wi.x * s.wi.x + s.wi.y * s.wi.y),
+						   eta * std::sqrt(wo.x * wo.x + wo.y * wo.y));
+		}
+		check("glass Fresnel event probabilities", std::abs(reflected / 20000.f - F) < 0.012f);
+		check("glass radiance weights, Snell refraction and TIR", ok);
+	}
+	glass.ior = 1.f;
+	glass.roughness = 0.8f;
+	material_prepare(glass);
+	BSDFSample sample;
+	check("index-matched glass transmits unchanged", bsdf_sample({0, 0, 1}, glass, rng, sample) &&
+														 sample.wi.z == -1.f &&
+														 near(sample.f.x, 1.f));
+	glass.metallic = 0.25f;
+	material_prepare(glass);
+	double matched_energy = 0;
+	for (int i = 0; i < 100000; ++i) {
+		BSDFSample s;
+		if (bsdf_sample({0, 0, 1}, glass, rng, s))
+			matched_energy += s.f.x * std::abs(s.wi.z) / s.pdf / 100000;
+	}
+	check("mixed metal and index-matched glass retains transmission",
+		  matched_energy > 0.8 && matched_energy <= 1.01);
+	Material metal;
+	metal.baseColor = Vec3(1.f);
+	metal.metallic = 1.f;
+	metal.roughness = 0.f;
+	material_prepare(metal);
+	Vec3 wo = normalize(Vec3(1, 0, 0.01f));
+	check("grazing perfect mirror weight is one",
+		  bsdf_sample(wo, metal, rng, sample) &&
+			  near(sample.f.x * std::abs(sample.wi.z) / sample.pdf, 1.f));
+	Material matte;
+	matte.roughness = 0.f;
+	material_prepare(matte);
+	check("smooth opaque dielectric retains diffuse NEE",
+		  !matte.isDelta && bsdf_eval_for_nee({0, 0, 1}, {0, 0, 1}, matte).x > 0.f);
+}
 
-    Material mat;
-    mat.baseColor = Vec3(0.6f, 0.3f, 0.8f);
-    mat.roughness = 0.4f;
-    mat.metallic = 0.0f;
-    material_prepare(mat);
-
-    float max_err_diff = 0.f;
-    float max_err_spec = 0.f;
-
-    for (int i = 0; i < N; ++i) {
-        Vec3 wo = normalize(Vec3(rng.next_float() - 0.5f, rng.next_float() - 0.5f, rng.next_float() * 0.9f + 0.1f));
-        Vec3 wi = normalize(Vec3(rng.next_float() - 0.5f, rng.next_float() - 0.5f, rng.next_float() * 0.9f + 0.1f));
-
-        // Diffuse reciprocity
-        Vec3 f1 = diffuse_bsdf::eval(wo, wi, mat);
-        Vec3 f2 = diffuse_bsdf::eval(wi, wo, mat);
-        float err = (f1 - f2).length();
-        if (err > max_err_diff) max_err_diff = err;
-
-        // Specular reciprocity  
-        Vec3 s1 = microfacet_refl_bsdf::eval(wo, wi, mat);
-        Vec3 s2 = microfacet_refl_bsdf::eval(wi, wo, mat);
-        float serr = (s1 - s2).length();
-        if (serr > max_err_spec) max_err_spec = serr;
-    }
-
-    check("Diffuse reciprocity (max err < 1e-6)", max_err_diff < 1e-6f);
-    check("Microfacet refl reciprocity (max err < 0.01)", max_err_spec < 0.01f);
-    std::printf("    diff_err=%.8f spec_err=%.8f\n", max_err_diff, max_err_spec);
+static void test_furnace() {
+	Material m;
+	m.baseColor = Vec3(1.f);
+	m.roughness = 1.f;
+	m.metallic = 1.f;
+	material_prepare(m);
+	PCGState rng = seed_pcg(999);
+	double energy = 0;
+	int valid = 0;
+	for (int i = 0; i < 500000; ++i) {
+		BSDFSample s;
+		if (!bsdf_sample({0, 0, 1}, m, rng, s))
+			continue;
+		energy += s.f.x * std::abs(s.wi.z) / s.pdf / 500000;
+		++valid;
+	}
+	check("rough GGX white furnace agrees with 1-ln(2)",
+		  std::abs(energy - (1 - std::log(2.0))) < 0.003);
+	check("GGX rejected samples retain probability mass",
+		  std::abs(valid / 500000.f - 0.5f) < 0.004f);
+	m.metallic = 0.f;
+	m.ior = 1.f;
+	m.baseColor = Vec3(0.7f);
+	material_prepare(m);
+	BSDFSample s;
+	check("Lambertian weight equals albedo",
+		  bsdf_sample({0, 0, 1}, m, rng, s) && near(s.f.x * s.wi.z / s.pdf, 0.7f));
 }
 
 int main() {
-    test_pdf_integration();
-    test_consistency();
-    test_furnace();
-    test_delta();
-    test_reciprocity();
-
-    std::printf("\n=== %s (%d failures) ===\n", g_fail == 0 ? "ALL PASSED" : "FAILURES", g_fail);
-    return g_fail;
+	test_distribution();
+	for (Vec3 wo : {normalize(Vec3(0.5f, 0.1f, 1)), normalize(Vec3(1, 0, 0.1f)),
+					normalize(Vec3(0.1f, 0, -1))}) {
+		test_material(1, 0, 0.7f, 0.5f, 0, wo);
+		test_material(0, 0, 0.7f, 0, 0, wo);
+		test_material(0, 1, 0.7f, 0, 0, wo);
+		test_material(0.3f, 0.4f, 0.7f, 0.2f, 0.5f, wo);
+	}
+	test_delta();
+	test_furnace();
+	std::printf("BSDF: %d failures\n", failures);
+	return failures ? 1 : 0;
 }

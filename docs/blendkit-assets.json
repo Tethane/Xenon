@@ -1,0 +1,41 @@
+{
+  "description": "Original Blendkit scene downloads used for the import gallery. Sources are downloaded separately; render conversions are documented in BLENDKIT_SCENES.md.",
+  "assets": [
+    {
+      "name": "Japanese Laundromat",
+      "asset_base_id": "fea95d8b-bb8d-4bdd-bd53-e1a6252fa3b7",
+      "asset_version_id": "ca34ad8d-9646-4f47-ab3b-5f390e6ad775",
+      "author": "3dhub",
+      "license": "royalty_free",
+      "source_application_version": "5.2.0",
+      "asset_page": "https://www.blendkit.com/asset-gallery-detail/fea95d8b-bb8d-4bdd-bd53-e1a6252fa3b7/",
+      "sha256": "7a2d9eb9f8394132745c681ac8e37e4633d27acf12adf3c5d24d974627ad5089",
+      "bytes": 73232174,
+      "directory": "laundromat"
+    },
+    {
+      "name": "Forgotten Industrail Warehouse",
+      "asset_base_id": "9cb181dc-d05a-42c0-880c-5949918ce392",
+      "asset_version_id": "0ef864f4-57d0-4dc3-9a56-e26f4b442d19",
+      "author": "Ibrohim Toxirov",
+      "license": "royalty_free",
+      "source_application_version": "5.2.0",
+      "asset_page": "https://www.blendkit.com/asset-gallery-detail/9cb181dc-d05a-42c0-880c-5949918ce392/",
+      "sha256": "125591d4b6d465c2f52a89f8fd82b46a0d55a94f8821043f28e51896df6745c4",
+      "bytes": 495186237,
+      "directory": "warehouse"
+    },
+    {
+      "name": "Autumn Cabins by the Lake",
+      "asset_base_id": "81285b8a-9df7-4f39-84d7-7256057a6666",
+      "asset_version_id": "1a455070-5618-49eb-bf3f-6cc3b97e7c71",
+      "author": "Ibrohim Toxirov",
+      "license": "royalty_free",
+      "source_application_version": "5.2.0",
+      "asset_page": "https://www.blendkit.com/asset-gallery-detail/81285b8a-9df7-4f39-84d7-7256057a6666/",
+      "sha256": "20b02a8aa6d38557e1a0b4a215e1f1cbd87ee48b77587b1dece5eca3a9496f96",
+      "bytes": 305471294,
+      "directory": "autumn-cabins"
+    }
+  ]
+}

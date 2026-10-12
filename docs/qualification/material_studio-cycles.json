@@ -1,0 +1,19 @@
+{
+  "renderer": "Blender Cycles",
+  "blender": "4.5.3 LTS",
+  "devices": [
+    "NVIDIA GeForce RTX 4060 Laptop GPU"
+  ],
+  "width": 512,
+  "height": 384,
+  "samples": 1024,
+  "seed": 1,
+  "max_bounces": 8,
+  "render_seconds": 5.297277824996854,
+  "denoising": false,
+  "adaptive_sampling": false,
+  "clamping": false,
+  "pixel_filter": "BOX",
+  "linear_color_space": "scene-linear Rec.709",
+  "source": "/home/ethan/dev/Xenon/build/fixtures/material_studio/material_studio.blend"
+}

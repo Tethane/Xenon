@@ -1,0 +1,13 @@
+{
+  "candidate": "/home/ethan/dev/Xenon/build/qualification/final-beauty/material_studio/optix-4096spp-run1.pfm",
+  "reference": "/home/ethan/dev/Xenon/build/fixtures/material_studio/cycles.pfm",
+  "linear_metrics": {
+    "rmse": 0.006981550243184155,
+    "relative_rmse": 0.01686158789854987,
+    "mae": 0.0019209133906401277,
+    "max_absolute_error": 0.3130064904689789,
+    "mean_luminance": 0.10870952825285568,
+    "reference_mean_luminance": 0.107192714769502,
+    "relative_luminance_bias": 0.014150341155322986
+  }
+}

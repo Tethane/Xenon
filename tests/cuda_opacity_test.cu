@@ -1,0 +1,2 @@
+#define XENON_HAS_CUDA 1
+#include "opacity_test.cpp"

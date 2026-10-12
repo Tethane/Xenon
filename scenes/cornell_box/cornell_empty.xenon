@@ -7,6 +7,7 @@ matfile left.mat
 matfile right.mat
 matfile white.mat
 matfile light.mat
-mesh scenes/cornell_box/meshes/empty_box.obj 0 0 0 1 0 0 0
-light 0 10 255 182 120 0.5
-light 0 11 255 182 120 0.5
+mesh meshes/empty_box.obj 0 0 0 1 0 0 0
+# Linear emitted radiance (warm light); each triangle has area 8.
+light 0 10 15 10.705882 7.058824 8
+light 0 11 15 10.705882 7.058824 8

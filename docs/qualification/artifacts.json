@@ -1,0 +1,202 @@
+{
+  "renderer_sha256": "90510fa2fb988c8bdb88bbffd5d3a95b4f9fc3da70d016170c182a5afae4bd86",
+  "files": {
+    "docs/licenses/Sponza.txt": {
+      "sha256": "3f981e31f8de04f3754e63d7c259a0a78f71db8f01b5155c58cac52fb79cc2b9",
+      "bytes": 15921
+    },
+    "docs/renders/comparisons/classroom-instances-comparison.png": {
+      "sha256": "4a2cde74bcbc294176e2e4ce253be8766de7721cc3f388b4ce4a27a6270c6b6a",
+      "bytes": 1924647
+    },
+    "docs/renders/gallery/classroom-instances.png": {
+      "sha256": "722964253176ab81f41118580aa6c1451aa01f062a096d37cbbf2106e1be01a2",
+      "bytes": 1001005
+    },
+    "docs/renders/gallery/energy_studio.png": {
+      "sha256": "d8af816ea73b87b1388b7badbff088e941573f0ba0c214037f20d18fc187e060",
+      "bytes": 624409
+    },
+    "docs/renders/comparisons/glass_fog-comparison.png": {
+      "sha256": "84dc63dd19a65edd8a4d08fc633c2a9f7b4805978479b2eef78e4c684de2e127",
+      "bytes": 1559538
+    },
+    "docs/renders/gallery/glass_fog.png": {
+      "sha256": "ddd017bc0b1670d71d2ceacdb4883d000f140a65055dc4b692ee9ab3de8ffbae",
+      "bytes": 298844
+    },
+    "docs/renders/comparisons/hdr_studio-comparison.png": {
+      "sha256": "f346e4c019c32ea868c7058fcef6aafaa702f79f1f6ee451542d17230d914dcf",
+      "bytes": 1387326
+    },
+    "docs/renders/gallery/hdr_studio.png": {
+      "sha256": "ea902909445067a2c29155261f75453af88f250d7255abb034458755824e62e6",
+      "bytes": 288237
+    },
+    "docs/renders/comparisons/material_studio-comparison.png": {
+      "sha256": "edb00941b737b25920790c5ae26045291a71fd8f0f6ec890ebc19893c5dc4432",
+      "bytes": 992644
+    },
+    "docs/renders/gallery/material_studio.png": {
+      "sha256": "6d48d9582eaa6d5a23ff41478420291f37d73f4c5ce92dcd7a166e303e913842",
+      "bytes": 216370
+    },
+    "docs/renders/plots/quality-curve.png": {
+      "sha256": "51fd55876cb41d939081329e367af3bdaf4b923930f2b7d073db8b7387df91b5",
+      "bytes": 93815
+    },
+    "docs/renders/comparisons/sponza-full-comparison.png": {
+      "sha256": "518f8a56368aceed074aeb010baf0b80a4198859880c67d10e1f07016d06332c",
+      "bytes": 1770622
+    },
+    "docs/renders/gallery/sponza-full.png": {
+      "sha256": "034357f28028a499dc707f7bbea05ceede33141aaaccdff9377ec40b35b17bbb",
+      "bytes": 934926
+    },
+    "docs/qualification/classroom-backend-audit.json": {
+      "sha256": "a77eef0663fabd374a75024fa06eb8e1e8fefd5097edaa712244fc5e3f6e2d75",
+      "bytes": 14777
+    },
+    "docs/qualification/classroom-instances-beauty.json": {
+      "sha256": "8bde4cd76dd85f534d463ff101e8c07c44f0dba0cd528d1b12e8a728987afed2",
+      "bytes": 202031
+    },
+    "docs/qualification/classroom-instances-benchmark.json": {
+      "sha256": "b06640d53fac7ba65c91053f1bf8a83c0073baacac8d2894f2377c8ce4219547",
+      "bytes": 237493
+    },
+    "docs/qualification/classroom-instances-comparison.json": {
+      "sha256": "e99794e59b0135b00eceb44aa0b7d5bcd93eb39c5d278c22611e3142016e8c51",
+      "bytes": 529
+    },
+    "docs/qualification/classroom-instances-cycles.json": {
+      "sha256": "fdb216d2ff178ee98149de55c9a5813c2a5530628c34c212dd02e62ff1b18600",
+      "bytes": 481
+    },
+    "docs/qualification/classroom-instances-timings.csv": {
+      "sha256": "618295063d9d7c0924e157fe2f69c13c6e23d7d27e89a125e5c5df711eb7fa77",
+      "bytes": 294
+    },
+    "docs/qualification/ctest-cpu.log": {
+      "sha256": "94247cfb13afb25f811dc8dcb7216e9e6dc028f39d715d7bfeaffcf67a0d2181",
+      "bytes": 2468
+    },
+    "docs/qualification/ctest-cuda-optix.log": {
+      "sha256": "1e30623cf4b0bd369961ee9f556cacd0c744b6c68407d642bf67d9dc97e18c37",
+      "bytes": 4497
+    },
+    "docs/qualification/ctest-opengl.log": {
+      "sha256": "64e64164f04160dbddb32e62b7003af77b982064642087a89a282b97ac9ed4e8",
+      "bytes": 314
+    },
+    "docs/qualification/energy_studio-beauty.json": {
+      "sha256": "4f5b8cf246a9a087f239858c33c5b1de20af0ae967f31035f440ad7a1621b229",
+      "bytes": 23748
+    },
+    "docs/qualification/glass_fog-beauty.json": {
+      "sha256": "2a742ea6bbfa50e604f3972df904d2dbf6196a50aeae93bf2ce14c4c5f142af4",
+      "bytes": 24311
+    },
+    "docs/qualification/glass_fog-benchmark.json": {
+      "sha256": "e42551379ebc70494cf32772b712e5a1bf41a337434bd27c5bee5f7540a42b76",
+      "bytes": 59035
+    },
+    "docs/qualification/glass_fog-comparison.json": {
+      "sha256": "93350c7c5f175d9e5a2768e2f8d77ee6b387528b18baefc2cd45309cf8dcab0c",
+      "bytes": 518
+    },
+    "docs/qualification/glass_fog-cycles.json": {
+      "sha256": "c49eb55f907b672c0fd92c3fe51e12090bdfae76e901ff18deb898aac20eba70",
+      "bytes": 477
+    },
+    "docs/qualification/glass_fog-timings.csv": {
+      "sha256": "440ca7bbc506c38dfbf99f9d9159958c3c50da24fdd00ba587181e1461fb73cf",
+      "bytes": 281
+    },
+    "docs/qualification/hdr_studio-beauty.json": {
+      "sha256": "e05ead8680761660b5d7a6f0716f3eee881b6f561d5045c19f73a63d9b964e4e",
+      "bytes": 24497
+    },
+    "docs/qualification/hdr_studio-benchmark.json": {
+      "sha256": "91d863eb8ee8318a96b1a56ea05c9e78e0d9b35e4a32aa392aa9894241f60d93",
+      "bytes": 59288
+    },
+    "docs/qualification/hdr_studio-comparison.json": {
+      "sha256": "598d033dc2edb80bac054821fa66d35b92f52dfcc473a0ef223c942a7f705de2",
+      "bytes": 517
+    },
+    "docs/qualification/hdr_studio-cycles.json": {
+      "sha256": "cf3c2a24447dad693cfa80711051d5a4e8f9737327c62ec1ad6a19ed9836ac72",
+      "bytes": 468
+    },
+    "docs/qualification/hdr_studio-timings.csv": {
+      "sha256": "6b124c4e20102608873740117195ba9e992ba7d579ace1b846490d5893469c59",
+      "bytes": 283
+    },
+    "docs/qualification/material_studio-beauty.json": {
+      "sha256": "8242f4c92b6cad56df51ff331934f23a9fd5eea7004d9fbcc2e60781ff27ca4b",
+      "bytes": 24448
+    },
+    "docs/qualification/material_studio-benchmark.json": {
+      "sha256": "a6e8457b119b68f008f315bd1b6d1e08175024e5d4b4cffa7d960758868e3a45",
+      "bytes": 59614
+    },
+    "docs/qualification/material_studio-comparison.json": {
+      "sha256": "5a8c42f876f1b06e03149312ecb3a674342da394eaa58ddbb1bf8f49a4813502",
+      "bytes": 526
+    },
+    "docs/qualification/material_studio-cycles.json": {
+      "sha256": "32dac029700df48bd5f2c9bd58ba9cbe9415815753604eca3a163c07bb7e1492",
+      "bytes": 482
+    },
+    "docs/qualification/material_studio-timings.csv": {
+      "sha256": "342ed670f86dcf30c5a344bb2d3cd669b1f5336cbec4b325801b985f54f8d7e5",
+      "bytes": 282
+    },
+    "docs/qualification/quality-curve.json": {
+      "sha256": "f3c976c52ac9332c90886134785bde595737e22431e926441f2fd61a1ac6b470",
+      "bytes": 137658
+    },
+    "docs/qualification/repeat-image-audit.json": {
+      "sha256": "1e157fe7043dcbbb3fb7f7f5b94eb02151239a378eaa1d2125d98126a07350f0",
+      "bytes": 14654
+    },
+    "docs/qualification/sanitizer-targeted.log": {
+      "sha256": "71678cf7db596199879ce92aa38624008120bd4e20e334b82c576dec365b385f",
+      "bytes": 709
+    },
+    "docs/qualification/sponza-full-beauty.json": {
+      "sha256": "5cf9b129fddbc3babe639328a57b36c66a45e46449f04bd22add5878de3acdcd",
+      "bytes": 58424
+    },
+    "docs/qualification/sponza-full-benchmark.json": {
+      "sha256": "bbabd852bffc3ae530c63b2f43a10ec69acc1fad5f4c87c0727236b788b2fbb3",
+      "bytes": 93289
+    },
+    "docs/qualification/sponza-full-comparison.json": {
+      "sha256": "508a2f33f209b0ea655f09d04b256a9a86b06e15e53879aec3ed982ac44a1615",
+      "bytes": 527
+    },
+    "docs/qualification/sponza-full-cycles.json": {
+      "sha256": "9880f8807ec1535d89e158f7dfd0b70cb34f76c4387f1e5984d5b1b488bf3e85",
+      "bytes": 469
+    },
+    "docs/qualification/sponza-full-timings.csv": {
+      "sha256": "29de25503b0550a4b1468021af5446bf0a0ecd593301e5b8a0eb33a097e9eced",
+      "bytes": 296
+    },
+    "docs/qualification/suite-results.json": {
+      "sha256": "47e0ef0b79dc7a481c52ee397861347ce4df58c926538c721a65ad99a5743c11",
+      "bytes": 48641
+    },
+    "docs/qualification/thread-pool-asan.log": {
+      "sha256": "7dd727b4ec78c55d057bcf18d94a25ef074ca1d32c39f856685b227188b1fc06",
+      "bytes": 90
+    },
+    "docs/qualification/thread-pool-tsan-noaslr.log": {
+      "sha256": "7dd727b4ec78c55d057bcf18d94a25ef074ca1d32c39f856685b227188b1fc06",
+      "bytes": 90
+    }
+  },
+  "scope": "Qualified images, measurements and logs. Historical images and logs are archived separately."
+}

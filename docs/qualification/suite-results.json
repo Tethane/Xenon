@@ -1,0 +1,1544 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "started_utc": "2026-10-12T09:38:36.032178+00:00",
+  "manifest": "/home/ethan/dev/Xenon/scenes/benchmarks/suite.json",
+  "manifest_sha256": "e6e7ab767f5f0ed1a8b3dc470c62541519eaf9ed2351d63d0f52cc56af850ed8",
+  "binary": "/home/ethan/dev/Xenon/build/optix/xenon",
+  "binary_sha256": "90510fa2fb988c8bdb88bbffd5d3a95b4f9fc3da70d016170c182a5afae4bd86",
+  "settings": {
+    "samples": 128,
+    "repeats": 3,
+    "warmups": 1,
+    "backends": [
+      "cpu",
+      "cuda",
+      "optix"
+    ]
+  },
+  "requested_scenes": [
+    "material_studio",
+    "hdr_studio",
+    "glass_fog",
+    "classroom-instances",
+    "sponza-full"
+  ],
+  "scenes": {
+    "material_studio": {
+      "benchmark_results": "/home/ethan/dev/Xenon/build/qualification/final/material_studio/results.json",
+      "results_sha256": "a6e8457b119b68f008f315bd1b6d1e08175024e5d4b4cffa7d960758868e3a45",
+      "command": [
+        "/usr/bin/python3",
+        "/home/ethan/dev/Xenon/scripts/benchmark.py",
+        "/home/ethan/dev/Xenon/build/fixtures/material_studio-compensated/scene.xenon",
+        "--binary",
+        "/home/ethan/dev/Xenon/build/optix/xenon",
+        "--reference",
+        "/home/ethan/dev/Xenon/build/fixtures/material_studio/cycles.pfm",
+        "--backends",
+        "cpu",
+        "cuda",
+        "optix",
+        "--samples",
+        "128",
+        "--repeats",
+        "3",
+        "--warmups",
+        "1",
+        "--width",
+        "512",
+        "--height",
+        "384",
+        "--exposure",
+        "0",
+        "--min-bounces",
+        "3",
+        "--max-bounces",
+        "8",
+        "--seed",
+        "42",
+        "--output-dir",
+        "/home/ethan/dev/Xenon/build/qualification/final/material_studio"
+      ],
+      "reference": {
+        "path": "/home/ethan/dev/Xenon/build/fixtures/material_studio/cycles.pfm",
+        "metrics_path": "/home/ethan/dev/Xenon/build/fixtures/material_studio/cycles-metrics.json",
+        "metrics_sha256": "32dac029700df48bd5f2c9bd58ba9cbe9415815753604eca3a163c07bb7e1492",
+        "metrics": {
+          "renderer": "Blender Cycles",
+          "blender": "4.5.3 LTS",
+          "devices": [
+            "NVIDIA GeForce RTX 4060 Laptop GPU"
+          ],
+          "width": 512,
+          "height": 384,
+          "samples": 1024,
+          "seed": 1,
+          "max_bounces": 8,
+          "render_seconds": 5.297277824996854,
+          "denoising": false,
+          "adaptive_sampling": false,
+          "clamping": false,
+          "pixel_filter": "BOX",
+          "linear_color_space": "scene-linear Rec.709",
+          "source": "/home/ethan/dev/Xenon/build/fixtures/material_studio/material_studio.blend"
+        }
+      },
+      "summary": {
+        "cpu-128spp": {
+          "load": {
+            "median": 0.12794757,
+            "min": 0.122369355,
+            "max": 0.141948597,
+            "stdev": 0.01008705405404636
+          },
+          "cpu_acceleration": {
+            "median": 0.005119161,
+            "min": 0.004818387,
+            "max": 0.01103154,
+            "stdev": 0.003503568672085792
+          },
+          "renderer_setup": {
+            "median": 0.009420463,
+            "min": 0.009159384,
+            "max": 0.009688627,
+            "stdev": 0.0002646294038166081
+          },
+          "upload": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 7.213664269,
+            "min": 7.138142298,
+            "max": 7.321628482,
+            "stdev": 0.09221986328996257
+          },
+          "readback": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "output": {
+            "median": 0.073282879,
+            "min": 0.071084017,
+            "max": 0.075259428,
+            "stdev": 0.0020886916584058886
+          },
+          "total": {
+            "median": 7.441222841,
+            "min": 7.350237156,
+            "max": 7.543897446,
+            "stdev": 0.0968889203415515
+          },
+          "wall": {
+            "median": 7.452396218999638,
+            "min": 7.364810086000944,
+            "max": 7.555783326999517,
+            "stdev": 0.09559550509982406
+          },
+          "reference_error": {
+            "rmse": 0.013584061421034497,
+            "relative_rmse": 0.032807734341478934,
+            "mae": 0.00502095487809583,
+            "max_absolute_error": 0.8718531131744385,
+            "mean_luminance": 0.10868607958598768,
+            "reference_mean_luminance": 0.10719271476950203,
+            "relative_luminance_bias": 0.013931588725006702
+          }
+        },
+        "cuda-128spp": {
+          "load": {
+            "median": 0.147611368,
+            "min": 0.134176592,
+            "max": 0.158050541,
+            "stdev": 0.011968256486422075
+          },
+          "cpu_acceleration": {
+            "median": 0.005155933,
+            "min": 0.00478645,
+            "max": 0.005923942,
+            "stdev": 0.0005802648190602285
+          },
+          "renderer_setup": {
+            "median": 0.245165933,
+            "min": 0.198416874,
+            "max": 0.283396274,
+            "stdev": 0.042560803396869296
+          },
+          "upload": {
+            "median": 0.0184449,
+            "min": 0.00858085,
+            "max": 0.020233307,
+            "stdev": 0.006275317204957292
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 1.908674883,
+            "min": 1.854861395,
+            "max": 1.968308558,
+            "stdev": 0.056748458829998696
+          },
+          "readback": {
+            "median": 0.002267826,
+            "min": 0.002197041,
+            "max": 0.009759024,
+            "stdev": 0.0043456231790104626
+          },
+          "output": {
+            "median": 0.089771877,
+            "min": 0.082326071,
+            "max": 0.102070957,
+            "stdev": 0.009971358307581371
+          },
+          "total": {
+            "median": 2.621449056,
+            "min": 2.487808996,
+            "max": 2.682350938,
+            "stdev": 0.09951153372438526
+          },
+          "wall": {
+            "median": 2.7086542899924098,
+            "min": 2.5728507099993294,
+            "max": 2.7685834339936264,
+            "stdev": 0.10028743181632413
+          },
+          "reference_error": {
+            "rmse": 0.013584059633193885,
+            "relative_rmse": 0.03280773002355089,
+            "mae": 0.005020953544535572,
+            "max_absolute_error": 0.8718531131744385,
+            "mean_luminance": 0.1086860803552568,
+            "reference_mean_luminance": 0.10719271476950203,
+            "relative_luminance_bias": 0.01393159590151233
+          }
+        },
+        "optix-128spp": {
+          "load": {
+            "median": 0.143919201,
+            "min": 0.140601437,
+            "max": 0.147162935,
+            "stdev": 0.0032808186027894516
+          },
+          "cpu_acceleration": {
+            "median": 0.005010277,
+            "min": 0.004820515,
+            "max": 0.006168038,
+            "stdev": 0.0007294105365857648
+          },
+          "renderer_setup": {
+            "median": 0.505996325,
+            "min": 0.464261165,
+            "max": 0.546580597,
+            "stdev": 0.041161056835310975
+          },
+          "upload": {
+            "median": 0.020257811,
+            "min": 0.020095934,
+            "max": 0.023252762,
+            "stdev": 0.001777709138053523
+          },
+          "optix_build": {
+            "median": 0.010528389,
+            "min": 0.009923292,
+            "max": 0.012114241,
+            "stdev": 0.0011314685491220391
+          },
+          "render": {
+            "median": 0.534728728,
+            "min": 0.526653987,
+            "max": 0.58795465,
+            "stdev": 0.03330658468232855
+          },
+          "readback": {
+            "median": 0.001643748,
+            "min": 0.001495526,
+            "max": 0.003266452,
+            "stdev": 0.0009824558455197871
+          },
+          "output": {
+            "median": 0.088746153,
+            "min": 0.082138745,
+            "max": 0.09414126,
+            "stdev": 0.006011452768745369
+          },
+          "total": {
+            "median": 1.499092328,
+            "min": 1.449889181,
+            "max": 1.575126711,
+            "stdev": 0.06309597978925331
+          },
+          "wall": {
+            "median": 1.6245495850016596,
+            "min": 1.577731395009323,
+            "max": 1.6998132440057816,
+            "stdev": 0.061590771948457496
+          },
+          "reference_error": {
+            "rmse": 0.013584200839345384,
+            "relative_rmse": 0.0328080710595461,
+            "mae": 0.00502099355730504,
+            "max_absolute_error": 0.8718531131744385,
+            "mean_luminance": 0.10868602440131565,
+            "reference_mean_luminance": 0.10719271476950203,
+            "relative_luminance_bias": 0.013931073907631798
+          }
+        }
+      },
+      "comparisons": {
+        "cuda-vs-cpu-128spp": {
+          "rmse": 7.429934514154384e-07,
+          "relative_rmse": 1.7915086843149034e-06,
+          "mae": 6.503815668424766e-09,
+          "max_absolute_error": 0.0005402658134698868,
+          "mean_luminance": 0.1086860803552568,
+          "reference_mean_luminance": 0.10868607958598768,
+          "relative_luminance_bias": 7.077899244839685e-09
+        },
+        "optix-vs-cpu-128spp": {
+          "rmse": 5.6741808664610255e-05,
+          "relative_rmse": 0.00013681606855717125,
+          "mae": 4.842936216261923e-07,
+          "max_absolute_error": 0.020834505558013916,
+          "mean_luminance": 0.10868602440131565,
+          "reference_mean_luminance": 0.10868607958598768,
+          "relative_luminance_bias": -5.077436985185966e-07
+        }
+      },
+      "optix_speedup": {
+        "128": {
+          "render": 3.569426483104532,
+          "through_image_output": 1.7486908624883577,
+          "process_wall": 1.6673263254009218
+        }
+      }
+    },
+    "hdr_studio": {
+      "benchmark_results": "/home/ethan/dev/Xenon/build/qualification/final/hdr_studio/results.json",
+      "results_sha256": "91d863eb8ee8318a96b1a56ea05c9e78e0d9b35e4a32aa392aa9894241f60d93",
+      "command": [
+        "/usr/bin/python3",
+        "/home/ethan/dev/Xenon/scripts/benchmark.py",
+        "/home/ethan/dev/Xenon/build/fixtures/hdr_studio-compensated/scene.xenon",
+        "--binary",
+        "/home/ethan/dev/Xenon/build/optix/xenon",
+        "--reference",
+        "/home/ethan/dev/Xenon/build/fixtures/hdr_studio/cycles.pfm",
+        "--backends",
+        "cpu",
+        "cuda",
+        "optix",
+        "--samples",
+        "128",
+        "--repeats",
+        "3",
+        "--warmups",
+        "1",
+        "--width",
+        "512",
+        "--height",
+        "384",
+        "--exposure",
+        "0",
+        "--min-bounces",
+        "3",
+        "--max-bounces",
+        "8",
+        "--seed",
+        "42",
+        "--output-dir",
+        "/home/ethan/dev/Xenon/build/qualification/final/hdr_studio"
+      ],
+      "reference": {
+        "path": "/home/ethan/dev/Xenon/build/fixtures/hdr_studio/cycles.pfm",
+        "metrics_path": "/home/ethan/dev/Xenon/build/fixtures/hdr_studio/cycles-metrics.json",
+        "metrics_sha256": "cf3c2a24447dad693cfa80711051d5a4e8f9737327c62ec1ad6a19ed9836ac72",
+        "metrics": {
+          "renderer": "Blender Cycles",
+          "blender": "4.5.3 LTS",
+          "devices": [
+            "NVIDIA GeForce RTX 4060 Laptop GPU"
+          ],
+          "width": 512,
+          "height": 384,
+          "samples": 1024,
+          "seed": 1,
+          "max_bounces": 8,
+          "render_seconds": 6.720532911000191,
+          "denoising": false,
+          "adaptive_sampling": false,
+          "clamping": false,
+          "pixel_filter": "BOX",
+          "linear_color_space": "scene-linear Rec.709",
+          "source": "/home/ethan/dev/Xenon/build/fixtures/hdr_studio/source.blend"
+        }
+      },
+      "summary": {
+        "cpu-128spp": {
+          "load": {
+            "median": 0.177212668,
+            "min": 0.161972885,
+            "max": 0.186473132,
+            "stdev": 0.012371130926767865
+          },
+          "cpu_acceleration": {
+            "median": 0.004987659,
+            "min": 0.004826475,
+            "max": 0.005046307,
+            "stdev": 0.00011383173106534619
+          },
+          "renderer_setup": {
+            "median": 0.008729312,
+            "min": 0.008703999,
+            "max": 0.008968083,
+            "stdev": 0.00014571244368389858
+          },
+          "upload": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 9.558927269,
+            "min": 9.486234986,
+            "max": 9.559966381,
+            "stdev": 0.042272067945131477
+          },
+          "readback": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "output": {
+            "median": 0.088693728,
+            "min": 0.084173087,
+            "max": 0.101521081,
+            "stdev": 0.008999352530983606
+          },
+          "total": {
+            "median": 9.834092559,
+            "min": 9.764022099,
+            "max": 9.849156583,
+            "stdev": 0.04543250405753994
+          },
+          "wall": {
+            "median": 9.847053713994683,
+            "min": 9.780358673000592,
+            "max": 9.864517666996107,
+            "stdev": 0.044414626753613275
+          },
+          "reference_error": {
+            "rmse": 0.026889587718297112,
+            "relative_rmse": 0.059916535843201606,
+            "mae": 0.011374860243284799,
+            "max_absolute_error": 4.682336330413818,
+            "mean_luminance": 0.20563097052760163,
+            "reference_mean_luminance": 0.20436014195407914,
+            "relative_luminance_bias": 0.006218573550453118
+          }
+        },
+        "cuda-128spp": {
+          "load": {
+            "median": 0.165505755,
+            "min": 0.164121092,
+            "max": 0.175877329,
+            "stdev": 0.006425158198586941
+          },
+          "cpu_acceleration": {
+            "median": 0.004849037,
+            "min": 0.004813629,
+            "max": 0.005056749,
+            "stdev": 0.0001313426408343208
+          },
+          "renderer_setup": {
+            "median": 0.233373101,
+            "min": 0.194884439,
+            "max": 0.238643496,
+            "stdev": 0.02388866270686969
+          },
+          "upload": {
+            "median": 0.028244192,
+            "min": 0.016947606,
+            "max": 0.038710113,
+            "stdev": 0.010883895354748423
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 2.326826866,
+            "min": 2.277635274,
+            "max": 2.354770809,
+            "stdev": 0.03905245923459441
+          },
+          "readback": {
+            "median": 0.002209236,
+            "min": 0.002141164,
+            "max": 0.002653887,
+            "stdev": 0.0002784580111117893
+          },
+          "output": {
+            "median": 0.096469865,
+            "min": 0.09639651,
+            "max": 0.115701085,
+            "stdev": 0.01112438627202305
+          },
+          "total": {
+            "median": 3.089737321,
+            "min": 2.966619709,
+            "max": 3.100795023,
+            "stdev": 0.07447956548063121
+          },
+          "wall": {
+            "median": 3.1777122119965497,
+            "min": 3.045972583000548,
+            "max": 3.188285267999163,
+            "stdev": 0.0792885234158066
+          },
+          "reference_error": {
+            "rmse": 0.026889606561231943,
+            "relative_rmse": 0.05991657782983941,
+            "mae": 0.011374876485437606,
+            "max_absolute_error": 4.682361125946045,
+            "mean_luminance": 0.20563093346449826,
+            "reference_mean_luminance": 0.20436014195407914,
+            "relative_luminance_bias": 0.006218392188750147
+          }
+        },
+        "optix-128spp": {
+          "load": {
+            "median": 0.168588462,
+            "min": 0.161893055,
+            "max": 0.182970491,
+            "stdev": 0.010769784440635961
+          },
+          "cpu_acceleration": {
+            "median": 0.004898588,
+            "min": 0.004839275,
+            "max": 0.004911251,
+            "stdev": 3.842509621328248e-05
+          },
+          "renderer_setup": {
+            "median": 0.504614933,
+            "min": 0.49461465,
+            "max": 0.560716767,
+            "stdev": 0.03562983606970736
+          },
+          "upload": {
+            "median": 0.041422403,
+            "min": 0.040944422,
+            "max": 0.047562504,
+            "stdev": 0.0036907161790382
+          },
+          "optix_build": {
+            "median": 0.011498555,
+            "min": 0.010891915,
+            "max": 0.012132831,
+            "stdev": 0.0006205092871762678
+          },
+          "render": {
+            "median": 0.627762121,
+            "min": 0.60064864,
+            "max": 0.659250393,
+            "stdev": 0.029328079776204125
+          },
+          "readback": {
+            "median": 0.001232424,
+            "min": 0.001221195,
+            "max": 0.002130316,
+            "stdev": 0.0005216699350397083
+          },
+          "output": {
+            "median": 0.09994178,
+            "min": 0.098876382,
+            "max": 0.111724175,
+            "stdev": 0.007130050137800317
+          },
+          "total": {
+            "median": 1.653529453,
+            "min": 1.648053847,
+            "max": 1.762556835,
+            "stdev": 0.06458571378120881
+          },
+          "wall": {
+            "median": 1.8144526660034899,
+            "min": 1.7791154449951136,
+            "max": 1.8828764219942968,
+            "stdev": 0.05275236159059507
+          },
+          "reference_error": {
+            "rmse": 0.026889922884323354,
+            "relative_rmse": 0.05991728267455637,
+            "mae": 0.011374786065767238,
+            "max_absolute_error": 4.682444095611572,
+            "mean_luminance": 0.20563093151265918,
+            "reference_mean_luminance": 0.20436014195407914,
+            "relative_luminance_bias": 0.006218382637772835
+          }
+        }
+      },
+      "comparisons": {
+        "cuda-vs-cpu-128spp": {
+          "rmse": 1.6122285315707447e-05,
+          "relative_rmse": 3.580929250395885e-05,
+          "mae": 2.0691014442538366e-07,
+          "max_absolute_error": 0.00821802020072937,
+          "mean_luminance": 0.20563093346449826,
+          "reference_mean_luminance": 0.20563097052760163,
+          "relative_luminance_bias": -1.8024086191422937e-07
+        },
+        "optix-vs-cpu-128spp": {
+          "rmse": 9.702179574945443e-05,
+          "relative_rmse": 0.000215495619586057,
+          "mae": 2.61649907577303e-06,
+          "max_absolute_error": 0.02420853078365326,
+          "mean_luminance": 0.20563093151265918,
+          "reference_mean_luminance": 0.20563097052760163,
+          "relative_luminance_bias": -1.8973281283116855e-07
+        }
+      },
+      "optix_speedup": {
+        "128": {
+          "render": 3.7065423162096147,
+          "through_image_output": 1.8685710831423574,
+          "process_wall": 1.7513337611588253
+        }
+      }
+    },
+    "glass_fog": {
+      "benchmark_results": "/home/ethan/dev/Xenon/build/qualification/final/glass_fog/results.json",
+      "results_sha256": "e42551379ebc70494cf32772b712e5a1bf41a337434bd27c5bee5f7540a42b76",
+      "command": [
+        "/usr/bin/python3",
+        "/home/ethan/dev/Xenon/scripts/benchmark.py",
+        "/home/ethan/dev/Xenon/build/fixtures/glass_fog-compensated/scene.xenon",
+        "--binary",
+        "/home/ethan/dev/Xenon/build/optix/xenon",
+        "--reference",
+        "/home/ethan/dev/Xenon/build/fixtures/glass_fog/cycles.pfm",
+        "--backends",
+        "cpu",
+        "cuda",
+        "optix",
+        "--samples",
+        "128",
+        "--repeats",
+        "3",
+        "--warmups",
+        "1",
+        "--width",
+        "512",
+        "--height",
+        "384",
+        "--exposure",
+        "0",
+        "--min-bounces",
+        "3",
+        "--max-bounces",
+        "8",
+        "--seed",
+        "42",
+        "--output-dir",
+        "/home/ethan/dev/Xenon/build/qualification/final/glass_fog"
+      ],
+      "reference": {
+        "path": "/home/ethan/dev/Xenon/build/fixtures/glass_fog/cycles.pfm",
+        "metrics_path": "/home/ethan/dev/Xenon/build/fixtures/glass_fog/cycles-metrics.json",
+        "metrics_sha256": "c49eb55f907b672c0fd92c3fe51e12090bdfae76e901ff18deb898aac20eba70",
+        "metrics": {
+          "renderer": "Blender Cycles",
+          "blender": "4.5.3 LTS",
+          "devices": [
+            "NVIDIA GeForce RTX 4060 Laptop GPU"
+          ],
+          "width": 512,
+          "height": 384,
+          "samples": 1024,
+          "seed": 1,
+          "max_bounces": 8,
+          "render_seconds": 11.927379860004294,
+          "denoising": false,
+          "adaptive_sampling": false,
+          "clamping": false,
+          "pixel_filter": "BOX",
+          "linear_color_space": "scene-linear Rec.709",
+          "source": "/home/ethan/dev/Xenon/build/fixtures/glass_fog/material_studio.blend"
+        }
+      },
+      "summary": {
+        "cpu-128spp": {
+          "load": {
+            "median": 0.13596551,
+            "min": 0.12423289,
+            "max": 0.147057164,
+            "stdev": 0.011413636903190203
+          },
+          "cpu_acceleration": {
+            "median": 0.005226845,
+            "min": 0.004775039,
+            "max": 0.005448149,
+            "stdev": 0.0003430697679656429
+          },
+          "renderer_setup": {
+            "median": 0.010014745,
+            "min": 0.009692221,
+            "max": 0.010374441,
+            "stdev": 0.00034127874027740576
+          },
+          "upload": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 8.361212177,
+            "min": 8.306203402,
+            "max": 8.372355548,
+            "stdev": 0.03541714854099569
+          },
+          "readback": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "output": {
+            "median": 0.088877719,
+            "min": 0.085758067,
+            "max": 0.091655646,
+            "stdev": 0.0029504390938659172
+          },
+          "total": {
+            "median": 8.597812633,
+            "min": 8.546510766,
+            "max": 8.615311423,
+            "stdev": 0.03575756240009749
+          },
+          "wall": {
+            "median": 8.611584778001998,
+            "min": 8.557775256995228,
+            "max": 8.627772867999738,
+            "stdev": 0.03664510962163894
+          },
+          "reference_error": {
+            "rmse": 0.029801322376943867,
+            "relative_rmse": 0.07598396721509505,
+            "mae": 0.01840826033324245,
+            "max_absolute_error": 1.0067224502563477,
+            "mean_luminance": 0.16775784589838919,
+            "reference_mean_luminance": 0.16594653379756935,
+            "relative_luminance_bias": 0.010915034254523035
+          }
+        },
+        "cuda-128spp": {
+          "load": {
+            "median": 0.168872163,
+            "min": 0.143125388,
+            "max": 0.172365192,
+            "stdev": 0.015969052426771616
+          },
+          "cpu_acceleration": {
+            "median": 0.004958859,
+            "min": 0.004757049,
+            "max": 0.005689606,
+            "stdev": 0.0004906426079401717
+          },
+          "renderer_setup": {
+            "median": 0.230788827,
+            "min": 0.211339893,
+            "max": 0.235409989,
+            "stdev": 0.012773577503423589
+          },
+          "upload": {
+            "median": 0.019214469,
+            "min": 0.008425819,
+            "max": 0.020402629,
+            "stdev": 0.006598619436217953
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 2.425541169,
+            "min": 2.416376408,
+            "max": 2.465095455,
+            "stdev": 0.02589105355698867
+          },
+          "readback": {
+            "median": 0.002420946,
+            "min": 0.002335273,
+            "max": 0.007205439,
+            "stdev": 0.0027873891606523715
+          },
+          "output": {
+            "median": 0.104358232,
+            "min": 0.104347501,
+            "max": 0.108763836,
+            "stdev": 0.002546680080398862
+          },
+          "total": {
+            "median": 3.129983296,
+            "min": 3.117767704,
+            "max": 3.147975498,
+            "stdev": 0.015195672843859925
+          },
+          "wall": {
+            "median": 3.2158776599972043,
+            "min": 3.197871589989518,
+            "max": 3.2358094389928738,
+            "stdev": 0.01897706843383769
+          },
+          "reference_error": {
+            "rmse": 0.02980134985666584,
+            "relative_rmse": 0.0759840372797139,
+            "mae": 0.01840832167492263,
+            "max_absolute_error": 1.0067224502563477,
+            "mean_luminance": 0.1677577673092021,
+            "reference_mean_luminance": 0.16594653379756935,
+            "relative_luminance_bias": 0.010914560673151516
+          }
+        },
+        "optix-128spp": {
+          "load": {
+            "median": 0.134979289,
+            "min": 0.124948248,
+            "max": 0.13689324,
+            "stdev": 0.006415707623405571
+          },
+          "cpu_acceleration": {
+            "median": 0.004934856,
+            "min": 0.004852958,
+            "max": 0.005064962,
+            "stdev": 0.00010691160652302136
+          },
+          "renderer_setup": {
+            "median": 0.555997641,
+            "min": 0.50502078,
+            "max": 0.602745318,
+            "stdev": 0.048877518672737985
+          },
+          "upload": {
+            "median": 0.020075473,
+            "min": 0.019714127,
+            "max": 0.023517996,
+            "stdev": 0.0020996410370349014
+          },
+          "optix_build": {
+            "median": 0.010284464,
+            "min": 0.009907359,
+            "max": 0.012425796,
+            "stdev": 0.0013583099694238915
+          },
+          "render": {
+            "median": 0.634603605,
+            "min": 0.594144621,
+            "max": 0.651686793,
+            "stdev": 0.029551836539187616
+          },
+          "readback": {
+            "median": 0.001398011,
+            "min": 0.001342608,
+            "max": 0.002946157,
+            "stdev": 0.0009102375994876283
+          },
+          "output": {
+            "median": 0.108547878,
+            "min": 0.108270482,
+            "max": 0.112151876,
+            "stdev": 0.0021652932637426566
+          },
+          "total": {
+            "median": 1.637528906,
+            "min": 1.590987513,
+            "max": 1.734099547,
+            "stdev": 0.0729989089429293
+          },
+          "wall": {
+            "median": 1.7575598650000757,
+            "min": 1.7144135209964588,
+            "max": 1.8507033009955194,
+            "stdev": 0.06965655126177782
+          },
+          "reference_error": {
+            "rmse": 0.029801183211279288,
+            "relative_rmse": 0.07598361238656895,
+            "mae": 0.018408158744020083,
+            "max_absolute_error": 1.0067226886749268,
+            "mean_luminance": 0.1677577808786366,
+            "reference_mean_luminance": 0.16594653379756935,
+            "relative_luminance_bias": 0.010914642443069706
+          }
+        }
+      },
+      "comparisons": {
+        "cuda-vs-cpu-128spp": {
+          "rmse": 3.559579209155938e-05,
+          "relative_rmse": 9.036722259572841e-05,
+          "mae": 8.027001917475394e-08,
+          "max_absolute_error": 0.022718600928783417,
+          "mean_luminance": 0.1677577673092021,
+          "reference_mean_luminance": 0.16775784589838919,
+          "relative_luminance_bias": -4.6846802695778695e-07
+        },
+        "optix-vs-cpu-128spp": {
+          "rmse": 0.00011539796883832388,
+          "relative_rmse": 0.00029296142393135617,
+          "mae": 8.428748859362006e-07,
+          "max_absolute_error": 0.055392906069755554,
+          "mean_luminance": 0.1677577808786366,
+          "reference_mean_luminance": 0.16775784589838919,
+          "relative_luminance_bias": -3.875809935076219e-07
+        }
+      },
+      "optix_speedup": {
+        "128": {
+          "render": 3.8221358181537592,
+          "through_image_output": 1.911406439624706,
+          "process_wall": 1.8297400413140783
+        }
+      }
+    },
+    "classroom-instances": {
+      "benchmark_results": "/home/ethan/dev/Xenon/build/qualification/final/classroom-instances/results.json",
+      "results_sha256": "b06640d53fac7ba65c91053f1bf8a83c0073baacac8d2894f2377c8ce4219547",
+      "command": [
+        "/usr/bin/python3",
+        "/home/ethan/dev/Xenon/scripts/benchmark.py",
+        "/home/ethan/dev/Xenon/build/fixtures/classroom-instances-compensated/scene.xenon",
+        "--binary",
+        "/home/ethan/dev/Xenon/build/optix/xenon",
+        "--reference",
+        "/home/ethan/dev/Xenon/build/fixtures/classroom-converted/cycles.pfm",
+        "--backends",
+        "cpu",
+        "cuda",
+        "optix",
+        "--samples",
+        "128",
+        "--repeats",
+        "3",
+        "--warmups",
+        "1",
+        "--width",
+        "800",
+        "--height",
+        "600",
+        "--exposure",
+        "0",
+        "--min-bounces",
+        "3",
+        "--max-bounces",
+        "8",
+        "--seed",
+        "42",
+        "--output-dir",
+        "/home/ethan/dev/Xenon/build/qualification/final/classroom-instances"
+      ],
+      "reference": {
+        "path": "/home/ethan/dev/Xenon/build/fixtures/classroom-converted/cycles.pfm",
+        "metrics_path": "/home/ethan/dev/Xenon/build/fixtures/classroom-converted/cycles-metrics.json",
+        "metrics_sha256": "fdb216d2ff178ee98149de55c9a5813c2a5530628c34c212dd02e62ff1b18600",
+        "metrics": {
+          "renderer": "Blender Cycles",
+          "blender": "4.5.3 LTS",
+          "devices": [
+            "NVIDIA GeForce RTX 4060 Laptop GPU"
+          ],
+          "width": 800,
+          "height": 600,
+          "samples": 1024,
+          "seed": 1,
+          "max_bounces": 8,
+          "render_seconds": 45.70438172000286,
+          "denoising": false,
+          "adaptive_sampling": false,
+          "clamping": false,
+          "pixel_filter": "BOX",
+          "linear_color_space": "scene-linear Rec.709",
+          "source": "/home/ethan/dev/Xenon/build/fixtures/classroom-converted/comparison.blend"
+        }
+      },
+      "summary": {
+        "cpu-128spp": {
+          "load": {
+            "median": 11.263773899,
+            "min": 11.036353243,
+            "max": 11.690918741,
+            "stdev": 0.33232234903144464
+          },
+          "cpu_acceleration": {
+            "median": 0.170038041,
+            "min": 0.169932999,
+            "max": 0.186667744,
+            "stdev": 0.009631629715897838
+          },
+          "renderer_setup": {
+            "median": 0.047299496,
+            "min": 0.046289399,
+            "max": 0.047446069,
+            "stdev": 0.0006297704717643826
+          },
+          "upload": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 141.705001457,
+            "min": 138.898046426,
+            "max": 141.774402168,
+            "stdev": 1.6409974283587312
+          },
+          "readback": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "output": {
+            "median": 0.230934166,
+            "min": 0.226293244,
+            "max": 0.231403414,
+            "stdev": 0.0028246589211350782
+          },
+          "total": {
+            "median": 153.206819326,
+            "min": 150.609981563,
+            "max": 153.90934484,
+            "stdev": 1.737954089285251
+          },
+          "wall": {
+            "median": 153.3580597399996,
+            "min": 150.7699696549971,
+            "max": 154.06949681200786,
+            "stdev": 1.736434683259889
+          },
+          "reference_error": {
+            "rmse": 0.27541782504768186,
+            "relative_rmse": 0.20685740968797817,
+            "mae": 0.10125729914075246,
+            "max_absolute_error": 113.2390573322773,
+            "mean_luminance": 0.6697226248295955,
+            "reference_mean_luminance": 0.6466137153571476,
+            "relative_luminance_bias": 0.03573835339957807
+          }
+        },
+        "cuda-128spp": {
+          "load": {
+            "median": 11.444761309,
+            "min": 10.581303063,
+            "max": 11.518291145,
+            "stdev": 0.5210427757835917
+          },
+          "cpu_acceleration": {
+            "median": 0.173841775,
+            "min": 0.173373773,
+            "max": 0.175080673,
+            "stdev": 0.0008819865585151048
+          },
+          "renderer_setup": {
+            "median": 0.263226451,
+            "min": 0.249351347,
+            "max": 0.289046857,
+            "stdev": 0.020145079594348223
+          },
+          "upload": {
+            "median": 5.513187135,
+            "min": 5.360926307,
+            "max": 5.728390788,
+            "stdev": 0.18462850845431444
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 44.734974331,
+            "min": 44.728700604,
+            "max": 44.856978406,
+            "stdev": 0.07231821860480095
+          },
+          "readback": {
+            "median": 0.008786814,
+            "min": 0.005929858,
+            "max": 0.009438885,
+            "stdev": 0.0018663987007829634
+          },
+          "output": {
+            "median": 0.25349929,
+            "min": 0.236387903,
+            "max": 0.26882286,
+            "stdev": 0.016225688471271496
+          },
+          "total": {
+            "median": 64.040258841,
+            "min": 63.255355562,
+            "max": 64.708314674,
+            "stdev": 0.727262210225684
+          },
+          "wall": {
+            "median": 64.31791311799316,
+            "min": 63.54692941799294,
+            "max": 64.95719473100326,
+            "stdev": 0.706156864003895
+          },
+          "reference_error": {
+            "rmse": 0.2744132776395178,
+            "relative_rmse": 0.2061029266594174,
+            "mae": 0.10121380448894589,
+            "max_absolute_error": 113.24017885327339,
+            "mean_luminance": 0.6696686711135332,
+            "reference_mean_luminance": 0.6466137153571476,
+            "relative_luminance_bias": 0.035654912985647914
+          }
+        },
+        "optix-128spp": {
+          "load": {
+            "median": 10.985354574,
+            "min": 10.355662509,
+            "max": 11.243912723,
+            "stdev": 0.45686483336783446
+          },
+          "cpu_acceleration": {
+            "median": 0.174564609,
+            "min": 0.171643908,
+            "max": 0.175848369,
+            "stdev": 0.002154685838257398
+          },
+          "renderer_setup": {
+            "median": 0.63893558,
+            "min": 0.521461888,
+            "max": 0.653719579,
+            "stdev": 0.07246922538475017
+          },
+          "upload": {
+            "median": 5.561967765,
+            "min": 5.311877457,
+            "max": 5.860536034,
+            "stdev": 0.2746860048385115
+          },
+          "optix_build": {
+            "median": 0.22714496,
+            "min": 0.219273967,
+            "max": 0.242177625,
+            "stdev": 0.011636946174356622
+          },
+          "render": {
+            "median": 3.810219559,
+            "min": 3.807200219,
+            "max": 3.848753275,
+            "stdev": 0.023168297828942162
+          },
+          "readback": {
+            "median": 0.005415947,
+            "min": 0.004571164,
+            "max": 0.01046733,
+            "stdev": 0.0031883878379031934
+          },
+          "output": {
+            "median": 0.242870786,
+            "min": 0.239751755,
+            "max": 0.249921572,
+            "stdev": 0.005210040233533806
+          },
+          "total": {
+            "median": 23.062255955,
+            "min": 22.603110592,
+            "max": 23.338701704,
+            "stdev": 0.3715577569633854
+          },
+          "wall": {
+            "median": 23.37318896499346,
+            "min": 22.93207179599267,
+            "max": 23.661364038998727,
+            "stdev": 0.36730922616918177
+          },
+          "reference_error": {
+            "rmse": 0.2727750774697675,
+            "relative_rmse": 0.20487252756086127,
+            "mae": 0.10118776557170671,
+            "max_absolute_error": 113.23951509594917,
+            "mean_luminance": 0.6696449484093558,
+            "reference_mean_luminance": 0.6466137153571476,
+            "relative_luminance_bias": 0.03561822538745139
+          }
+        }
+      },
+      "comparisons": {
+        "cuda-vs-cpu-128spp": {
+          "rmse": 0.026981447249211046,
+          "relative_rmse": 0.019584172473343306,
+          "mae": 0.00047501232671586066,
+          "max_absolute_error": 14.896202683448792,
+          "mean_luminance": 0.6696686711135332,
+          "reference_mean_luminance": 0.6697226248295955,
+          "relative_luminance_bias": -8.056128621314538e-05
+        },
+        "optix-vs-cpu-128spp": {
+          "rmse": 0.043587129050059625,
+          "relative_rmse": 0.03163721519642355,
+          "mae": 0.001342236736910713,
+          "max_absolute_error": 31.282154321670532,
+          "mean_luminance": 0.6696449484093558,
+          "reference_mean_luminance": 0.6697226248295955,
+          "relative_luminance_bias": -0.00011598297169588217
+        }
+      },
+      "optix_speedup": {
+        "128": {
+          "render": 11.740786492298827,
+          "through_image_output": 2.7768427757439653,
+          "process_wall": 2.7517816766177483
+        }
+      }
+    },
+    "sponza-full": {
+      "benchmark_results": "/home/ethan/dev/Xenon/build/qualification/final/sponza-full/results.json",
+      "results_sha256": "bbabd852bffc3ae530c63b2f43a10ec69acc1fad5f4c87c0727236b788b2fbb3",
+      "command": [
+        "/usr/bin/python3",
+        "/home/ethan/dev/Xenon/scripts/benchmark.py",
+        "/home/ethan/dev/Xenon/build/fixtures/sponza-full-compensated/scene.xenon",
+        "--binary",
+        "/home/ethan/dev/Xenon/build/optix/xenon",
+        "--reference",
+        "/home/ethan/dev/Xenon/build/fixtures/sponza-full/cycles.pfm",
+        "--backends",
+        "cpu",
+        "cuda",
+        "optix",
+        "--samples",
+        "128",
+        "--repeats",
+        "3",
+        "--warmups",
+        "1",
+        "--width",
+        "800",
+        "--height",
+        "600",
+        "--exposure",
+        "4",
+        "--min-bounces",
+        "3",
+        "--max-bounces",
+        "8",
+        "--seed",
+        "42",
+        "--output-dir",
+        "/home/ethan/dev/Xenon/build/qualification/final/sponza-full"
+      ],
+      "reference": {
+        "path": "/home/ethan/dev/Xenon/build/fixtures/sponza-full/cycles.pfm",
+        "metrics_path": "/home/ethan/dev/Xenon/build/fixtures/sponza-full/cycles-metrics.json",
+        "metrics_sha256": "9880f8807ec1535d89e158f7dfd0b70cb34f76c4387f1e5984d5b1b488bf3e85",
+        "metrics": {
+          "renderer": "Blender Cycles",
+          "blender": "4.5.3 LTS",
+          "devices": [
+            "NVIDIA GeForce RTX 4060 Laptop GPU"
+          ],
+          "width": 800,
+          "height": 600,
+          "samples": 4096,
+          "seed": 1,
+          "max_bounces": 8,
+          "render_seconds": 145.4327019839984,
+          "denoising": false,
+          "adaptive_sampling": false,
+          "clamping": false,
+          "pixel_filter": "BOX",
+          "linear_color_space": "scene-linear Rec.709",
+          "source": "/home/ethan/dev/Xenon/build/fixtures/sponza-full/source.blend"
+        }
+      },
+      "summary": {
+        "cpu-128spp": {
+          "load": {
+            "median": 50.671286164,
+            "min": 49.090188408,
+            "max": 51.992740728,
+            "stdev": 1.4532103684074804
+          },
+          "cpu_acceleration": {
+            "median": 1.934731242,
+            "min": 1.887959618,
+            "max": 1.950676132,
+            "stdev": 0.03259648615270685
+          },
+          "renderer_setup": {
+            "median": 0.031599989,
+            "min": 0.021877668,
+            "max": 0.040346113,
+            "stdev": 0.009238521448879525
+          },
+          "upload": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 170.732462326,
+            "min": 167.892445408,
+            "max": 177.8187551,
+            "stdev": 5.112286922615366
+          },
+          "readback": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "output": {
+            "median": 0.219716075,
+            "min": 0.215282642,
+            "max": 0.229687952,
+            "stdev": 0.007377969631101297
+          },
+          "total": {
+            "median": 224.931924593,
+            "min": 220.693620526,
+            "max": 229.105292102,
+            "stdev": 4.205877562649916
+          },
+          "wall": {
+            "median": 225.13733639199927,
+            "min": 220.86995049800316,
+            "max": 229.3053054799966,
+            "stdev": 4.217775131492508
+          },
+          "reference_error": {
+            "rmse": 0.0007929588296751466,
+            "relative_rmse": 0.09161544023193312,
+            "mae": 0.00031872839744554794,
+            "max_absolute_error": 0.0942218154668808,
+            "mean_luminance": 0.0015763300679018462,
+            "reference_mean_luminance": 0.0015313974116583982,
+            "relative_luminance_bias": 0.029340950886673482
+          }
+        },
+        "cuda-128spp": {
+          "load": {
+            "median": 50.672540262,
+            "min": 50.497473721,
+            "max": 50.686923211,
+            "stdev": 0.10547217031117874
+          },
+          "cpu_acceleration": {
+            "median": 1.917955242,
+            "min": 1.894883697,
+            "max": 1.969444599,
+            "stdev": 0.03817236823500755
+          },
+          "renderer_setup": {
+            "median": 0.324741814,
+            "min": 0.271330897,
+            "max": 0.326193005,
+            "stdev": 0.03126415120736803
+          },
+          "upload": {
+            "median": 8.475501672,
+            "min": 6.355138407,
+            "max": 9.437593539,
+            "stdev": 1.5770801489304076
+          },
+          "optix_build": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "stdev": 0.0
+          },
+          "render": {
+            "median": 48.788724022,
+            "min": 48.724736646,
+            "max": 48.949222589,
+            "stdev": 0.11564897528081965
+          },
+          "readback": {
+            "median": 0.006704974,
+            "min": 0.005791566,
+            "max": 0.014500949,
+            "stdev": 0.00478652435865138
+          },
+          "output": {
+            "median": 0.237916281,
+            "min": 0.231250674,
+            "max": 0.2558421,
+            "stdev": 0.012718120512433482
+          },
+          "total": {
+            "median": 112.660650313,
+            "min": 110.636728742,
+            "max": 113.333486946,
+            "stdev": 1.403654306391424
+          },
+          "wall": {
+            "median": 112.97497298799863,
+            "min": 110.93864811399544,
+            "max": 113.67215575701266,
+            "stdev": 1.4203724183189725
+          },
+          "reference_error": {
+            "rmse": 0.0007930944306824932,
+            "relative_rmse": 0.09163110705537847,
+            "mae": 0.0003187738359264386,
+            "max_absolute_error": 0.09423096477985382,
+            "mean_luminance": 0.0015761823206872187,
+            "reference_mean_luminance": 0.0015313974116583982,
+            "relative_luminance_bias": 0.029244472197665218
+          }
+        },
+        "optix-128spp": {
+          "load": {
+            "median": 50.285603247,
+            "min": 49.714165617,
+            "max": 51.331308432,
+            "stdev": 0.8200804008370188
+          },
+          "cpu_acceleration": {
+            "median": 1.904914987,
+            "min": 1.887647797,
+            "max": 1.929646247,
+            "stdev": 0.021109479995514612
+          },
+          "renderer_setup": {
+            "median": 0.569348808,
+            "min": 0.545802353,
+            "max": 0.681410928,
+            "stdev": 0.07245922979567207
+          },
+          "upload": {
+            "median": 7.04818075,
+            "min": 7.010299918,
+            "max": 11.576445364,
+            "stdev": 2.625398369957853
+          },
+          "optix_build": {
+            "median": 0.518817352,
+            "min": 0.508079394,
+            "max": 0.53012947,
+            "stdev": 0.011026283804781057
+          },
+          "render": {
+            "median": 6.468180353,
+            "min": 6.450738356,
+            "max": 6.521344825,
+            "stdev": 0.03677852137465289
+          },
+          "readback": {
+            "median": 0.008086891,
+            "min": 0.006763209,
+            "max": 0.009362898,
+            "stdev": 0.0012999173562124374
+          },
+          "output": {
+            "median": 0.236906449,
+            "min": 0.225584305,
+            "max": 0.239063692,
+            "stdev": 0.007240378857646804
+          },
+          "total": {
+            "median": 69.223311362,
+            "min": 66.77735089,
+            "max": 74.790104376,
+            "stdev": 4.106420288578828
+          },
+          "wall": {
+            "median": 69.63030811300268,
+            "min": 67.13978732899704,
+            "max": 75.16258040799585,
+            "stdev": 4.106375922674885
+          },
+          "reference_error": {
+            "rmse": 0.0007922879236633868,
+            "relative_rmse": 0.09153792630898859,
+            "mae": 0.000318383246468952,
+            "max_absolute_error": 0.09391508996486664,
+            "mean_luminance": 0.0015759676679290042,
+            "reference_mean_luminance": 0.0015313974116583982,
+            "relative_luminance_bias": 0.02910430429834631
+          }
+        }
+      },
+      "comparisons": {
+        "cuda-vs-cpu-128spp": {
+          "rmse": 5.963336451743598e-05,
+          "relative_rmse": 0.006995769021587869,
+          "mae": 1.3633099457154412e-05,
+          "max_absolute_error": 0.01222397934179753,
+          "mean_luminance": 0.0015761823206872187,
+          "reference_mean_luminance": 0.0015763300679018462,
+          "relative_luminance_bias": -9.372860268034262e-05
+        },
+        "optix-vs-cpu-128spp": {
+          "rmse": 0.00012534843558153355,
+          "relative_rmse": 0.014705001296537594,
+          "mae": 5.838855095755139e-05,
+          "max_absolute_error": 0.00786033901385963,
+          "mean_luminance": 0.0015759676679290042,
+          "reference_mean_luminance": 0.0015763300679018462,
+          "relative_luminance_bias": -0.00022990107225727535
+        }
+      },
+      "optix_speedup": {
+        "128": {
+          "render": 7.542882442876125,
+          "through_image_output": 1.6274958261364658,
+          "process_wall": 1.6224971000365545
+        }
+      }
+    }
+  },
+  "finished_utc": "2026-10-12T10:22:12.551637+00:00"
+}

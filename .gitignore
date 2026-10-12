@@ -1,42 +1,23 @@
-# Prerequisites
+# Build products
+build/
+bin/
+xenon
 *.d
-
-# Compiled Object files
 *.slo
 *.lo
 *.o
 *.obj
-
-# Precompiled Headers
 *.gch
 *.pch
-
-# Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
 *.mod
 *.smod
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
-
-# Executables
-xenon
-build/
-bin/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-.DS_Store
 
 # CMake
 CMakeCache.txt
@@ -51,16 +32,21 @@ CTestTestfile.cmake
 _CPack_Packages/
 CPackConfig.cmake
 CPackSourceConfig.cmake
-.cache/
 
-# Python
+# Downloaded assets and local output; published images are in docs/renders/
+/assets/
+/renders/
+/log/
+.log/
+.cache/
+run_tests.sh
+
+# Editors and Python
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Project specific
-renders/*.png
-!renders/cornell_final.png
-!renders/wavefront_cornell.png
-.log/
-run_tests.sh

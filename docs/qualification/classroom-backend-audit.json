@@ -1,0 +1,438 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-12T09:50:33.088457+00:00",
+  "purpose": "Diagnostic audit of sparse backend differences in the Classroom qualification warmup images.",
+  "inputs": {
+    "cpu": {
+      "pfm": "build/qualification/final/classroom-instances/cpu-128spp-warmup1.pfm",
+      "pfm_sha256": "98bf99e344c411e61371086132b152991327d5e55e4027eda4576df996719c28",
+      "metrics": "build/qualification/final/classroom-instances/cpu-128spp-warmup1.json",
+      "metrics_sha256": "7763d9910fbf1e3b841e7164bab14218561079a1633ac9c311f2bbaf123bb3f4",
+      "run_status": "discarded timing warmup; retained for diagnostic image comparison",
+      "settings": {
+        "backend": "cpu",
+        "width": 800,
+        "height": 600,
+        "samples": 128,
+        "seed": 42,
+        "min_bounces": 3,
+        "max_bounces": 8,
+        "exposure_ev": 0,
+        "mean_luminance": 0.66972262483,
+        "max_radiance": 113.557472229
+      }
+    },
+    "cuda": {
+      "pfm": "build/qualification/final/classroom-instances/cuda-128spp-warmup1.pfm",
+      "pfm_sha256": "228ee7c7817d431667e3b9a2e40b49fa56cfebfe73d8cca9a7607db9c3a8f630",
+      "metrics": "build/qualification/final/classroom-instances/cuda-128spp-warmup1.json",
+      "metrics_sha256": "89406a24e579471f5bfd486cae5f018a263405cd32c55bd169cad5f371288c3d",
+      "run_status": "discarded timing warmup; retained for diagnostic image comparison",
+      "settings": {
+        "backend": "cuda",
+        "width": 800,
+        "height": 600,
+        "samples": 128,
+        "seed": 42,
+        "min_bounces": 3,
+        "max_bounces": 8,
+        "exposure_ev": 0,
+        "mean_luminance": 0.669668671116,
+        "max_radiance": 113.55859375
+      }
+    },
+    "optix": {
+      "pfm": "build/qualification/final/classroom-instances/optix-128spp-warmup1.pfm",
+      "pfm_sha256": "52831a70a1331f67da2074e4e735693e5b559a1f9451bec0b00f1661f56636d2",
+      "metrics": "build/qualification/final/classroom-instances/optix-128spp-warmup1.json",
+      "metrics_sha256": "9f82803963029fef71a9f693be44cd8ddaac1e9dad8b213d012b0de4e4c3d880",
+      "run_status": "discarded timing warmup; retained for diagnostic image comparison",
+      "settings": {
+        "backend": "optix",
+        "width": 800,
+        "height": 600,
+        "samples": 128,
+        "seed": 42,
+        "min_bounces": 3,
+        "max_bounces": 8,
+        "exposure_ev": 0,
+        "mean_luminance": 0.669644948409,
+        "max_radiance": 113.557929993
+      }
+    }
+  },
+  "comparison_conventions": {
+    "reference": "CPU for CPU comparisons; CUDA for OptiX-versus-CUDA.",
+    "pixels": 480000,
+    "pixel_rms": "sqrt(mean((candidate RGB - reference RGB)^2)) over three channels",
+    "pixel_max_channel_error": "max(abs(candidate RGB - reference RGB)) over three channels",
+    "squared_error_concentration": "Fraction of all untrimmed squared RGB error contributed by the N largest pixel RMS errors.",
+    "relative_luminance_bias": "(candidate mean luminance - reference mean luminance) / reference mean luminance",
+    "luminance_weights": [
+      0.2126,
+      0.7152,
+      0.0722
+    ]
+  },
+  "comparisons": {
+    "optix-vs-cpu": {
+      "reference": "cpu",
+      "candidate": "optix",
+      "untrimmed_full_image_metrics": {
+        "rmse": 0.043587129050048,
+        "relative_rmse": 0.03163721519641511,
+        "mae": 0.0013422367364476387,
+        "max_absolute_error": 31.282154321670532,
+        "mean_luminance": 0.6696449484088209,
+        "reference_mean_luminance": 0.6697226248295955,
+        "relative_luminance_bias": -0.00011598297249457917
+      },
+      "diagnostic_pixel_rms_quantiles": {
+        "0": 0.0,
+        "0.25": 4.020553101072324e-07,
+        "0.5": 1.5599316733028464e-06,
+        "0.75": 8.469768988444766e-06,
+        "0.9": 0.000116461079425461,
+        "0.95": 0.0019083505232251085,
+        "0.99": 0.05077864892747399,
+        "0.995": 0.06549810633824725,
+        "0.999": 0.08319182943141126,
+        "0.9999": 0.4160036323650211,
+        "1": 23.4050618645264
+      },
+      "diagnostic_max_channel_error_thresholds": [
+        {
+          "threshold": 1e-07,
+          "pixels_exceeding": 456254,
+          "fraction_exceeding": 0.9505291666666666
+        },
+        {
+          "threshold": 1e-06,
+          "pixels_exceeding": 302861,
+          "fraction_exceeding": 0.6309604166666667
+        },
+        {
+          "threshold": 1e-05,
+          "pixels_exceeding": 124659,
+          "fraction_exceeding": 0.25970625
+        },
+        {
+          "threshold": 0.0001,
+          "pixels_exceeding": 54593,
+          "fraction_exceeding": 0.11373541666666667
+        },
+        {
+          "threshold": 0.001,
+          "pixels_exceeding": 30139,
+          "fraction_exceeding": 0.06278958333333333
+        },
+        {
+          "threshold": 0.01,
+          "pixels_exceeding": 14384,
+          "fraction_exceeding": 0.029966666666666666
+        },
+        {
+          "threshold": 0.1,
+          "pixels_exceeding": 449,
+          "fraction_exceeding": 0.0009354166666666666
+        },
+        {
+          "threshold": 1,
+          "pixels_exceeding": 20,
+          "fraction_exceeding": 4.1666666666666665e-05
+        },
+        {
+          "threshold": 5,
+          "pixels_exceeding": 6,
+          "fraction_exceeding": 1.25e-05
+        },
+        {
+          "threshold": 10,
+          "pixels_exceeding": 4,
+          "fraction_exceeding": 8.333333333333334e-06
+        }
+      ],
+      "diagnostic_squared_error_fraction_from_worst_pixels": {
+        "1": 0.6007057938645419,
+        "5": 0.8848537569457604,
+        "10": 0.9401117166171118,
+        "50": 0.965985188435889,
+        "100": 0.9695249134958575,
+        "480": 0.9737906039021582,
+        "4800": 0.9940703364207072
+      }
+    },
+    "cuda-vs-cpu": {
+      "reference": "cpu",
+      "candidate": "cuda",
+      "untrimmed_full_image_metrics": {
+        "rmse": 0.026981447249215206,
+        "relative_rmse": 0.019584172473346324,
+        "mae": 0.00047501232600960774,
+        "max_absolute_error": 14.896202683448792,
+        "mean_luminance": 0.6696686711159071,
+        "reference_mean_luminance": 0.6697226248295955,
+        "relative_luminance_bias": -8.056128266857515e-05
+      },
+      "diagnostic_pixel_rms_quantiles": {
+        "0": 0.0,
+        "0.25": 5.7067102656146175e-08,
+        "0.5": 1.9466795466607238e-07,
+        "0.75": 9.454583218250374e-07,
+        "0.9": 7.100329037176093e-06,
+        "0.95": 3.9245823155081005e-05,
+        "0.99": 0.0074894580599346875,
+        "0.995": 0.026037724776589805,
+        "0.999": 0.07177263777901598,
+        "0.9999": 0.11599679022850772,
+        "1": 10.50387450195908
+      },
+      "diagnostic_max_channel_error_thresholds": [
+        {
+          "threshold": 1e-07,
+          "pixels_exceeding": 338490,
+          "fraction_exceeding": 0.7051875
+        },
+        {
+          "threshold": 1e-06,
+          "pixels_exceeding": 131704,
+          "fraction_exceeding": 0.2743833333333333
+        },
+        {
+          "threshold": 1e-05,
+          "pixels_exceeding": 46678,
+          "fraction_exceeding": 0.09724583333333334
+        },
+        {
+          "threshold": 0.0001,
+          "pixels_exceeding": 18943,
+          "fraction_exceeding": 0.03946458333333333
+        },
+        {
+          "threshold": 0.001,
+          "pixels_exceeding": 9968,
+          "fraction_exceeding": 0.020766666666666666
+        },
+        {
+          "threshold": 0.01,
+          "pixels_exceeding": 4754,
+          "fraction_exceeding": 0.009904166666666667
+        },
+        {
+          "threshold": 0.1,
+          "pixels_exceeding": 136,
+          "fraction_exceeding": 0.00028333333333333335
+        },
+        {
+          "threshold": 1,
+          "pixels_exceeding": 8,
+          "fraction_exceeding": 1.6666666666666667e-05
+        },
+        {
+          "threshold": 5,
+          "pixels_exceeding": 5,
+          "fraction_exceeding": 1.0416666666666666e-05
+        },
+        {
+          "threshold": 10,
+          "pixels_exceeding": 4,
+          "fraction_exceeding": 8.333333333333334e-06
+        }
+      ],
+      "diagnostic_squared_error_fraction_from_worst_pixels": {
+        "1": 0.31573834575872944,
+        "5": 0.9349890590844093,
+        "10": 0.9670188258380481,
+        "50": 0.97433079533119,
+        "100": 0.9758086004650918,
+        "480": 0.9823313027128807,
+        "4800": 0.9998195218734405
+      }
+    },
+    "optix-vs-cuda": {
+      "reference": "cuda",
+      "candidate": "optix",
+      "untrimmed_full_image_metrics": {
+        "rmse": 0.0464422419545786,
+        "relative_rmse": 0.03371535430268549,
+        "mae": 0.0013714263599132503,
+        "max_absolute_error": 31.282318353652954,
+        "mean_luminance": 0.6696449484088209,
+        "reference_mean_luminance": 0.6696686711159071,
+        "relative_luminance_bias": -3.542454367268024e-05
+      },
+      "diagnostic_pixel_rms_quantiles": {
+        "0": 0.0,
+        "0.25": 3.8551505231722705e-07,
+        "0.5": 1.4958760824972753e-06,
+        "0.75": 8.231485606018099e-06,
+        "0.9": 0.00011580986450926729,
+        "0.95": 0.0019113816888661217,
+        "0.99": 0.050549857523150915,
+        "0.995": 0.06564205884756275,
+        "0.999": 0.08324721884713018,
+        "0.9999": 0.44439666492025254,
+        "1": 23.405197421613476
+      },
+      "diagnostic_max_channel_error_thresholds": [
+        {
+          "threshold": 1e-07,
+          "pixels_exceeding": 455016,
+          "fraction_exceeding": 0.94795
+        },
+        {
+          "threshold": 1e-06,
+          "pixels_exceeding": 298328,
+          "fraction_exceeding": 0.6215166666666667
+        },
+        {
+          "threshold": 1e-05,
+          "pixels_exceeding": 123153,
+          "fraction_exceeding": 0.25656875
+        },
+        {
+          "threshold": 0.0001,
+          "pixels_exceeding": 54458,
+          "fraction_exceeding": 0.11345416666666666
+        },
+        {
+          "threshold": 0.001,
+          "pixels_exceeding": 30098,
+          "fraction_exceeding": 0.06270416666666667
+        },
+        {
+          "threshold": 0.01,
+          "pixels_exceeding": 14346,
+          "fraction_exceeding": 0.0298875
+        },
+        {
+          "threshold": 0.1,
+          "pixels_exceeding": 447,
+          "fraction_exceeding": 0.00093125
+        },
+        {
+          "threshold": 1,
+          "pixels_exceeding": 21,
+          "fraction_exceeding": 4.375e-05
+        },
+        {
+          "threshold": 5,
+          "pixels_exceeding": 7,
+          "fraction_exceeding": 1.4583333333333333e-05
+        },
+        {
+          "threshold": 10,
+          "pixels_exceeding": 6,
+          "fraction_exceeding": 1.25e-05
+        }
+      ],
+      "diagnostic_squared_error_fraction_from_worst_pixels": {
+        "1": 0.5291234711614986,
+        "5": 0.8483272288917272,
+        "10": 0.9334427986863794,
+        "50": 0.969659407413306,
+        "100": 0.973164897383416,
+        "480": 0.9769068570909136,
+        "4800": 0.9947829097474307
+      }
+    }
+  },
+  "interpretation": [
+    "Differences are concentrated in rare bright pixels, with additional variation along fine chair and desk geometry edges; the diagnostic image did not reveal a broad coherent brightness or material shift.",
+    "This pattern is consistent with floating-point intersection and rare-path divergence, but the specific cause of each divergent path was not traced.",
+    "A single same-seed comparison does not establish unbiased equivalence or an uncertainty interval. Repeated timing runs use the same seed and are not independent statistical samples.",
+    "All reported full-image error metrics are untrimmed. Concentration statistics and high-sample pixel observations are diagnostics, not substitute quality scores."
+  ],
+  "high_sample_pixel_diagnostic": {
+    "status": "Diagnostic observations at the ten worst CPU-versus-OptiX 128-sample pixels; this OptiX image is not independent ground truth.",
+    "coordinates": "Zero-based x,y with top-left image origin after decoding PFM bottom-up rows.",
+    "pfm": "build/qualification/final-beauty/classroom-instances/optix-8192spp-run1.pfm",
+    "pfm_sha256": "00c798c029f3e6d110758e8acc142fc8556be60cf5ae0ec88b21f510af742e43",
+    "metrics": "build/qualification/final-beauty/classroom-instances/optix-8192spp-run1.json",
+    "metrics_sha256": "45af0b928dc4995f8bfb012aa20e68f3fd3b16ebfeb76aa476a1c876120c8e3f",
+    "settings": {
+      "backend": "optix",
+      "width": 800,
+      "height": 600,
+      "samples": 8192,
+      "seed": 42,
+      "min_bounces": 3,
+      "max_bounces": 8,
+      "exposure_ev": 0,
+      "mean_luminance": 0.669810904331,
+      "max_radiance": 41.4561958313
+    },
+    "observations": [
+      {
+        "x": 416,
+        "y": 382,
+        "cpu_128_luminance": 25.7016477142334,
+        "optix_128_luminance": 2.1506017594814297,
+        "optix_8192_luminance": 1.8263046781778334
+      },
+      {
+        "x": 383,
+        "y": 400,
+        "cpu_128_luminance": 9.26928481402397,
+        "optix_128_luminance": 1.612384980535507,
+        "optix_8192_luminance": 1.3614974915742872
+      },
+      {
+        "x": 21,
+        "y": 378,
+        "cpu_128_luminance": 9.718236109733581,
+        "optix_128_luminance": 0.527200738799572,
+        "optix_8192_luminance": 0.5344948114156722
+      },
+      {
+        "x": 313,
+        "y": 522,
+        "cpu_128_luminance": 7.770918484592437,
+        "optix_128_luminance": 0.531725249826908,
+        "optix_8192_luminance": 0.5888413521647453
+      },
+      {
+        "x": 676,
+        "y": 323,
+        "cpu_128_luminance": 1.3352879781246185,
+        "optix_128_luminance": 6.444404189205169,
+        "optix_8192_luminance": 1.393360359621048
+      },
+      {
+        "x": 28,
+        "y": 480,
+        "cpu_128_luminance": 0.5306520097732544,
+        "optix_128_luminance": 4.664775123596192,
+        "optix_8192_luminance": 0.5034708877325058
+      },
+      {
+        "x": 594,
+        "y": 231,
+        "cpu_128_luminance": 4.130777348232269,
+        "optix_128_luminance": 1.323700838279724,
+        "optix_8192_luminance": 1.283267287325859
+      },
+      {
+        "x": 398,
+        "y": 6,
+        "cpu_128_luminance": 0.4007274907171726,
+        "optix_128_luminance": 3.513513716816902,
+        "optix_8192_luminance": 0.5192663363397121
+      },
+      {
+        "x": 310,
+        "y": 429,
+        "cpu_128_luminance": 0.3816504831969738,
+        "optix_128_luminance": 2.819878467226028,
+        "optix_8192_luminance": 0.3642428510963917
+      },
+      {
+        "x": 359,
+        "y": 506,
+        "cpu_128_luminance": 2.8124211981773373,
+        "optix_128_luminance": 0.14804273116588593,
+        "optix_8192_luminance": 0.14064394057393073
+      }
+    ]
+  }
+}

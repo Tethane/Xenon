@@ -1,0 +1,19 @@
+{
+  "renderer": "Blender Cycles",
+  "blender": "4.5.3 LTS",
+  "devices": [
+    "NVIDIA GeForce RTX 4060 Laptop GPU"
+  ],
+  "width": 512,
+  "height": 384,
+  "samples": 1024,
+  "seed": 1,
+  "max_bounces": 8,
+  "render_seconds": 6.720532911000191,
+  "denoising": false,
+  "adaptive_sampling": false,
+  "clamping": false,
+  "pixel_filter": "BOX",
+  "linear_color_space": "scene-linear Rec.709",
+  "source": "/home/ethan/dev/Xenon/build/fixtures/hdr_studio/source.blend"
+}

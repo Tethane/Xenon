@@ -1,0 +1,13 @@
+{
+  "candidate": "/home/ethan/dev/Xenon/build/qualification/final-beauty/glass_fog/optix-8192spp-run1.pfm",
+  "reference": "/home/ethan/dev/Xenon/build/fixtures/glass_fog/cycles.pfm",
+  "linear_metrics": {
+    "rmse": 0.007128638101481683,
+    "relative_rmse": 0.018175777468530215,
+    "mae": 0.0041036320357142764,
+    "max_absolute_error": 0.22610242664813995,
+    "mean_luminance": 0.16779412099167726,
+    "reference_mean_luminance": 0.16594653379756938,
+    "relative_luminance_bias": 0.011133629319197879
+  }
+}

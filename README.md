@@ -1,211 +1,124 @@
 # Xenon
 
-A physically based path tracer written from scratch in C++ with an optional CUDA GPU backend. Xenon implements unbiased Monte Carlo light transport with next event estimation (NEE) and multiple importance sampling (MIS) to produce high-quality rendered images of 3D scenes.
+A C++20 path tracer that grew from a sphere on the CPU to textured, multi-million-triangle scenes on NVIDIA RTX hardware.
 
-Both the CPU and GPU renderers share the same wavefront pipeline architecture and produce equivalent output.
+**CPU · CUDA · OptiX** &nbsp; [Gallery](docs/renders/README.md) · [Benchmarks](docs/QUALIFICATION.md) · [Documentation](docs/README.md)
 
-## Example Renders
+## Install and run
 
-<p align="center">
-  <img src="lucy_output.png" width="400" alt="Cornell Box — area lighting with color bleeding" />
-  <img src="cow_output 1.png" width="400" alt="Metallic cow — GGX microfacet reflections" />
-</p>
-<p align="center">
-  <img src="cow_output.png" width="400" alt="Stanford Lucy — glass with full transmission and caustics" />
-  <img src="cornell_box_cpu.png" width="400" alt="Instancing grid — multiple material types with environment lighting" />
-</p>
-<p align="center">
-  <img src="instancing_grid_output.png" width="400" alt="Analytic primitives — sphere, box, disk, quad with glass" />
-  <img src="sky_dome_output.png" width="400" alt="Outdoor scene — directional sunlight with gradient sky" />
-</p>
+Linux / WSL, with a C++20 compiler and CMake 3.20+. On Ubuntu:
 
-All images above are rendered directly by Xenon at 256 samples per pixel.
-
-## Features
-
-### Rendering
-- Unbiased path tracing with configurable bounce depth (Russian roulette termination)
-- Next event estimation (NEE) with direct light sampling
-- Multiple importance sampling (MIS) using the balance heuristic
-- Progressive accumulation with live preview via GLFW/OpenGL
-
-### Materials
-- Principled BSDF supporting diffuse, conductor, dielectric, and subsurface lobes
-- GGX microfacet model for rough specular reflections and transmissions
-- Fresnel-weighted lobe selection for glass, metal, and plastic surfaces
-- File-based material definitions (`.mat` format) with hot-reload support
-
-### Geometry
-- Triangle meshes loaded from Wavefront OBJ files
-- Analytic primitives: sphere, box, plane, disk, quad
-- Two-level acceleration structure (TLAS/BLAS) with binned SAH BVH construction
-- Object instancing with per-instance affine transforms
-
-### Lighting
-- Area lights (emissive triangles)
-- Directional lights (sun)
-- Gradient sky environment model
-
-### GPU Backend (CUDA)
-- Full wavefront pipeline reimplemented in CUDA kernels
-- Scene data flattened and uploaded to device memory once at startup
-- BVH traversal, material evaluation, and light sampling all run on the GPU
-- Final framebuffer copied back per sample for progressive display
-
-## CPU vs GPU Rendering
-
-Xenon provides two independent rendering backends that implement the same algorithm:
-
-| | CPU Backend | GPU Backend |
-|---|---|---|
-| **Architecture** | Tiled integrator — one path per pixel, processed in 32×32 tiles for cache locality | Wavefront kernels — rays sorted into stage-specific GPU kernels (raygen, intersect, shade, shadow) |
-| **Parallelism** | Thread pool distributing tiles across all CPU cores | CUDA blocks/threads processing thousands of rays in parallel |
-| **BVH Traversal** | SSE-accelerated AABB intersection with dual-child ILP | Scalar traversal in CUDA device code |
-| **When to use** | No GPU available, debugging, small scenes | Large scenes, high sample counts, interactive preview |
-
-Both backends produce the same image for a given scene and sample count. The CPU backend is always available; the GPU backend requires an NVIDIA GPU with CUDA support.
-
-## Building
-
-### Dependencies
-
-- **C++17** compiler (GCC 10+ or Clang 12+)
-- **CMake** 3.20+
-- **GLFW 3** — windowing and OpenGL context (`libglfw3-dev` on Debian/Ubuntu)
-- **OpenGL** — live preview display
-- **CUDA Toolkit** (optional) — GPU backend. If not found, Xenon builds with CPU-only support.
-
-All other dependencies (stb_image_write for PNG output) are vendored in the repository.
-
-### Build Steps
-
-```bash
-git clone https://github.com/Tethane/xenon.git
-cd xenon
-
-# Release build (recommended)
-./xenon.sh --build
-
-# Debug build
-./xenon.sh --build --debug
+```sh
+sudo apt install build-essential cmake pkg-config libglfw3-dev libgl1-mesa-dev python3 git
+git clone https://github.com/Tethane/Xenon.git
+cd Xenon
+./xenon.sh --scene prim_types --backend cpu --samples 64
 ```
 
-Or manually with CMake:
+The launcher builds Xenon and opens a progressive preview. This first scene needs no downloaded assets. Add `--no-display` to render headlessly; images go to `renders/`.
 
-```bash
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build --parallel $(nproc)
+For GPU rendering, install the NVIDIA driver and CUDA Toolkit, make `nvcc` available, and select `--backend cuda` or `--backend optix`. CMake fetches the pinned OptiX headers. [Build options and WSL setup →](docs/GETTING_STARTED.md)
+
+```sh
+# Original scenes, with their mesh assets restored
+./xenon.sh --scene lucy --backend optix --samples 512
+
+# Exported benchmarks, after the one-time scene setup
+./xenon.sh --scene sponza --backend optix --samples 1024
+./xenon.sh --scene classroom --backend optix --samples 1024
+
+./xenon.sh --list-scenes
 ```
 
-To disable CUDA even when a toolkit is available:
+[Scene setup and Blender import →](docs/BLENDER_IMPORT.md) · [Original mesh assets →](docs/GETTING_STARTED.md#scenes-and-assets)
 
-```bash
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DXENON_ENABLE_CUDA=OFF
+## Bring your own scene
+
+Download a `.blend`, glTF/GLB or OBJ with its textures, then export and render:
+
+```sh
+python3 scripts/import_scene.py /path/to/scene.blend \
+  --output build/imports/my-scene --width 960 --height 540
+./xenon.sh --scene build/imports/my-scene/scene.xenon \
+  --backend optix --samples 1024
 ```
 
-## Usage
+Use a compatible Blender installation on `PATH`, set `BLENDER`, or pass `--blender /path/to/blender`. Mesh instances remain shared. Strict export reports unsupported content; `--prepare` is an explicit, reported conversion for selected legacy materials. Check a preview before increasing samples.
 
-```bash
-# Render a scene with live preview window
-./xenon.sh --scene cornell_box --samples 256
+[Download → import → render walkthrough](docs/IMPORTING_SCENES.md) covers Blendkit assets, Blender exports, standalone models, textures and grass preparation.
 
-# Render to a file (no window)
-./xenon.sh --scene cornell_box --samples 512 --output render.png --no-display
+For Blendkit, the downloader accepts a gallery URL or asset ID and keeps the original scene, license metadata and checksum together:
 
-# Render with the GPU backend
-./xenon.sh --scene cornell_box --samples 256 --backend cuda
-
-# Custom scene file
-./build/release/xenon --scene scenes/lucy/lucy.xenon --samples 128
+```sh
+python3 scripts/download_blendkit.py fea95d8b-bb8d-4bdd-bd53-e1a6252fa3b7 \
+  --output build/assets/blendkit/laundromat
+python3 scripts/import_scene.py build/assets/blendkit/laundromat/source.blend \
+  --output build/imports/blendkit/laundromat --prepare --bake-world \
+  --bake-size 512 --compensated-materials --omit-area-lights --omit-object Plane.011 \
+  --width 960 --height 540
+./xenon.sh --scene build/imports/blendkit/laundromat/scene.xenon \
+  --backend optix --samples 1024
 ```
 
-### Scene Format
+[The three Blendkit scenes](docs/BLENDKIT_SCENES.md) have their own reproduction commands and conversion notes. Export destinations must be new or empty. For a downloaded object, replace `scene.blend` above with `model.glb` or `model.obj`; the importer uses an available camera or frames the model, then adds a daylight rig. To control the composition and lighting yourself, set them in Blender and import the saved `.blend`.
 
-Scenes are defined in `.xenon` text files:
+Grass and trees made from scattered meshes export as triangle instances, including supported Geometry Nodes and particle instances. Raw hair strands need conversion to mesh ribbons or tubes. Preparation records material, lighting and volume approximations alongside the export.
 
-```
-config 800 600 256           # width height samples
-camera 0 5 15 0 5 0 40      # eye_xyz target_xyz fov
-matfile floor.mat            # load a material file
-mesh scenes/model.obj        # load an OBJ mesh
-sphere 0 1 0 1.0 glass       # primitive: center radius material
-light 0 34 255 182 120 0.5   # area light: triangle_id emission
-sun 1 -1 0.5 3.0 3.0 2.8    # directional light: direction rgb
-```
+## From a sphere to full scenes
 
-Materials use a separate `.mat` format with physically meaningful parameters (albedo, roughness, metallic, IOR, transmission, etc.).
+| Cornell box · early CPU render | Lucy · the first dense mesh |
+|---|---|
+| ![Early Cornell box render](docs/renders/history/cornell_box-cpu.png) | ![Early Lucy render](docs/renders/history/lucy.png) |
 
-## Implementation Overview
+The project started with intersections and a sphere. A Cornell box made indirect light and color bleeding visible; Lucy brought mesh loading and acceleration structures into focus. CUDA moved path tracing into a wavefront pipeline. OptiX now accelerates its intersection queries while Xenon retains control of materials, lighting and transport.
 
-```
-src/
-├── main.cpp                  # Entry point, argument parsing, render loop
-├── math/                     # Vec3 (SSE), Mat4, Ray, SIMD utilities
-├── geometry/                 # Triangle mesh, analytic primitives, BVH
-│   ├── blas.cpp              # Bottom-level BVH (per-mesh, binned SAH)
-│   ├── tlas.h                # Top-level BVH over instances
-│   ├── primitives.h          # Sphere, box, plane, disk, quad
-│   └── transform.h           # Affine transforms for instancing
-├── material/                 # Material system and BSDF evaluation
-│   ├── material.h            # Material struct and .mat parser
-│   └── bsdf.h                # Diffuse, GGX, glass, subsurface BSDFs
-├── camera/                   # Perspective camera with thin-lens model
-├── render/                   # CPU rendering pipeline
-│   ├── cpu_tiled.cpp          # Tiled path integrator (main CPU path)
-│   ├── wavefront.cpp          # Staged wavefront pipeline (CPU reference)
-│   ├── thread_pool.h          # Lock-free work-stealing thread pool
-│   └── swapchain.h            # Triple-buffer swapchain for display
-├── cuda/                     # GPU rendering pipeline
-│   ├── cuda_renderer.cu       # CUDA wavefront kernels
-│   ├── gpu_scene.cu           # Scene upload to device memory
-│   ├── gpu_bsdf.cuh           # Device-side BSDF evaluation
-│   └── gpu_traverse.cuh       # Device-side BVH traversal
-├── scene/                    # Scene loading and management
-│   ├── scene.h                # Scene container (geometry, materials, lights)
-│   └── scene_file.cpp         # .xenon file parser
-└── display/                  # GLFW window and OpenGL display
-```
+Returning to the project a year later meant revisiting those foundations with more experience. The approach stayed concrete: test the equations, profile the work, then render real scenes and compare linear images with Blender.
 
-### Key Design Decisions
+| Intel Sponza · 3.75M placed triangles | Classroom · 896 mesh placements |
+|---|---|
+| ![Sponza rendered with OptiX](docs/renders/gallery/sponza-full.png) | ![Converted Classroom rendered with OptiX](docs/renders/gallery/classroom-instances.png) |
+| ![Coated ceramic, gold and absorbing glass](docs/renders/gallery/energy_studio.png) | ![Glass, homogeneous fog and depth of field](docs/renders/gallery/glass_fog.png) |
 
-- **Two-level BVH (TLAS/BLAS):** Each mesh or primitive group gets its own bottom-level BVH. A top-level BVH indexes instances with transforms. This supports instancing without duplicating geometry data.
-- **Binned SAH construction:** BVH nodes are split using the surface area heuristic evaluated over 12 candidate bins per axis, balancing build speed against traversal quality.
-- **Wavefront pipeline:** The renderer processes paths in discrete stages (generate, intersect, shade, shadow) rather than tracing complete paths per thread. This maps cleanly to GPU kernel launches and keeps the CPU and GPU implementations structurally identical.
-- **Material classification:** Each hit is classified into exactly one BSDF lobe (diffuse, microfacet reflection, microfacet transmission, delta reflection, delta transmission, subsurface) before shading. The CPU backend processes all lobes inline; the GPU backend could sort by lobe type to reduce warp divergence.
+These benchmark and studio renders use 4,096–8,192 samples, without denoising or radiance clamping. The early images are preserved as project history. [Full gallery and Cycles comparisons →](docs/renders/README.md)
+
+### Downloaded Blender scenes
+
+| Forgotten Industrial Warehouse | Autumn Cabins by the Lake |
+|---|---|
+| ![Warehouse rendered by Xenon](docs/renders/gallery/blendkit-warehouse.png) | ![Autumn Cabins rendered by Xenon](docs/renders/gallery/blendkit-autumn-cabins.png) |
+
+Real downloaded scenes, rendered with OptiX at 2,048 samples. Their grass and trees use shared triangle meshes. [Japanese Laundromat](docs/renders/gallery/blendkit-laundromat.png) adds a textured interior at 4,096 samples. Material conversions, reduced texture sizes and Autumn's homogeneous fog approximation are recorded in the [scene recipes and results](docs/BLENDKIT_SCENES.md).
+
+## What it renders
+
+Textured meshes and affine instances; normal, bump and opacity maps; rough metals and glass; compensated GGX, rough diffuse and approximate clearcoat; HDR environments, mesh emitters, point/spot lights and sun; absorbing glass, homogeneous fog, and finite-aperture depth of field.
+
+Blender exports evaluated geometry into an explicit scene contract, with glTF/GLB/OBJ import through Blender. Supported material graphs are documented; procedural inputs may need baking. Arbitrary Blender shaders, hair strands and heterogeneous volumes need further work. [Import scope →](docs/BLENDER_IMPORT.md) · [Material model →](docs/MATERIAL_ENERGY.md)
 
 ## Performance
 
-Performance depends on scene complexity, material types, and sample count. Approximate single-frame times on representative hardware:
+RTX 4060 Laptop GPU, 800×600, 128 samples. Median of three measured runs after warmup:
 
-| Scene | Triangles | Samples | CPU (16-thread) | GPU (CUDA) |
-|---|---|---|---|---|
-| Cornell Box | ~30 | 256 | ~2s | ~0.3s |
-| Cow | ~6k | 256 | ~8s | ~1s |
-| Lucy | ~100k | 256 | ~25s | ~3s |
+| Scene | CPU render | CUDA render | OptiX render | OptiX / CUDA speedup |
+|---|---:|---:|---:|---:|
+| Classroom | 141.71 s | 44.73 s | **3.81 s** | **11.74×** |
+| Sponza | 170.73 s | 48.79 s | **6.47 s** | **7.54×** |
 
-*Times are approximate and depend on hardware, resolution, and bounce depth.*
+Including loading, building, upload and teardown, the gains are **2.75×** and **1.62×** respectively. Across five scenes, linear comparisons against independently sampled Cycles references measured **1.69–5.29% relative RMSE** at the gallery sample counts. Classroom uses a documented shared-source conversion. [Full measurements, timing ranges and commands →](docs/QUALIFICATION.md)
 
-The CPU backend uses a tiled integrator optimized for cache locality. Each 32×32 tile is processed by a single thread, keeping the working set small. BVH traversal uses SSE intrinsics for dual-AABB intersection, achieving roughly 2× throughput over scalar code through instruction-level parallelism.
+## Under the hood
 
-## Running Tests
+Each pixel begins with a sampled camera ray. At a surface, Xenon evaluates the material, samples a light and chooses the next direction from the BSDF. Multiple importance sampling balances light and BSDF samples; Russian roulette ends low-contribution paths without a fixed energy cutoff. In fog, sampled scattering events compete with the next surface intersection. Samples accumulate in linear radiance before exposure and display conversion.
 
-```bash
-cmake --build build --parallel $(nproc)
-cd build && ctest --output-on-failure
-```
+- **Tiled CPU, wavefront GPU.** CPU paths run through a worker pool; CUDA separates generation, intersection, shading and shadow work into queues.
+- **Shared geometry, separate traversal.** BLAS/TLAS and OptiX GAS/IAS reuse meshes across affine instances. Software CUDA remains a reference for the hardware traversal path.
+- **Explicit transport.** Next-event estimation, power-heuristic MIS and Russian roulette combine surface and volume sampling. Device queue counts avoid unnecessary host readbacks.
+- **Measurable output.** Seeded paths, linear float32 images and stage timings support analytic tests and renderer comparisons. The backend configuration passes 41 tests; CPU-only, OpenGL and sanitizer checks are recorded separately.
 
-Tests cover vector math, random sampling distributions, BSDF energy conservation, and wavefront pipeline correctness.
+OptiX supplies hardware traversal and hit information. Xenon's CUDA kernels still handle textures, BSDF evaluation, light sampling, medium transport and path continuation. This separation lets the software and hardware traversal backends exercise the same rendering model. Blender is an offline import step; the renderer consumes explicit meshes, instances, materials, lights and volume bounds without requiring Blender at render time.
 
-## Future Improvements
+[`src/`](src/) renderer · [`scenes/`](scenes/README.md) inputs · [`scripts/`](scripts/README.md) asset and measurement tools · [`tests/`](tests/) regressions · [`docs/`](docs/README.md) guides and evidence
 
-- Texture mapping (albedo, normal, roughness maps)
-- HDRI environment maps with importance sampling
-- Denoising (OIDN or wavelet-based)
-- Adaptive sampling based on per-pixel variance
-- GPU-side BVH construction and refitting
-- Volumetric scattering (participating media)
-- Bidirectional path tracing / photon mapping
+[Development and formatting](docs/DEVELOPMENT.md)
 
-## License
-
-This project is provided for educational and portfolio purposes.
+Scene credits: Classroom by Christophe Seux; Sponza by Frank Meinl and Anton Kaplanyan, Intel Sample Library; Studio Small 09 by Poly Haven; Japanese Laundromat by 3dhub; Warehouse and Autumn Cabins by Ibrohim Toxirov. [Sources and licenses](docs/ASSETS.md).

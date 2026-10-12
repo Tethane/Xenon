@@ -1,0 +1,13 @@
+{
+  "candidate": "/home/ethan/dev/Xenon/build/qualification/final-beauty/hdr_studio/optix-4096spp-run1.pfm",
+  "reference": "/home/ethan/dev/Xenon/build/fixtures/hdr_studio/cycles.pfm",
+  "linear_metrics": {
+    "rmse": 0.009629158513053978,
+    "relative_rmse": 0.02145610513747981,
+    "mae": 0.0035182889512615193,
+    "max_absolute_error": 0.6897953748703003,
+    "mean_luminance": 0.2056706336942933,
+    "reference_mean_luminance": 0.20436014195407914,
+    "relative_luminance_bias": 0.006412658200778895
+  }
+}

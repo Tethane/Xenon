@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "defaults": {
+    "min_bounces": 3,
+    "max_bounces": 8,
+    "seed": 42
+  },
+  "scenes": [
+    {
+      "id": "material_studio",
+      "scene": "build/fixtures/material_studio-compensated/scene.xenon",
+      "reference": "build/fixtures/material_studio/cycles.pfm",
+      "reference_metrics": "build/fixtures/material_studio/cycles-metrics.json",
+      "width": 512,
+      "height": 384,
+      "exposure": 0
+    },
+    {
+      "id": "hdr_studio",
+      "scene": "build/fixtures/hdr_studio-compensated/scene.xenon",
+      "reference": "build/fixtures/hdr_studio/cycles.pfm",
+      "reference_metrics": "build/fixtures/hdr_studio/cycles-metrics.json",
+      "width": 512,
+      "height": 384,
+      "exposure": 0
+    },
+    {
+      "id": "glass_fog",
+      "scene": "build/fixtures/glass_fog-compensated/scene.xenon",
+      "reference": "build/fixtures/glass_fog/cycles.pfm",
+      "reference_metrics": "build/fixtures/glass_fog/cycles-metrics.json",
+      "width": 512,
+      "height": 384,
+      "exposure": 0
+    },
+    {
+      "id": "classroom-instances",
+      "scene": "build/fixtures/classroom-instances-compensated/scene.xenon",
+      "reference": "build/fixtures/classroom-converted/cycles.pfm",
+      "reference_metrics": "build/fixtures/classroom-converted/cycles-metrics.json",
+      "width": 800,
+      "height": 600,
+      "exposure": 0
+    },
+    {
+      "id": "sponza-full",
+      "scene": "build/fixtures/sponza-full-compensated/scene.xenon",
+      "reference": "build/fixtures/sponza-full/cycles.pfm",
+      "reference_metrics": "build/fixtures/sponza-full/cycles-metrics.json",
+      "width": 800,
+      "height": 600,
+      "exposure": 4
+    }
+  ]
+}

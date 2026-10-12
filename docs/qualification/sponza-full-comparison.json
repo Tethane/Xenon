@@ -1,0 +1,13 @@
+{
+  "candidate": "/home/ethan/dev/Xenon/build/qualification/final-beauty/sponza-full/optix-8192spp-run1.pfm",
+  "reference": "/home/ethan/dev/Xenon/build/fixtures/sponza-full/cycles.pfm",
+  "linear_metrics": {
+    "rmse": 0.00041440135447474134,
+    "relative_rmse": 0.04787835269892417,
+    "mae": 9.754243740622429e-05,
+    "max_absolute_error": 0.08571420609951019,
+    "mean_luminance": 0.0015753467053196966,
+    "reference_mean_luminance": 0.0015313974116583982,
+    "relative_luminance_bias": 0.028698816732166392
+  }
+}

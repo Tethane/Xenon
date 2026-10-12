@@ -1,0 +1,417 @@
+{
+  "material_studio": {
+    "cpu": {
+      "input_linear_sha256": [
+        "a0a5a307c1b465c831d01e344966afa1f82f7b66df5a5c92f5fdd81add23eecc",
+        "a0a5a307c1b465c831d01e344966afa1f82f7b66df5a5c92f5fdd81add23eecc",
+        "a0a5a307c1b465c831d01e344966afa1f82f7b66df5a5c92f5fdd81add23eecc"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.10868607958598768,
+          "reference_mean_luminance": 0.10868607958598768,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.10868607958598768,
+          "reference_mean_luminance": 0.10868607958598768,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    },
+    "cuda": {
+      "input_linear_sha256": [
+        "7e2d61ad01298b6da6a60c31693b2ccb7a1f282c8c8f67949f64565d1226c12c",
+        "7e2d61ad01298b6da6a60c31693b2ccb7a1f282c8c8f67949f64565d1226c12c",
+        "7e2d61ad01298b6da6a60c31693b2ccb7a1f282c8c8f67949f64565d1226c12c"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.10868608035525679,
+          "reference_mean_luminance": 0.10868608035525679,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.10868608035525679,
+          "reference_mean_luminance": 0.10868608035525679,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    },
+    "optix": {
+      "input_linear_sha256": [
+        "854f448f996eb2cdcab0c76326119524271059bb3cb9834c4f949359b6a7533a",
+        "854f448f996eb2cdcab0c76326119524271059bb3cb9834c4f949359b6a7533a",
+        "854f448f996eb2cdcab0c76326119524271059bb3cb9834c4f949359b6a7533a"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.10868602440131568,
+          "reference_mean_luminance": 0.10868602440131568,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.10868602440131568,
+          "reference_mean_luminance": 0.10868602440131568,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    }
+  },
+  "hdr_studio": {
+    "cpu": {
+      "input_linear_sha256": [
+        "f0c3120b3566b63fab0d6fce8750b641b49fe652d55d6fd5b9d76b44c746afba",
+        "f0c3120b3566b63fab0d6fce8750b641b49fe652d55d6fd5b9d76b44c746afba",
+        "f0c3120b3566b63fab0d6fce8750b641b49fe652d55d6fd5b9d76b44c746afba"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.20563097052760157,
+          "reference_mean_luminance": 0.20563097052760157,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.20563097052760157,
+          "reference_mean_luminance": 0.20563097052760157,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    },
+    "cuda": {
+      "input_linear_sha256": [
+        "3f9984a14dc01aa7b9ff0e5dcca9e2c6832ae449713ed0da3cab77fa8b3e2d06",
+        "986ab1feeb6149759854a02bdc685dedc158449c7629fd7fb4a3c6a99e620fb7",
+        "21ecc184294cacf187337347c3f18692c93027e348696112f1e61ac0f4be4ea0"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 6.01976260869391e-10,
+          "relative_rmse": 1.337052691808424e-09,
+          "mae": 1.154671420206594e-11,
+          "max_absolute_error": 2.384185791015625e-07,
+          "mean_luminance": 0.20563093346378167,
+          "reference_mean_luminance": 0.20563093346449832,
+          "relative_luminance_bias": -3.485122351590483e-12
+        },
+        {
+          "rmse": 5.810813932565133e-10,
+          "relative_rmse": 1.2906429896277589e-09,
+          "mae": 1.0473794671068189e-11,
+          "max_absolute_error": 2.384185791015625e-07,
+          "mean_luminance": 0.20563093346358416,
+          "reference_mean_luminance": 0.20563093346449832,
+          "relative_luminance_bias": -4.445623151509843e-12
+        }
+      ]
+    },
+    "optix": {
+      "input_linear_sha256": [
+        "b3169d9833de9232e9b846a2d5d5721db0952f73bfca94655bf89c91ddc5da46",
+        "db7dc024090030e5f4d4c0cd478c63d1ad1c3ee65debf1b57e379a7a0dad28ee",
+        "a43889175c06267a30f730d795b7049ef7412c164095effe263e15fac8ee5c44"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 4.1331606221518156e-10,
+          "relative_rmse": 9.180181542125142e-10,
+          "mae": 8.241111496924228e-12,
+          "max_absolute_error": 5.960464477539063e-08,
+          "mean_luminance": 0.20563093151354672,
+          "reference_mean_luminance": 0.2056309315126592,
+          "relative_luminance_bias": 4.316044669722816e-12
+        },
+        {
+          "rmse": 4.058297043437133e-10,
+          "relative_rmse": 9.013901712638099e-10,
+          "mae": 8.190386640510243e-12,
+          "max_absolute_error": 5.960464477539063e-08,
+          "mean_luminance": 0.2056309315128594,
+          "reference_mean_luminance": 0.2056309315126592,
+          "relative_luminance_bias": 9.735936390640065e-13
+        }
+      ]
+    }
+  },
+  "glass_fog": {
+    "cpu": {
+      "input_linear_sha256": [
+        "f7390f7f54893cc308672d8649428c3c6106443adb8d901465d01be46e09c53a",
+        "f7390f7f54893cc308672d8649428c3c6106443adb8d901465d01be46e09c53a",
+        "f7390f7f54893cc308672d8649428c3c6106443adb8d901465d01be46e09c53a"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.16775784589838919,
+          "reference_mean_luminance": 0.16775784589838919,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.16775784589838919,
+          "reference_mean_luminance": 0.16775784589838919,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    },
+    "cuda": {
+      "input_linear_sha256": [
+        "fcf2e070237b2a3c085a23bb5d616e9d78649e27fbc771a0e9ea908354ffb54a",
+        "fcf2e070237b2a3c085a23bb5d616e9d78649e27fbc771a0e9ea908354ffb54a",
+        "fcf2e070237b2a3c085a23bb5d616e9d78649e27fbc771a0e9ea908354ffb54a"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.1677577673092021,
+          "reference_mean_luminance": 0.1677577673092021,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.1677577673092021,
+          "reference_mean_luminance": 0.1677577673092021,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    },
+    "optix": {
+      "input_linear_sha256": [
+        "37df612e5edffc8587cdc054d90c43e91e47d7681a665588e228c986aa15dc41",
+        "37df612e5edffc8587cdc054d90c43e91e47d7681a665588e228c986aa15dc41",
+        "37df612e5edffc8587cdc054d90c43e91e47d7681a665588e228c986aa15dc41"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.16775778087863666,
+          "reference_mean_luminance": 0.16775778087863666,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.16775778087863666,
+          "reference_mean_luminance": 0.16775778087863666,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    }
+  },
+  "classroom-instances": {
+    "cpu": {
+      "input_linear_sha256": [
+        "98bf99e344c411e61371086132b152991327d5e55e4027eda4576df996719c28",
+        "98bf99e344c411e61371086132b152991327d5e55e4027eda4576df996719c28",
+        "98bf99e344c411e61371086132b152991327d5e55e4027eda4576df996719c28"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.6697226248295957,
+          "reference_mean_luminance": 0.6697226248295957,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.6697226248295957,
+          "reference_mean_luminance": 0.6697226248295957,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    },
+    "cuda": {
+      "input_linear_sha256": [
+        "2713cf786e1776a318ef4964bdead79b40788a167ee4876182dd944db3e3b450",
+        "12cd36ce33133f76b5702c443b04a112921566c0bf29fab1fd5312179f2a9ce8",
+        "fb9c82dd5e1ee6cb7581ca9c584264207aee626c85e39c2fc3d6f673ac09b65e"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 1.0394948849481218e-09,
+          "relative_rmse": 7.546349372233528e-10,
+          "mae": 7.701520290639665e-12,
+          "max_absolute_error": 2.384185791015625e-07,
+          "mean_luminance": 0.6696686711135829,
+          "reference_mean_luminance": 0.6696686711135333,
+          "relative_luminance_bias": 7.394096369469734e-14
+        },
+        {
+          "rmse": 1.202368343238102e-09,
+          "relative_rmse": 8.728750591823403e-10,
+          "mae": 8.829455408785079e-12,
+          "max_absolute_error": 4.76837158203125e-07,
+          "mean_luminance": 0.6696686711142306,
+          "reference_mean_luminance": 0.6696686711135333,
+          "relative_luminance_bias": 1.041141820633855e-12
+        }
+      ]
+    },
+    "optix": {
+      "input_linear_sha256": [
+        "67d62fa91f6dd046492c83c87d2a8ba69e33039c443fe5fd5b17e60d5a423ec3",
+        "0e2947a59f0f7f66571a8548991db2371dc41c4aec1fd358e3322e4940460b3b",
+        "b7b279ceb977206faec5e4946c9b71aef4d208be91e88c934903ae5a8d50b274"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 7.814543174793122e-10,
+          "relative_rmse": 5.674698210689732e-10,
+          "mae": 4.5712416370709735e-12,
+          "max_absolute_error": 2.384185791015625e-07,
+          "mean_luminance": 0.6696449484095481,
+          "reference_mean_luminance": 0.6696449484093561,
+          "relative_luminance_bias": 2.868215219369354e-13
+        },
+        {
+          "rmse": 7.057939648594544e-10,
+          "relative_rmse": 5.125274324957055e-10,
+          "mae": 4.1728425357076855e-12,
+          "max_absolute_error": 2.384185791015625e-07,
+          "mean_luminance": 0.6696449484086096,
+          "reference_mean_luminance": 0.6696449484093561,
+          "relative_luminance_bias": -1.114790701447372e-12
+        }
+      ]
+    }
+  },
+  "sponza-full": {
+    "cpu": {
+      "input_linear_sha256": [
+        "03ae0ed910438fdd179552ad58e350eaae7576eb00c2eb2c1d5a4d797ba2ebb9",
+        "03ae0ed910438fdd179552ad58e350eaae7576eb00c2eb2c1d5a4d797ba2ebb9",
+        "03ae0ed910438fdd179552ad58e350eaae7576eb00c2eb2c1d5a4d797ba2ebb9"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.0015763300679018462,
+          "reference_mean_luminance": 0.0015763300679018462,
+          "relative_luminance_bias": 0.0
+        },
+        {
+          "rmse": 0.0,
+          "relative_rmse": 0.0,
+          "mae": 0.0,
+          "max_absolute_error": 0.0,
+          "mean_luminance": 0.0015763300679018462,
+          "reference_mean_luminance": 0.0015763300679018462,
+          "relative_luminance_bias": 0.0
+        }
+      ]
+    },
+    "cuda": {
+      "input_linear_sha256": [
+        "9ccaf7229b139de13aef1dfd7db085427df4e74f84876a979aa026ca40726bc1",
+        "e2b5bc86524ad125756a4915727deb60d79474454830f645aa8a1fb2e8a71a8c",
+        "87766c165234f958479b0ca6260a90f8381cdc3830a31fd62a71a7f440cc9187"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 2.601339460601547e-12,
+          "relative_rmse": 3.051667411648687e-10,
+          "mae": 1.501428117636452e-14,
+          "max_absolute_error": 9.313225746154785e-10,
+          "mean_luminance": 0.0015761823206842413,
+          "reference_mean_luminance": 0.0015761823206872185,
+          "relative_luminance_bias": -1.8888799389318883e-12
+        },
+        {
+          "rmse": 2.5040177456011177e-12,
+          "relative_rmse": 2.9374979575614096e-10,
+          "mae": 1.4416793684783138e-14,
+          "max_absolute_error": 9.313225746154785e-10,
+          "mean_luminance": 0.0015761823206843965,
+          "reference_mean_luminance": 0.0015761823206872185,
+          "relative_luminance_bias": -1.7903775327938523e-12
+        }
+      ]
+    },
+    "optix": {
+      "input_linear_sha256": [
+        "d96303baa017d8d369a663bc6842869f4e1511df03936c1508c8ba2f0af51b87",
+        "48f8454b79a2d7cd24b2128876973f2fca16da410dc0637036a6a78d74a516b5",
+        "9a2d77d36ac964fb7d7fa1f5b12e32ba369da59132ed8f46aba07f99b050e958"
+      ],
+      "comparisons_to_first": [
+        {
+          "rmse": 2.674603716571676e-12,
+          "relative_rmse": 3.137698056832577e-10,
+          "mae": 8.962312373720731e-15,
+          "max_absolute_error": 1.862645149230957e-09,
+          "mean_luminance": 0.0015759676679291755,
+          "reference_mean_luminance": 0.0015759676679290048,
+          "relative_luminance_bias": 1.0828484963367034e-13
+        },
+        {
+          "rmse": 2.2794926416711127e-12,
+          "relative_rmse": 2.6741754630863774e-10,
+          "mae": 8.382667399726212e-15,
+          "max_absolute_error": 1.862645149230957e-09,
+          "mean_luminance": 0.0015759676679329834,
+          "reference_mean_luminance": 0.0015759676679290048,
+          "relative_luminance_bias": 2.524536748511542e-12
+        }
+      ]
+    }
+  }
+}

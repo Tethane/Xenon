@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "purpose": "Xenon import gallery; single render runs, not backend speedup or original-Cycles parity measurements",
+  "display_transform": "exposure/reinhard/srgb",
+  "denoising": false,
+  "radiance_clamping": false,
+  "scenes": [
+    {
+      "id": "laundromat",
+      "asset": {
+        "name": "Japanese Laundromat",
+        "asset_base_id": "fea95d8b-bb8d-4bdd-bd53-e1a6252fa3b7",
+        "asset_version_id": "ca34ad8d-9646-4f47-ab3b-5f390e6ad775",
+        "author": "3dhub",
+        "license": "royalty_free",
+        "source_application_version": "5.2.0",
+        "asset_page": "https://www.blendkit.com/asset-gallery-detail/fea95d8b-bb8d-4bdd-bd53-e1a6252fa3b7/",
+        "sha256": "7a2d9eb9f8394132745c681ac8e37e4633d27acf12adf3c5d24d974627ad5089",
+        "bytes": 73232174,
+        "directory": "laundromat"
+      },
+      "geometry": {
+        "triangles": 270296,
+        "unique_triangles": 174976,
+        "mesh_assets": 160,
+        "mesh_placements": 191
+      },
+      "preparation": {
+        "source_frame": 93,
+        "source_instances": 165,
+        "realized_instances": 165,
+        "unique_meshes": 165,
+        "baked_material_meshes": 131,
+        "foliage_repair": null
+      },
+      "uv_preserved_simplified_materials": [
+        "glass_prepared_graph"
+      ],
+      "metrics": {
+        "schema_version": 1,
+        "scene": "/home/ethan/dev/Xenon/build/imports/blendkit/laundromat/scene.xenon",
+        "backend": "optix",
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "cpu": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+        "compiler": "13.3.0",
+        "build": "Release",
+        "gpu_host_counters": false,
+        "optix_upload_params": false,
+        "seed": 42,
+        "width": 960,
+        "height": 540,
+        "samples": 4096,
+        "min_bounces": 3,
+        "max_bounces": 8,
+        "exposure_ev": 0,
+        "display_transform": "exposure/reinhard/srgb",
+        "png": "renders/blendkit/laundromat/beauty.png",
+        "linear_pfm": "renders/blendkit/laundromat/radiance.pfm",
+        "mean_luminance": 0.436686804132,
+        "max_radiance": 256.915374756,
+        "peak_host_rss_bytes": 4681109504,
+        "gpu_free_before_bytes": 7440695296,
+        "gpu_free_after_bytes": 4846518272,
+        "gpu_total_bytes": 8585216000,
+        "seconds": {
+          "load": 7.526522479,
+          "cpu_acceleration": 0.074817792,
+          "renderer_setup": 1.140720212,
+          "upload": 5.590693231,
+          "optix_build": 0.20322281,
+          "render": 131.979921624,
+          "readback": 0.24183188,
+          "output": 0.496085664,
+          "total": 149.410365166
+        }
+      },
+      "binary_sha256": "a07e51d96b91d93a6a229d9decdab53c26eb6affb07a8d4a6d30508a52d50b86",
+      "files": {
+        "docs/renders/gallery/blendkit-laundromat.png": {
+          "sha256": "bcd9cc18a6029762eb3f34f89ae93531f26b3fde4a979028b9b8d9ab18016d26",
+          "bytes": 1477853
+        },
+        "renders/blendkit/laundromat/radiance.pfm": {
+          "sha256": "1b2f9bd7a7fcb14aa4fdd47ecd8c3a863681f8714108ca75a9a1b4a537c71deb",
+          "bytes": 6220816
+        },
+        "renders/blendkit/laundromat/metrics.json": {
+          "sha256": "64147e72175fcf40d4723404c00ab77567b77a9e289afc2c5330c1befe131053",
+          "bytes": 1097
+        },
+        "build/imports/blendkit/laundromat/scene.xenon": {
+          "sha256": "ff86e545b2f8d4f962b925bd739d749b5da2a1691c8cf0628e594292f8e934a1",
+          "bytes": 35666
+        },
+        "build/imports/blendkit/laundromat/comparison.blend": {
+          "sha256": "732740b314498f57343ef0033a900381c58d6d6bfbd5dda23eb14dcd71e7c1f0",
+          "bytes": 132389050
+        },
+        "build/imports/blendkit/laundromat/export-report.json": {
+          "sha256": "1735de3ad26e4f5172c54cbf90f6afb84b564b2735871f432867e6884f170d96",
+          "bytes": 148904
+        },
+        "build/imports/blendkit/laundromat/conversion-report.json": {
+          "sha256": "4236a26cb626baad2ffc895f8848f136434710c7fdf120605ecc00327f099001",
+          "bytes": 303897
+        },
+        "build/imports/blendkit/laundromat/import-request.json": {
+          "sha256": "c730abd832b7858e903eb41e23b987bab2c9f8bee62e819f848c6007cf93442f",
+          "bytes": 2194
+        }
+      }
+    },
+    {
+      "id": "warehouse",
+      "asset": {
+        "name": "Forgotten Industrail Warehouse",
+        "asset_base_id": "9cb181dc-d05a-42c0-880c-5949918ce392",
+        "asset_version_id": "0ef864f4-57d0-4dc3-9a56-e26f4b442d19",
+        "author": "Ibrohim Toxirov",
+        "license": "royalty_free",
+        "source_application_version": "5.2.0",
+        "asset_page": "https://www.blendkit.com/asset-gallery-detail/9cb181dc-d05a-42c0-880c-5949918ce392/",
+        "sha256": "125591d4b6d465c2f52a89f8fd82b46a0d55a94f8821043f28e51896df6745c4",
+        "bytes": 495186237,
+        "directory": "warehouse"
+      },
+      "geometry": {
+        "triangles": 50542506,
+        "unique_triangles": 4928352,
+        "mesh_assets": 234,
+        "mesh_placements": 42479,
+        "mesh_data_evaluations": 234
+      },
+      "preparation": {
+        "source_frame": 1,
+        "source_instances": 42484,
+        "realized_instances": 42484,
+        "unique_meshes": 226,
+        "baked_material_meshes": 211,
+        "foliage_repair": null
+      },
+      "uv_preserved_simplified_materials": [
+        "Cinnamomum_camphora_Bark.001_prepared_graph",
+        "Cinnamomum_camphora_Bark.002_prepared_graph",
+        "Cinnamomum_camphora_Bark_prepared_graph",
+        "Hippophae_rhamnoides_Moss_prepared_graph",
+        "Manhole_Cover_prepared_graph",
+        "Prunus_x_yedoensis_Leaf.008_prepared_graph",
+        "Prunus_x_yedoensis_Leaf.009_prepared_graph",
+        "Prunus_x_yedoensis_Leaf.024_prepared_graph",
+        "Prunus_x_yedoensis_Leaf_prepared_graph",
+        "Waste.001_prepared_graph",
+        "Waste_prepared_graph",
+        "Wood_Floor_prepared_graph"
+      ],
+      "metrics": {
+        "schema_version": 1,
+        "scene": "/home/ethan/dev/Xenon/build/imports/blendkit/warehouse/scene.xenon",
+        "backend": "optix",
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "cpu": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+        "compiler": "13.3.0",
+        "build": "Release",
+        "gpu_host_counters": false,
+        "optix_upload_params": false,
+        "seed": 42,
+        "width": 960,
+        "height": 960,
+        "samples": 2048,
+        "min_bounces": 3,
+        "max_bounces": 8,
+        "exposure_ev": 0,
+        "display_transform": "exposure/reinhard/srgb",
+        "png": "renders/blendkit/warehouse/beauty.png",
+        "linear_pfm": "renders/blendkit/warehouse/radiance.pfm",
+        "mean_luminance": 0.687060093396,
+        "max_radiance": 293.952484131,
+        "peak_host_rss_bytes": 14739107840,
+        "gpu_free_before_bytes": 7440695296,
+        "gpu_free_after_bytes": 0,
+        "gpu_total_bytes": 8585216000,
+        "seconds": {
+          "load": 138.009254564,
+          "cpu_acceleration": 4.018576856,
+          "renderer_setup": 1.599661687,
+          "upload": 127.920923349,
+          "optix_build": 8.215507273,
+          "render": 129.599771956,
+          "readback": 0.0640416,
+          "output": 0.476209916,
+          "total": 412.32914375
+        }
+      },
+      "binary_sha256": "0283ee51d5a90fa6c5a9f48c7f3a7c0b8e2444ddbb8c3c778f6d7b6ddca8458b",
+      "files": {
+        "docs/renders/gallery/blendkit-warehouse.png": {
+          "sha256": "9d59f6680698147bd35ff01b15b0d6aae1073abb098ad7fd67c5caa224d24dab",
+          "bytes": 2547283
+        },
+        "renders/blendkit/warehouse/radiance.pfm": {
+          "sha256": "0a40dc60f403d2ef6f09368573c4f8446127310d7ac55c84445fb7b3f8df7d43",
+          "bytes": 11059216
+        },
+        "renders/blendkit/warehouse/metrics.json": {
+          "sha256": "6304d36986a37c921ed2f20b0721c061f0d2ca27bf0d48c13df35782dfd79c36",
+          "bytes": 1089
+        },
+        "build/imports/blendkit/warehouse/scene.xenon": {
+          "sha256": "126eb941e27dc0e1e4e63a056917a12ed965d7191f50bb969166c5cf0b53a238",
+          "bytes": 5364609
+        },
+        "build/imports/blendkit/warehouse/comparison.blend": {
+          "sha256": "0258109292a2dd4b90471729a4782111f6e425043eedb41e53998bc60df315c6",
+          "bytes": 922906197
+        },
+        "build/imports/blendkit/warehouse/export-report.json": {
+          "sha256": "587a909308b0b023be796f4deb984861dd2b1992d7bad187b9d67bf8193dd792",
+          "bytes": 6785957
+        },
+        "build/imports/blendkit/warehouse/conversion-report.json": {
+          "sha256": "87cf3ee45a48bc5d99aeb3adb581473e409925326288c859eab0861b4837dde7",
+          "bytes": 5125909
+        },
+        "build/imports/blendkit/warehouse/import-request.json": {
+          "sha256": "c0839ca0e174fe2b4a0e98e554801445a8274378491f61822fc071c783082c4d",
+          "bytes": 2744
+        }
+      }
+    },
+    {
+      "id": "autumn-cabins",
+      "asset": {
+        "name": "Autumn Cabins by the Lake",
+        "asset_base_id": "81285b8a-9df7-4f39-84d7-7256057a6666",
+        "asset_version_id": "1a455070-5618-49eb-bf3f-6cc3b97e7c71",
+        "author": "Ibrohim Toxirov",
+        "license": "royalty_free",
+        "source_application_version": "5.2.0",
+        "asset_page": "https://www.blendkit.com/asset-gallery-detail/81285b8a-9df7-4f39-84d7-7256057a6666/",
+        "sha256": "20b02a8aa6d38557e1a0b4a215e1f1cbd87ee48b77587b1dece5eca3a9496f96",
+        "bytes": 305471294,
+        "directory": "autumn-cabins"
+      },
+      "geometry": {
+        "triangles": 328137426,
+        "unique_triangles": 6969778,
+        "mesh_assets": 75,
+        "mesh_placements": 45799,
+        "mesh_data_evaluations": 75
+      },
+      "preparation": {
+        "source_frame": 5,
+        "source_instances": 43324,
+        "realized_instances": 43324,
+        "unique_meshes": 77,
+        "baked_material_meshes": 73,
+        "foliage_repair": {
+          "reason": "Whole-tree atlas underresolved repeated leaf cards",
+          "source_material": "Prunus x yedoensis Leaf.002",
+          "uv_layer": "automap",
+          "placements": 5,
+          "method": "UV-only material tile bake; original leaf geometry and UVs preserved",
+          "size": 512
+        }
+      },
+      "uv_preserved_simplified_materials": [
+        "Cinnamomum_camphora_Bark_prepared_graph",
+        "Riverbed_Cobblestone_Ground_prepared_graph"
+      ],
+      "metrics": {
+        "schema_version": 1,
+        "scene": "/home/ethan/dev/Xenon/build/imports/blendkit/autumn-cabins/scene.xenon",
+        "backend": "optix",
+        "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "cpu": "AMD Ryzen AI 9 HX 370 w/ Radeon 890M",
+        "compiler": "13.3.0",
+        "build": "Release",
+        "gpu_host_counters": false,
+        "optix_upload_params": false,
+        "seed": 42,
+        "width": 800,
+        "height": 800,
+        "samples": 2048,
+        "min_bounces": 3,
+        "max_bounces": 8,
+        "exposure_ev": 0,
+        "display_transform": "exposure/reinhard/srgb",
+        "png": "renders/blendkit/autumn-cabins/beauty.png",
+        "linear_pfm": "renders/blendkit/autumn-cabins/radiance.pfm",
+        "mean_luminance": 0.35734939175,
+        "max_radiance": 136.097671509,
+        "peak_host_rss_bytes": 6920335360,
+        "gpu_free_before_bytes": 7440695296,
+        "gpu_free_after_bytes": 3785359360,
+        "gpu_total_bytes": 8585216000,
+        "seconds": {
+          "load": 104.440965141,
+          "cpu_acceleration": 5.506568213,
+          "renderer_setup": 1.014518256,
+          "upload": 8.447285011,
+          "optix_build": 0.502352933,
+          "render": 105.532162128,
+          "readback": 0.009336316,
+          "output": 0.337518904,
+          "total": 227.916017999
+        }
+      },
+      "binary_sha256": "0283ee51d5a90fa6c5a9f48c7f3a7c0b8e2444ddbb8c3c778f6d7b6ddca8458b",
+      "files": {
+        "docs/renders/gallery/blendkit-autumn-cabins.png": {
+          "sha256": "7523997299afc6bcd26a9fe779e47ad12083d7a01f54185a49de981dd86acaed",
+          "bytes": 1563181
+        },
+        "renders/blendkit/autumn-cabins/radiance.pfm": {
+          "sha256": "c1b35895d29e901733d152cb652beb8a236a56858bbce4f719b997efe4dfae0f",
+          "bytes": 7680016
+        },
+        "renders/blendkit/autumn-cabins/metrics.json": {
+          "sha256": "772fe3aab26fffb9b23a434eb7a5a555251340a4bc35a88474c7162a57628759",
+          "bytes": 1109
+        },
+        "build/imports/blendkit/autumn-cabins/scene.xenon": {
+          "sha256": "5bf5d526e50d217af730f8cffd01e667bca577d5124fce23d8a91d258af2b3b7",
+          "bytes": 7341489
+        },
+        "build/imports/blendkit/autumn-cabins/comparison.blend": {
+          "sha256": "4426681a1cb457448398ce1a7a560aea99def57c36a68ce3174e6b21a4b692b2",
+          "bytes": 677236331
+        },
+        "build/imports/blendkit/autumn-cabins/export-report.json": {
+          "sha256": "40058acc81241c4e6551cf44ba92d5a525d82fa770e5c3b9b0931bad58590bfb",
+          "bytes": 7442504
+        },
+        "build/imports/blendkit/autumn-cabins/conversion-report.json": {
+          "sha256": "48ef52b040b95c7bce9135f5200de24be9963c74d94945ce70fb546bea9c0a0d",
+          "bytes": 5141824
+        },
+        "build/imports/blendkit/autumn-cabins/import-request.json": {
+          "sha256": "e5a2bf854d30eeb47dd7c7013fbda24869ba0d089b6150f5b45ed9a646fcebf8",
+          "bytes": 2642
+        }
+      }
+    }
+  ]
+}

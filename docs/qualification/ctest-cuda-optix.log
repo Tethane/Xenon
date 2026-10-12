@@ -1,0 +1,88 @@
+Internal ctest changing into directory: /home/ethan/dev/Xenon/build/optix
+Test project /home/ethan/dev/Xenon/build/optix
+      Start  1: math_test
+ 1/41 Test  #1: math_test ........................   Passed    0.00 sec
+      Start  2: sampler_test
+ 2/41 Test  #2: sampler_test .....................   Passed    0.03 sec
+      Start  3: camera_test
+ 3/41 Test  #3: camera_test ......................   Passed    0.01 sec
+      Start  4: medium_test
+ 4/41 Test  #4: medium_test ......................   Passed    0.11 sec
+      Start  5: environment_test
+ 5/41 Test  #5: environment_test .................   Passed    0.12 sec
+      Start  6: instance_test
+ 6/41 Test  #6: instance_test ....................   Passed    0.00 sec
+      Start  7: bsdf_test
+ 7/41 Test  #7: bsdf_test ........................   Passed    1.48 sec
+      Start  8: energy_test
+ 8/41 Test  #8: energy_test ......................   Passed    6.31 sec
+      Start  9: wavefront_test
+ 9/41 Test  #9: wavefront_test ...................   Passed    0.00 sec
+      Start 10: swapchain_test
+10/41 Test #10: swapchain_test ...................   Passed    0.04 sec
+      Start 11: display_test
+11/41 Test #11: display_test .....................   Passed    0.01 sec
+      Start 12: execution_cpu
+12/41 Test #12: execution_cpu ....................   Passed    0.52 sec
+      Start 13: measurement_cpu
+13/41 Test #13: measurement_cpu ..................   Passed    0.26 sec
+      Start 14: transport_cpu
+14/41 Test #14: transport_cpu ....................   Passed    0.53 sec
+      Start 15: execution_cuda
+15/41 Test #15: execution_cuda ...................   Passed   10.49 sec
+      Start 16: measurement_cuda
+16/41 Test #16: measurement_cuda .................   Passed    4.44 sec
+      Start 17: transport_cuda
+17/41 Test #17: transport_cuda ...................   Passed    6.11 sec
+      Start 18: measurement_optix
+18/41 Test #18: measurement_optix ................   Passed    6.88 sec
+      Start 19: transport_optix
+19/41 Test #19: transport_optix ..................   Passed    9.83 sec
+      Start 20: geometry_test
+20/41 Test #20: geometry_test ....................   Passed    0.07 sec
+      Start 21: cuda_geometry_test
+21/41 Test #21: cuda_geometry_test ...............   Passed    0.62 sec
+      Start 22: cuda_bsdf_test
+22/41 Test #22: cuda_bsdf_test ...................   Passed    0.55 sec
+      Start 23: render_test
+23/41 Test #23: render_test ......................   Passed    1.87 sec
+      Start 24: texture_test
+24/41 Test #24: texture_test .....................   Passed    0.03 sec
+      Start 25: cuda_texture_test
+25/41 Test #25: cuda_texture_test ................   Passed    0.71 sec
+      Start 26: cuda_render_test
+26/41 Test #26: cuda_render_test .................   Passed    7.33 sec
+      Start 27: optix_texture_test
+27/41 Test #27: optix_texture_test ...............   Passed    1.88 sec
+      Start 28: optix_geometry_test
+28/41 Test #28: optix_geometry_test ..............   Passed    1.41 sec
+      Start 29: optix_render_test
+29/41 Test #29: optix_render_test ................   Passed   13.04 sec
+      Start 30: opacity_test
+30/41 Test #30: opacity_test .....................   Passed    0.19 sec
+      Start 31: cuda_opacity_test
+31/41 Test #31: cuda_opacity_test ................   Passed    0.85 sec
+      Start 32: optix_opacity_test
+32/41 Test #32: optix_opacity_test ...............   Passed    2.13 sec
+      Start 33: light_sampling_test
+33/41 Test #33: light_sampling_test ..............   Passed    0.04 sec
+      Start 34: cuda_light_sampling_test
+34/41 Test #34: cuda_light_sampling_test .........   Passed    0.54 sec
+      Start 35: opacity_transport_cpu
+35/41 Test #35: opacity_transport_cpu ............   Passed    1.07 sec
+      Start 36: opacity_transport_cuda
+36/41 Test #36: opacity_transport_cuda ...........   Passed    2.71 sec
+      Start 37: opacity_transport_optix
+37/41 Test #37: opacity_transport_optix ..........   Passed    4.07 sec
+      Start 38: thread_pool_test
+38/41 Test #38: thread_pool_test .................   Passed    6.83 sec
+      Start 39: emission_sidedness_cpu
+39/41 Test #39: emission_sidedness_cpu ...........   Passed    1.89 sec
+      Start 40: emission_sidedness_cuda
+40/41 Test #40: emission_sidedness_cuda ..........   Passed    6.01 sec
+      Start 41: emission_sidedness_optix
+41/41 Test #41: emission_sidedness_optix .........   Passed    8.80 sec
+
+100% tests passed, 0 tests failed out of 41
+
+Total Test time (real) = 109.88 sec
